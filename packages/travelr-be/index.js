@@ -2,15 +2,20 @@ const express = require('express');
 const http = require('http');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const mongoose = require('mongoose');
 const cors = require('cors');
+const mysql = require('mysql');
 
 const app = express();
 
 // DB setup
-mongoose.connect(
-  'mongodb://admin:Uq6D4mPT@ds016298.mlab.com:16298/react-advanced-serverside',
-);
+
+const pool = mysql.createPool({
+  connectionLimit: 10,
+  host: 'localhost',
+  user: 'roott',
+  password: process.env.TRAVELR_DB_DEV_PASS,
+  database: 'travelr',
+});
 
 // middlewares
 app.use(morgan('combined')); // logs accesses
