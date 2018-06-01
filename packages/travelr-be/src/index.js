@@ -4,7 +4,7 @@ const express = require('express');
 const http = require('http');
 const morgan = require('morgan');
 
-const setupDummyData = require('./src/utils/setupDummyData');
+const router = require('./router');
 
 // start server
 const app = express();
@@ -15,7 +15,6 @@ app.use(bodyParser.json({ type: '*/*' })); // parses any requests into json
 app.use(cors());
 
 // Routes
-const router = require('./router');
 router(app);
 
 const port = 3090;

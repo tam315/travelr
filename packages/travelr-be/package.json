@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js",
+    "start": "nodemon ./src/index.js",
     "test": "jest --watch",
     "dev-initdb": "nodemon src/dev/setupDummyData.js"
   },
