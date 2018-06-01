@@ -5,6 +5,11 @@ const randomString = require('random-string');
 const db = require('../helper/db');
 const { getRandomInt, getRandomDouble } = require('../helper/math');
 
+const USER_COUNT = 2000;
+const POST_COUNT = 10000;
+const COMMENT_COUNT = 20000;
+const LIKE_COUNT = 30000;
+
 const pool = db.createPool();
 
 const actions = {
@@ -38,7 +43,7 @@ const getPostsFromDB = () => {
 
 const setupDummyUsers = async () => {
   const users = [];
-  for (let i = 0; i < 100; i += 1) {
+  for (let i = 0; i < USER_COUNT; i += 1) {
     users.push({
       id: randomString({ length: 28 }),
       display_name: loremIpsum({
@@ -76,7 +81,7 @@ const setupDummyPosts = async () => {
 
   const users = await getUsersFromDB(pool);
 
-  for (let i = 0; i < 10000; i += 1) {
+  for (let i = 0; i < POST_COUNT; i += 1) {
     posts.push({
       user_id: users[getRandomInt(users.length - 1)].id,
       old_image_url: DUMMY_IMAGES[getRandomInt(DUMMY_IMAGES.length - 1)],
@@ -108,7 +113,7 @@ const setupDummyLikes = async () => {
   let count = 0;
   const memory = {};
 
-  while (count < 5000) {
+  while (count < LIKE_COUNT) {
     const postId = posts[getRandomInt(posts.length - 1)].id;
     const userId = users[getRandomInt(users.length - 1)].id;
 
@@ -140,7 +145,7 @@ const setupDummyComments = async () => {
 
   const comments = [];
 
-  for (let i = 0; i < 30000; i += 1) {
+  for (let i = 0; i < COMMENT_COUNT; i += 1) {
     comments.push({
       post_id: posts[getRandomInt(posts.length - 1)].id,
       user_id: users[getRandomInt(users.length - 1)].id,
