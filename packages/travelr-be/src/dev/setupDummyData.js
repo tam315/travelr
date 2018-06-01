@@ -50,9 +50,10 @@ const setupDummyUsers = async () => {
   }
 
   await pool.query('DELETE FROM users');
-  users.forEach(async user => {
-    await pool.query('INSERT INTO users SET ?', user);
-  });
+  await pool.query(
+    `INSERT INTO users (${db.getQueryColumns(users)}) VALUES ?`,
+    [db.getQueryValues(users)],
+  );
 
   console.log('succeed addition of users');
 };
