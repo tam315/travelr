@@ -7,7 +7,7 @@ const { getRandomInt, getRandomDouble } = require('../helper/math');
 
 const USER_COUNT = 2000;
 const POST_COUNT = 10000;
-const COMMENT_COUNT = 20000;
+const COMMENT_COUNT = 2000;
 const LIKE_COUNT = 30000;
 
 const pool = db.createPool();
