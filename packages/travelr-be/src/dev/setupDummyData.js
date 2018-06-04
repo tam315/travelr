@@ -5,6 +5,7 @@ const pgPromise = require('pg-promise')();
 
 const dbHelper = require('../helper/db');
 const { getRandomInt, getRandomDouble } = require('../helper/math');
+const config = require('../../config');
 
 const USER_COUNT = 2000;
 const POST_COUNT = 10000;
@@ -84,6 +85,9 @@ const setupDummyPosts = async () => {
   const users = await getUsersFromDB(db);
 
   for (let i = 0; i < POST_COUNT; i += 1) {
+    const lng = getRandomDouble(130, 145);
+    const lat = getRandomDouble(45, 30);
+
     posts.push({
       user_id: users[getRandomInt(users.length - 1)].id,
       old_image_url: DUMMY_IMAGES[getRandomInt(DUMMY_IMAGES.length - 1)],
@@ -92,8 +96,7 @@ const setupDummyPosts = async () => {
       shoot_date: new Date(
         getRandomInt(1527814486286, -2027814486286),
       ).toLocaleDateString(),
-      lat: getRandomDouble(45, 30),
-      lng: getRandomDouble(130, 145),
+      geom: `ST_GeomFromText('POINT(${lng} ${lat})', ${config.SRID})`,
       view_count: getRandomInt(1000, 0),
     });
   }
@@ -104,8 +107,10 @@ const setupDummyPosts = async () => {
     'new_image_url',
     'description',
     'shoot_date',
-    'lng',
-    'lat',
+    {
+      name: 'geom',
+      mod: '^', // format as raw text
+    },
     'view_count',
   ];
   const columnSet = new pgPromise.helpers.ColumnSet(column, { table: 'posts' });

@@ -8,4 +8,5 @@ module.exports = {
     },
     production: {},
   },
+  SRID: 4326,
 };
