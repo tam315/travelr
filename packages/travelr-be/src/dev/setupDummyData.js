@@ -1,8 +1,9 @@
 const loremIpsum = require('lorem-ipsum');
 const prompt = require('prompt');
 const randomString = require('random-string');
+const pgPromise = require('pg-promise')();
 
-const db = require('../helper/db');
+const dbHelper = require('../helper/db');
 const { getRandomInt, getRandomDouble } = require('../helper/math');
 
 const USER_COUNT = 2000;
@@ -10,7 +11,7 @@ const POST_COUNT = 10000;
 const COMMENT_COUNT = 2000;
 const LIKE_COUNT = 30000;
 
-const pool = db.createPool();
+const db = dbHelper.db;
 
 const actions = {
   '1': () => setupDummyUsers(),
@@ -34,11 +35,11 @@ prompt.get(['choice'], (err, result) => {
 });
 
 const getUsersFromDB = () => {
-  return pool.query('SELECT * FROM users');
+  return db.many('SELECT * FROM users');
 };
 
 const getPostsFromDB = () => {
-  return pool.query('SELECT * FROM posts');
+  return db.many('SELECT * FROM posts');
 };
 
 const setupDummyUsers = async () => {
@@ -51,15 +52,16 @@ const setupDummyUsers = async () => {
         units: 'words',
         count: 1,
       }),
+      is_admin: false,
     });
   }
 
-  await pool.query('DELETE FROM users');
-  await pool.query(
-    `INSERT INTO users (${db.getQueryColumns(users)}) VALUES ?`,
-    [db.getQueryValues(users)],
-  );
+  const column = ['id', 'display_name', 'is_admin'];
+  const columnSet = new pgPromise.helpers.ColumnSet(column, { table: 'users' });
+  const query = pgPromise.helpers.insert(users, columnSet);
 
+  await db.none('DELETE FROM users');
+  await db.none(query);
   console.log('succeed addition of users');
 };
 
@@ -79,7 +81,7 @@ const setupDummyPosts = async () => {
 
   let posts = [];
 
-  const users = await getUsersFromDB(pool);
+  const users = await getUsersFromDB(db);
 
   for (let i = 0; i < POST_COUNT; i += 1) {
     posts.push({
@@ -96,18 +98,28 @@ const setupDummyPosts = async () => {
     });
   }
 
-  await pool.query('DELETE FROM posts');
-  await pool.query(
-    `INSERT INTO posts (${db.getQueryColumns(posts)}) VALUES ?`,
-    [db.getQueryValues(posts)],
-  );
+  const column = [
+    'user_id',
+    'old_image_url',
+    'new_image_url',
+    'description',
+    'shoot_date',
+    'lng',
+    'lat',
+    'view_count',
+  ];
+  const columnSet = new pgPromise.helpers.ColumnSet(column, { table: 'posts' });
+  const query = pgPromise.helpers.insert(posts, columnSet);
+
+  await db.none('DELETE FROM posts');
+  await db.none(query);
 
   console.log('succeed addition of posts');
 };
 
 const setupDummyLikes = async () => {
-  const users = await getUsersFromDB(pool);
-  const posts = await getPostsFromDB(pool);
+  const users = await getUsersFromDB(db);
+  const posts = await getPostsFromDB(db);
   const likes = [];
 
   let count = 0;
@@ -130,18 +142,19 @@ const setupDummyLikes = async () => {
     count += 1;
   }
 
-  await pool.query('DELETE FROM likes');
-  await pool.query(
-    `INSERT INTO likes  (${db.getQueryColumns(likes)}) VALUES ?`,
-    [db.getQueryValues(likes)],
-  );
+  const column = ['post_id', 'user_id'];
+  const columnSet = new pgPromise.helpers.ColumnSet(column, { table: 'likes' });
+  const query = pgPromise.helpers.insert(likes, columnSet);
+
+  await db.none('DELETE FROM likes');
+  await db.none(query);
 
   console.log('succeed addition of likes');
 };
 
 const setupDummyComments = async () => {
-  const users = await getUsersFromDB(pool);
-  const posts = await getPostsFromDB(pool);
+  const users = await getUsersFromDB(db);
+  const posts = await getPostsFromDB(db);
 
   const comments = [];
 
@@ -156,11 +169,14 @@ const setupDummyComments = async () => {
     });
   }
 
-  await pool.query('DELETE FROM comments');
-  await pool.query(
-    `INSERT INTO comments (${db.getQueryColumns(comments)}) VALUES ?`,
-    [db.getQueryValues(comments)],
-  );
+  const column = ['post_id', 'user_id', 'datetime', 'comment'];
+  const columnSet = new pgPromise.helpers.ColumnSet(column, {
+    table: 'comments',
+  });
+  const query = pgPromise.helpers.insert(comments, columnSet);
+
+  await db.none('DELETE FROM comments');
+  await db.none(query);
 
   console.log('succeed addition of comments');
 };
