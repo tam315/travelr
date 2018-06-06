@@ -3,11 +3,8 @@ const dbHelper = require('../helper/db');
 const db = dbHelper.db;
 
 exports.createUser = async (req, res, next) => {
-  const token = req.header('authorization');
+  const { userId } = req;
   const { displayName } = req.body;
-
-  // TODO: authentication
-  const userId = 'ID_GET_FROM_FIREBASE';
 
   const user = await db
     .none('INSERT INTO users (id, display_name) values ($1, $2)', [
@@ -27,7 +24,7 @@ exports.getUser = async (req, res, next) => {
     userId,
   );
 
-  if (!user) return res.status(421).end();
+  if (!user) return res.sendStatus(421);
 
   res.status(200).send({
     userId: user.id,
@@ -40,14 +37,11 @@ exports.getUser = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res, next) => {
-  const token = req.header('authorization');
+  const { userId } = req;
   const { displayName } = req.body;
 
-  // TODO: authentication
-  const userId = 'ID_GET_FROM_FIREBASE';
-
   const userIdParams = req.params.userId;
-  if (userId !== userIdParams) return res.sendStatus(401);
+  if (userId !== userIdParams) return res.sendStatus(421);
 
   const user = await db
     .one('UPDATE users SET display_name = $1 WHERE id = $2 RETURNING *', [
@@ -60,13 +54,10 @@ exports.updateUser = async (req, res, next) => {
 };
 
 exports.deleteUser = async (req, res, next) => {
-  const token = req.header('authorization');
-
-  // TODO: authentication
-  const userId = 'ID_GET_FROM_FIREBASE';
+  const { userId } = req;
 
   const userIdParams = req.params.userId;
-  if (userId !== userIdParams) return res.sendStatus(401);
+  if (userId !== userIdParams) return res.sendStatus(421);
 
   const user = await db
     .one('DELETE FROM users WHERE id = $1 RETURNING *;', userId)
