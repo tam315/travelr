@@ -9,7 +9,10 @@ const requireAuth = passport.authenticate('jwt', { session: false });
 const requireSignin = passport.authenticate('local', { session: false });
 
 module.exports = app => {
+  app.post('/users', UsersController.createUser);
   app.get('/users/:userId', UsersController.getUser);
+  app.put('/users/:userId', UsersController.updateUser);
+  app.delete('/users/:userId', UsersController.deleteUser);
 
   app.get('/', requireAuth, (req, res) => {
     res.json({ hi: 'there' });

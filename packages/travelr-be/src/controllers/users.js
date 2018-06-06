@@ -2,7 +2,23 @@ const dbHelper = require('../helper/db');
 
 const db = dbHelper.db;
 
-// TODO: authorization
+exports.createUser = async (req, res, next) => {
+  const token = req.header('authorization');
+  const { displayName } = req.body;
+
+  // TODO: authentication
+  const userId = 'ID_GET_FROM_FIREBASE';
+
+  const user = await db
+    .none('INSERT INTO users (id, display_name) values ($1, $2)', [
+      userId,
+      displayName,
+    ])
+    .catch(err => res.status(400).send(err.message));
+
+  res.sendStatus(200);
+};
+
 exports.getUser = async (req, res, next) => {
   const { userId } = req.params;
 
@@ -21,4 +37,40 @@ exports.getUser = async (req, res, next) => {
     earnedLikes: +user.earned_likes,
     earnedComments: +user.earned_comments,
   });
+};
+
+exports.updateUser = async (req, res, next) => {
+  const token = req.header('authorization');
+  const { displayName } = req.body;
+
+  // TODO: authentication
+  const userId = 'ID_GET_FROM_FIREBASE';
+
+  const userIdParams = req.params.userId;
+  if (userId !== userIdParams) return res.sendStatus(401);
+
+  const user = await db
+    .one('UPDATE users SET display_name = $1 WHERE id = $2 RETURNING *', [
+      displayName,
+      userId,
+    ])
+    .catch(err => res.status(400).send(err.message));
+
+  res.sendStatus(200);
+};
+
+exports.deleteUser = async (req, res, next) => {
+  const token = req.header('authorization');
+
+  // TODO: authentication
+  const userId = 'ID_GET_FROM_FIREBASE';
+
+  const userIdParams = req.params.userId;
+  if (userId !== userIdParams) return res.sendStatus(401);
+
+  const user = await db
+    .one('DELETE FROM users WHERE id = $1 RETURNING *;', userId)
+    .catch(err => res.status(400).send(err.message));
+
+  res.sendStatus(200);
 };
