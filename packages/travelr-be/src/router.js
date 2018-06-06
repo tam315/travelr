@@ -1,9 +1,5 @@
-const passport = require('passport');
-
 const AuthenticationController = require('./controllers/authentication');
 const UsersController = require('./controllers/users');
-
-require('./services/passport'); // 単に実行するだけ
 
 const { checkToken } = AuthenticationController;
 
