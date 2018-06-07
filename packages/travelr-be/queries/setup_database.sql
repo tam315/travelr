@@ -23,6 +23,7 @@ CREATE TABLE posts
     view_count    INT NOT NULL DEFAULT 0
   );
 
+CREATE INDEX posts_user_id_idx ON posts(user_id);
 CREATE INDEX posts_geom_idx ON posts USING GIST (geom);
 
 CREATE TABLE likes
