@@ -2,41 +2,39 @@ DROP VIEW IF EXISTS get_user;
 
 CREATE VIEW get_user AS
 
+WITH
+  -- calculate total earned likes count for each post
+  posts_likes AS (
+    SELECT post_id, count(*)
+    FROM likes
+    GROUP BY post_id
+  ),
+
+  -- calculate total earned comments count for each post
+  posts_comments AS (
+    SELECT post_id, count(*)
+    FROM comments
+    GROUP BY post_id
+  ),
+
+  -- bind above stats data to each posts.
+  -- then, group by user_id and get stats for each user.
+  stats AS (
+    SELECT
+      posts.user_id,
+      sum(posts.view_count) AS earned_views,
+      sum(posts_likes.count) as earned_likes,
+      sum(posts_comments.count) as earned_comments
+    FROM posts
+    LEFT OUTER JOIN posts_likes ON (posts.id = posts_likes.post_id)
+    LEFT OUTER JOIN posts_comments ON (posts.id = posts_comments.post_id)
+    GROUP BY posts.user_id
+  )
+
 SELECT
   users.*,
   stats.earned_views,
   stats.earned_likes,
   stats.earned_comments
 FROM users
-
--- join stats data for each user
-LEFT OUTER JOIN (
-  SELECT
-    posts.user_id,
-    sum(posts.view_count) AS earned_views,
-    sum(stats_likes.earned_likes) as earned_likes,
-    sum(stats_comments.earned_comments) as earned_comments
-  FROM posts
-
-  -- join total 'likes' count for each post
-  LEFT OUTER JOIN (
-    SELECT likes.post_id, count(*) AS earned_likes
-    FROM likes
-    GROUP BY post_id
-  )
-  AS stats_likes
-  ON (posts.id = stats_likes.post_id)
-
-  -- join total 'comments' count for each post
-  LEFT OUTER JOIN (
-      SELECT comments.post_id, count(*) AS earned_comments
-    FROM comments
-    GROUP BY post_id
-  )
-  AS stats_comments
-  ON (posts.id = stats_comments.post_id)
-
-  GROUP BY posts.user_id
-)
-AS stats
-ON users.id = stats.user_id;
+LEFT OUTER JOIN stats ON (users.id = stats.user_id)
