@@ -11,10 +11,7 @@ const db = pgPromise({
   database,
 });
 
-// a function to shut down all connections (for jest)
-const shutdown = pgPromise.end;
-
 module.exports = {
   db,
-  shutdown,
+  pgPromise,
 };

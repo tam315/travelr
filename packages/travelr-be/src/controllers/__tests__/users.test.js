@@ -2,19 +2,17 @@ const request = require('supertest');
 
 const app = require('../../index');
 const dbHelper = require('../../helper/db');
-const { db } = dbHelper;
+const { db, pgPromise } = dbHelper;
 
-const authenticationController = require('../authentication');
 const {
-  DUMMY_ID_FOR_TESTING,
-  DUMMY_HEADER_FOR_TESTING,
   DUMMY_TOKEN_FOR_TESTING,
-} = authenticationController;
+  DUMMY_USER_ID_FOR_TESTING,
+} = require('../../dummies/dummies');
 
 const deleteDummyUser = async () => {
   await db.oneOrNone(
     'DELETE FROM users WHERE id = $1 RETURNING *;',
-    DUMMY_ID_FOR_TESTING,
+    DUMMY_USER_ID_FOR_TESTING,
   );
 };
 
@@ -23,7 +21,7 @@ const createDummyUser = async () => {
 
   await db.one(
     'INSERT INTO users(id, display_name) VALUES ($1, $2) RETURNING *;',
-    [DUMMY_ID_FOR_TESTING, 'displayName'],
+    [DUMMY_USER_ID_FOR_TESTING, 'displayName'],
   );
 };
 
@@ -31,7 +29,7 @@ const createDummyUser = async () => {
 // If not, the session will infinitely
 // increase and eventually the test will fail.
 afterAll(() => {
-  dbHelper.shutdown();
+  pgPromise.end();
 });
 
 afterEach(async () => {
@@ -39,10 +37,7 @@ afterEach(async () => {
 });
 
 describe('POST /users', () => {
-  const baseRequest = () =>
-    request(app)
-      .post('/users')
-      .set(DUMMY_HEADER_FOR_TESTING, true);
+  const baseRequest = () => request(app).post('/users');
 
   test('returns 401 if user not authorized', async () => {
     const res = await baseRequest();
@@ -80,9 +75,7 @@ describe('POST /users', () => {
 
 describe('GET /users/:userId', () => {
   const baseRequest = () =>
-    request(app)
-      .get(`/users/${DUMMY_ID_FOR_TESTING}`)
-      .set(DUMMY_HEADER_FOR_TESTING, true);
+    request(app).get(`/users/${DUMMY_USER_ID_FOR_TESTING}`);
 
   test('returns 400 and message if user not found', async () => {
     const res = await baseRequest();
@@ -107,9 +100,7 @@ describe('GET /users/:userId', () => {
 
 describe('PUT /users/:userId', () => {
   const baseRequest = () =>
-    request(app)
-      .put(`/users/${DUMMY_ID_FOR_TESTING}`)
-      .set(DUMMY_HEADER_FOR_TESTING, true);
+    request(app).put(`/users/${DUMMY_USER_ID_FOR_TESTING}`);
 
   test('returns 401 if user not authorized', async () => {
     const res = await baseRequest();
@@ -131,7 +122,6 @@ describe('PUT /users/:userId', () => {
     const res = await request(app)
       .put(`/users/someInvalidId`)
       .set('authorization', DUMMY_TOKEN_FOR_TESTING)
-      .set(DUMMY_HEADER_FOR_TESTING, true)
       .send({ displayName: 'displayName' });
 
     expect(res.status).toBe(400);
@@ -150,9 +140,7 @@ describe('PUT /users/:userId', () => {
 
 describe('DELETE /users/:userId', () => {
   const baseRequest = () =>
-    request(app)
-      .delete(`/users/${DUMMY_ID_FOR_TESTING}`)
-      .set(DUMMY_HEADER_FOR_TESTING, true);
+    request(app).delete(`/users/${DUMMY_USER_ID_FOR_TESTING}`);
 
   test('returns 401 if user not authorized', async () => {
     const res = await baseRequest();
@@ -163,8 +151,7 @@ describe('DELETE /users/:userId', () => {
   test("returns 400 and message if url param doesn't match the authented user's id", async () => {
     const res = await request(app)
       .delete(`/users/someInvalidId`)
-      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
-      .set(DUMMY_HEADER_FOR_TESTING, true);
+      .set('authorization', DUMMY_TOKEN_FOR_TESTING);
 
     expect(res.status).toBe(400);
     expect(res.text).toBe("param doe's not match authenticated user");
