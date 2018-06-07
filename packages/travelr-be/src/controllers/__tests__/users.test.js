@@ -110,3 +110,45 @@ describe('GET /users/:userId', () => {
     expect(res.body).toHaveProperty('earnedViews');
   });
 });
+
+describe('PUT /users/:userId', () => {
+  const baseRequest = () =>
+    request(app)
+      .put(`/users/${DUMMY_ID_FOR_TESTING}`)
+      .set(DUMMY_HEADER_FOR_TESTING, true);
+
+  test('returns 401 if user not authorized', async () => {
+    const res = await baseRequest();
+
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 400 if request has only token and missing body', async () => {
+    const res = await baseRequest().set(
+      'authorization',
+      DUMMY_TOKEN_FOR_TESTING,
+    );
+
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('display name missing');
+  });
+
+  test("returns 400 if url param doesn\t match authented user's id", async () => {
+    const res = await request(app)
+      .put(`/users/someInvalidId`)
+      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
+      .set(DUMMY_HEADER_FOR_TESTING, true)
+      .send({ displayName: 'displayName' });
+
+    expect(res.status).toBe(400);
+    expect(res.text).toBe("param doe's not match authenticated user");
+  });
+
+  test('returns 200 if request success', async () => {
+    const res = await baseRequest()
+      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
+      .send({ displayName: 'displayName' });
+
+    expect(res.status).toBe(200);
+  });
+});

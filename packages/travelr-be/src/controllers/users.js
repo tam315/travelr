@@ -44,17 +44,23 @@ exports.updateUser = async (req, res, next) => {
   const { userId } = req;
   const { displayName } = req.body;
 
+  // check if the body is valid
+  if (!displayName) return res.status(400).send('display name missing');
+
+  // check if the param is valid
   const userIdParams = req.params.userId;
-  if (userId !== userIdParams) return res.sendStatus(421);
+  if (userId !== userIdParams)
+    return res.status(400).send("param doe's not match authenticated user");
 
-  const user = await db
-    .one('UPDATE users SET display_name = $1 WHERE id = $2 RETURNING *', [
-      displayName,
-      userId,
-    ])
-    .catch(err => res.status(400).send(err.message));
-
-  res.sendStatus(200);
+  try {
+    const user = await db.one(
+      'UPDATE users SET display_name = $1 WHERE id = $2 RETURNING *',
+      [displayName, userId],
+    );
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
 };
 
 exports.deleteUser = async (req, res, next) => {
