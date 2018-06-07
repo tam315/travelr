@@ -6,14 +6,18 @@ exports.createUser = async (req, res, next) => {
   const { userId } = req;
   const { displayName } = req.body;
 
-  const user = await db
-    .none('INSERT INTO users (id, display_name) values ($1, $2)', [
-      userId,
-      displayName,
-    ])
-    .catch(err => res.status(400).send(err.message));
+  if (!displayName) return res.status(400).send('display name missing');
 
-  res.sendStatus(200);
+  try {
+    const user = await db.none(
+      'INSERT INTO users (id, display_name) values ($1, $2)',
+      [userId, displayName],
+    );
+
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
 };
 
 exports.getUser = async (req, res, next) => {

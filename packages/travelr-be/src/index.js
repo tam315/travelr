@@ -19,5 +19,12 @@ router(app);
 
 const port = 3090;
 const server = http.createServer(app);
-server.listen(port);
-console.log('Server listening on: ', port);
+
+// Run the server unless it is a test environment
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(port);
+  console.log('Server listening on: ', port);
+}
+
+// For testing
+module.exports = app;
