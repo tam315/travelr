@@ -66,12 +66,18 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   const { userId } = req;
 
+  // check if the param is valid
   const userIdParams = req.params.userId;
-  if (userId !== userIdParams) return res.sendStatus(421);
+  if (userId !== userIdParams)
+    return res.status(400).send("param doe's not match authenticated user");
 
-  const user = await db
-    .one('DELETE FROM users WHERE id = $1 RETURNING *;', userId)
-    .catch(err => res.status(400).send(err.message));
-
-  res.sendStatus(200);
+  try {
+    const user = await db.one(
+      'DELETE FROM users WHERE id = $1 RETURNING *;',
+      userId,
+    );
+    return res.sendStatus(200);
+  } catch (err) {
+    return res.status(400).send(err.message);
+  }
 };

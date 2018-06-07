@@ -127,7 +127,7 @@ describe('PUT /users/:userId', () => {
     expect(res.text).toBe('display name missing');
   });
 
-  test("returns 400 and message if url param doesn\t match the authented user's id", async () => {
+  test("returns 400 and message if url param doesn't match the authented user's id", async () => {
     const res = await request(app)
       .put(`/users/someInvalidId`)
       .set('authorization', DUMMY_TOKEN_FOR_TESTING)
@@ -143,6 +143,49 @@ describe('PUT /users/:userId', () => {
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN_FOR_TESTING)
       .send({ displayName: 'displayName' });
+
+    expect(res.status).toBe(200);
+  });
+});
+
+describe('DELETE /users/:userId', () => {
+  const baseRequest = () =>
+    request(app)
+      .delete(`/users/${DUMMY_ID_FOR_TESTING}`)
+      .set(DUMMY_HEADER_FOR_TESTING, true);
+
+  test('returns 401 if user not authorized', async () => {
+    const res = await baseRequest();
+
+    expect(res.status).toBe(401);
+  });
+
+  test("returns 400 and message if url param doesn't match the authented user's id", async () => {
+    const res = await request(app)
+      .delete(`/users/someInvalidId`)
+      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
+      .set(DUMMY_HEADER_FOR_TESTING, true);
+
+    expect(res.status).toBe(400);
+    expect(res.text).toBe("param doe's not match authenticated user");
+  });
+
+  test('returns 400 and message if user not found', async () => {
+    const res = await baseRequest().set(
+      'authorization',
+      DUMMY_TOKEN_FOR_TESTING,
+    );
+
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('No data returned from the query.');
+  });
+
+  test('returns 200 if user deleted', async () => {
+    await createDummyUser();
+    const res = await baseRequest().set(
+      'authorization',
+      DUMMY_TOKEN_FOR_TESTING,
+    );
 
     expect(res.status).toBe(200);
   });
