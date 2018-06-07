@@ -34,10 +34,6 @@ afterAll(() => {
   dbHelper.shutdown();
 });
 
-beforeEach(async () => {
-  await createDummyUser();
-});
-
 afterEach(async () => {
   await deleteDummyUser();
 });
@@ -54,7 +50,7 @@ describe('POST /users', () => {
     expect(res.status).toBe(401);
   });
 
-  test('returns 400 if request has only token and missing body', async () => {
+  test('returns 400 and message if body is invalid', async () => {
     const res = await baseRequest().set(
       'authorization',
       DUMMY_TOKEN_FOR_TESTING,
@@ -64,22 +60,21 @@ describe('POST /users', () => {
     expect(res.text).toBe('display name missing');
   });
 
-  test('returns 200 if request has token and valid body', async () => {
-    await deleteDummyUser();
-
-    const res = await baseRequest()
-      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
-      .send({ displayName: 'displayName' });
-
-    expect(res.status).toBe(200);
-  });
-
   test("returns 400 if it's duplicate registration", async () => {
+    await createDummyUser();
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN_FOR_TESTING)
       .send({ displayName: 'displayName' });
 
     expect(res.status).toBe(400);
+  });
+
+  test('returns 200 if user created', async () => {
+    const res = await baseRequest()
+      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
+      .send({ displayName: 'displayName' });
+
+    expect(res.status).toBe(200);
   });
 });
 
@@ -89,17 +84,16 @@ describe('GET /users/:userId', () => {
       .get(`/users/${DUMMY_ID_FOR_TESTING}`)
       .set(DUMMY_HEADER_FOR_TESTING, true);
 
-  test('returns 421 if user not found', async () => {
-    await deleteDummyUser();
-    await baseRequest().expect(421);
+  test('returns 400 and message if user not found', async () => {
+    const res = await baseRequest();
+
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('user not found');
   });
 
-  test('returns 200 if user found', async () => {
-    await baseRequest().expect(200);
-  });
-
-  test('returns valid body if user found', async () => {
-    const res = await baseRequest().expect(200);
+  test('returns 200 and valid body if user found', async () => {
+    await createDummyUser();
+    const res = await baseRequest();
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('userId');
@@ -123,7 +117,7 @@ describe('PUT /users/:userId', () => {
     expect(res.status).toBe(401);
   });
 
-  test('returns 400 if request has only token and missing body', async () => {
+  test('returns 400 and message if body is invalid', async () => {
     const res = await baseRequest().set(
       'authorization',
       DUMMY_TOKEN_FOR_TESTING,
@@ -133,7 +127,7 @@ describe('PUT /users/:userId', () => {
     expect(res.text).toBe('display name missing');
   });
 
-  test("returns 400 if url param doesn\t match authented user's id", async () => {
+  test("returns 400 and message if url param doesn\t match the authented user's id", async () => {
     const res = await request(app)
       .put(`/users/someInvalidId`)
       .set('authorization', DUMMY_TOKEN_FOR_TESTING)
@@ -144,7 +138,8 @@ describe('PUT /users/:userId', () => {
     expect(res.text).toBe("param doe's not match authenticated user");
   });
 
-  test('returns 200 if request success', async () => {
+  test('returns 200 if user updated', async () => {
+    await createDummyUser();
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN_FOR_TESTING)
       .send({ displayName: 'displayName' });
