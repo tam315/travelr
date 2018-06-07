@@ -10,7 +10,10 @@ const router = require('./router');
 const app = express();
 
 // middlewares
-app.use(morgan('combined')); // logs accesses
+if (process.env.NODE_ENV !== 'test') {
+  // log access unless it is a test environment
+  app.use(morgan('combined'));
+}
 app.use(bodyParser.json({ type: '*/*' })); // parses any requests into json
 app.use(cors());
 
