@@ -82,3 +82,31 @@ describe('POST /users', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('GET /users/:userId', () => {
+  const baseRequest = () =>
+    request(app)
+      .get(`/users/${DUMMY_ID_FOR_TESTING}`)
+      .set(DUMMY_HEADER_FOR_TESTING, true);
+
+  test('returns 421 if user not found', async () => {
+    await deleteDummyUser();
+    await baseRequest().expect(421);
+  });
+
+  test('returns 200 if user found', async () => {
+    await baseRequest().expect(200);
+  });
+
+  test('returns valid body if user found', async () => {
+    const res = await baseRequest().expect(200);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('userId');
+    expect(res.body).toHaveProperty('displayName');
+    expect(res.body).toHaveProperty('isAdmin');
+    expect(res.body).toHaveProperty('earnedLikes');
+    expect(res.body).toHaveProperty('earnedComments');
+    expect(res.body).toHaveProperty('earnedViews');
+  });
+});
