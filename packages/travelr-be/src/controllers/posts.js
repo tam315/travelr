@@ -100,24 +100,28 @@ exports.getPosts = async (req, res, next) => {
     const whereQuery = ` WHERE ${criterions.join(' AND ')}`;
     query = query + whereQuery;
   }
-  const posts = await db.manyOrNone(query);
+  try {
+    const posts = await db.manyOrNone(query);
 
-  const response = posts.map(post => ({
-    postId: post.id,
-    userId: post.user_id,
-    oldImageUrl: post.old_image_url,
-    newImageUrl: post.new_image_url,
-    description: post.description,
-    shootDate: post.shoot_date,
-    lng: post.lng,
-    lat: post.lat,
-    viewCount: post.view_count,
-    displayName: post.display_name,
-    likedCount: +post.liked_count,
-    commentsCount: +post.comments_count,
-  }));
+    const response = posts.map(post => ({
+      postId: post.id,
+      userId: post.user_id,
+      oldImageUrl: post.old_image_url,
+      newImageUrl: post.new_image_url,
+      description: post.description,
+      shootDate: post.shoot_date,
+      lng: post.lng,
+      lat: post.lat,
+      viewCount: post.view_count,
+      displayName: post.display_name,
+      likedCount: +post.liked_count,
+      commentsCount: +post.comments_count,
+    }));
 
-  res.status(200).json(response);
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
 };
 
 exports.createPost = async (req, res, next) => {
