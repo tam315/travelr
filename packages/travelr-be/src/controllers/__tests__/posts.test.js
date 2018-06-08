@@ -276,7 +276,7 @@ describe('GET /posts/:userId', async () => {
 describe('GET /posts/:userId/increment_view_count', async () => {
   test('returns 400 and message if post not found', async () => {
     const invalidPostId = 1234567890;
-    const res = await request(app).get(
+    const res = await request(app).post(
       `/posts/${invalidPostId}/increment_view_count`,
     );
     expect(res.status).toBe(400);
@@ -290,7 +290,9 @@ describe('GET /posts/:userId/increment_view_count', async () => {
       DUMMY_USER_ID,
     );
     const postId = posts[0].id;
-    const res = await request(app).get(`/posts/${postId}/increment_view_count`);
+    const res = await request(app).post(
+      `/posts/${postId}/increment_view_count`,
+    );
 
     expect(res.body.viewCount).toBe(posts[0].view_count + 1);
   });

@@ -18,17 +18,33 @@ module.exports = app => {
 
   // posts - for specific post
   app.get('/posts/:postId', PostsController.getPost);
-  app.put('/posts/:postId', PostsController.updatePost);
-  app.delete('/posts/:postId', PostsController.deletePost);
+  app.put('/posts/:postId', checkToken, PostsController.updatePost);
+  app.delete('/posts/:postId', checkToken, PostsController.deletePost);
   app.get('/posts/:postId/comments', PostsController.getComments);
-  app.post('/posts/:postId/comments', PostsController.createComment);
-  app.post('/posts/:postId/toggle_like', PostsController.toggleLike);
-  app.get(
+  app.post(
+    '/posts/:postId/comments',
+    checkToken,
+    PostsController.createComment,
+  );
+  app.post(
+    '/posts/:postId/toggle_like',
+    checkToken,
+    PostsController.toggleLike,
+  );
+  app.post(
     '/posts/:postId/increment_view_count',
     PostsController.incrementViewCount,
   );
 
   // posts - comment creation and update
-  app.put('/posts/comments/:commentId', PostsController.updateComment);
-  app.delete('/posts/comments/:commentId', PostsController.deleteComment);
+  app.put(
+    '/posts/comments/:commentId',
+    checkToken,
+    PostsController.updateComment,
+  );
+  app.delete(
+    '/posts/comments/:commentId',
+    checkToken,
+    PostsController.deleteComment,
+  );
 };
