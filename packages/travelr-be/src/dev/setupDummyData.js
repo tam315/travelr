@@ -96,7 +96,10 @@ const setupDummyPosts = async () => {
       shoot_date: new Date(
         getRandomInt(1527814486286, -2027814486286),
       ).toLocaleDateString(),
-      geom: `ST_GeomFromText('POINT(${lng} ${lat})', ${config.SRID})`,
+      geom: pgPromise.as.format('ST_GeomFromText($1, $2)', [
+        `POINT(${lng} ${lat})`,
+        config.SRID,
+      ]),
       view_count: getRandomInt(1000, 0),
     });
   }
