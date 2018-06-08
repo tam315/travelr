@@ -4,15 +4,12 @@ const app = require('../../index');
 const dbHelper = require('../../helper/db');
 const { db, pgPromise } = dbHelper;
 
-const {
-  DUMMY_TOKEN_FOR_TESTING,
-  DUMMY_USER_ID_FOR_TESTING,
-} = require('../../dummies/dummies');
+const { DUMMY_TOKEN, DUMMY_USER_ID } = require('../../dummies/dummies');
 
 const deleteDummyUser = async () => {
   await db.oneOrNone(
     'DELETE FROM users WHERE id = $1 RETURNING *;',
-    DUMMY_USER_ID_FOR_TESTING,
+    DUMMY_USER_ID,
   );
 };
 
@@ -21,7 +18,7 @@ const createDummyUser = async () => {
 
   await db.one(
     'INSERT INTO users(id, display_name) VALUES ($1, $2) RETURNING *;',
-    [DUMMY_USER_ID_FOR_TESTING, 'displayName'],
+    [DUMMY_USER_ID, 'displayName'],
   );
 };
 
@@ -46,10 +43,7 @@ describe('POST /users', () => {
   });
 
   test('returns 400 and message if body is invalid', async () => {
-    const res = await baseRequest().set(
-      'authorization',
-      DUMMY_TOKEN_FOR_TESTING,
-    );
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
 
     expect(res.status).toBe(400);
     expect(res.text).toBe('display name missing');
@@ -58,7 +52,7 @@ describe('POST /users', () => {
   test("returns 400 if it's duplicate registration", async () => {
     await createDummyUser();
     const res = await baseRequest()
-      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
+      .set('authorization', DUMMY_TOKEN)
       .send({ displayName: 'displayName' });
 
     expect(res.status).toBe(400);
@@ -66,7 +60,7 @@ describe('POST /users', () => {
 
   test('returns 200 if user created', async () => {
     const res = await baseRequest()
-      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
+      .set('authorization', DUMMY_TOKEN)
       .send({ displayName: 'displayName' });
 
     expect(res.status).toBe(200);
@@ -74,8 +68,7 @@ describe('POST /users', () => {
 });
 
 describe('GET /users/:userId', () => {
-  const baseRequest = () =>
-    request(app).get(`/users/${DUMMY_USER_ID_FOR_TESTING}`);
+  const baseRequest = () => request(app).get(`/users/${DUMMY_USER_ID}`);
 
   test('returns 400 and message if user not found', async () => {
     const res = await baseRequest();
@@ -99,8 +92,7 @@ describe('GET /users/:userId', () => {
 });
 
 describe('PUT /users/:userId', () => {
-  const baseRequest = () =>
-    request(app).put(`/users/${DUMMY_USER_ID_FOR_TESTING}`);
+  const baseRequest = () => request(app).put(`/users/${DUMMY_USER_ID}`);
 
   test('returns 401 if user not authorized', async () => {
     const res = await baseRequest();
@@ -109,10 +101,7 @@ describe('PUT /users/:userId', () => {
   });
 
   test('returns 400 and message if body is invalid', async () => {
-    const res = await baseRequest().set(
-      'authorization',
-      DUMMY_TOKEN_FOR_TESTING,
-    );
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
 
     expect(res.status).toBe(400);
     expect(res.text).toBe('display name missing');
@@ -121,7 +110,7 @@ describe('PUT /users/:userId', () => {
   test("returns 400 and message if url param doesn't match the authented user's id", async () => {
     const res = await request(app)
       .put(`/users/someInvalidId`)
-      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
+      .set('authorization', DUMMY_TOKEN)
       .send({ displayName: 'displayName' });
 
     expect(res.status).toBe(400);
@@ -131,7 +120,7 @@ describe('PUT /users/:userId', () => {
   test('returns 200 if user updated', async () => {
     await createDummyUser();
     const res = await baseRequest()
-      .set('authorization', DUMMY_TOKEN_FOR_TESTING)
+      .set('authorization', DUMMY_TOKEN)
       .send({ displayName: 'displayName' });
 
     expect(res.status).toBe(200);
@@ -139,8 +128,7 @@ describe('PUT /users/:userId', () => {
 });
 
 describe('DELETE /users/:userId', () => {
-  const baseRequest = () =>
-    request(app).delete(`/users/${DUMMY_USER_ID_FOR_TESTING}`);
+  const baseRequest = () => request(app).delete(`/users/${DUMMY_USER_ID}`);
 
   test('returns 401 if user not authorized', async () => {
     const res = await baseRequest();
@@ -151,17 +139,14 @@ describe('DELETE /users/:userId', () => {
   test("returns 400 and message if url param doesn't match the authented user's id", async () => {
     const res = await request(app)
       .delete(`/users/someInvalidId`)
-      .set('authorization', DUMMY_TOKEN_FOR_TESTING);
+      .set('authorization', DUMMY_TOKEN);
 
     expect(res.status).toBe(400);
     expect(res.text).toBe("param doe's not match authenticated user");
   });
 
   test('returns 400 and message if user not found', async () => {
-    const res = await baseRequest().set(
-      'authorization',
-      DUMMY_TOKEN_FOR_TESTING,
-    );
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
 
     expect(res.status).toBe(400);
     expect(res.text).toBe('No data returned from the query.');
@@ -169,10 +154,7 @@ describe('DELETE /users/:userId', () => {
 
   test('returns 200 if user deleted', async () => {
     await createDummyUser();
-    const res = await baseRequest().set(
-      'authorization',
-      DUMMY_TOKEN_FOR_TESTING,
-    );
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
 
     expect(res.status).toBe(200);
   });

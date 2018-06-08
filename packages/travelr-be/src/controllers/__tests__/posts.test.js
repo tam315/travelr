@@ -3,10 +3,7 @@ const request = require('supertest');
 const config = require('../../../config');
 const app = require('../../index');
 const dbHelper = require('../../helper/db');
-const {
-  DUMMY_POSTS,
-  DUMMY_USER_ID_FOR_TESTING,
-} = require('../../dummies/dummies');
+const { DUMMY_POSTS, DUMMY_USER_ID } = require('../../dummies/dummies');
 const { db, pgPromise } = dbHelper;
 
 const deleteDummyPosts = async () => {
@@ -14,14 +11,14 @@ const deleteDummyPosts = async () => {
   DUMMY_POSTS.forEach(async post => {
     await db.oneOrNone(
       'DELETE FROM posts WHERE user_id = $1 RETURNING *',
-      DUMMY_USER_ID_FOR_TESTING,
+      DUMMY_USER_ID,
     );
   });
 
   // delete user
   await db.oneOrNone(
     'DELETE FROM users WHERE id = $1 RETURNING *;',
-    DUMMY_USER_ID_FOR_TESTING,
+    DUMMY_USER_ID,
   );
 };
 
@@ -32,7 +29,7 @@ const createDummyPosts = async () => {
   // create user
   await db.one(
     'INSERT INTO users(id, display_name) VALUES ($1, $2) RETURNING *;',
-    [DUMMY_USER_ID_FOR_TESTING, 'dummy_display_name'],
+    [DUMMY_USER_ID, 'dummy_display_name'],
   );
 
   // create posts

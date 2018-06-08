@@ -1,7 +1,4 @@
-const {
-  DUMMY_TOKEN_FOR_TESTING,
-  DUMMY_USER_ID_FOR_TESTING,
-} = require('../dummies/dummies');
+const { DUMMY_TOKEN, DUMMY_USER_ID } = require('../dummies/dummies');
 
 exports.checkToken = async (req, res, next) => {
   const token = req.header('authorization');
@@ -12,8 +9,8 @@ exports.checkToken = async (req, res, next) => {
   req.userId = 'ID_GET_FROM_FIREBASE';
 
   // if the test request is test purpose, set the dummy user ID
-  if ('test' === process.env.NODE_ENV || token === DUMMY_TOKEN_FOR_TESTING) {
-    req.userId = DUMMY_USER_ID_FOR_TESTING;
+  if ('test' === process.env.NODE_ENV || token === DUMMY_TOKEN) {
+    req.userId = DUMMY_USER_ID;
   }
 
   next();

@@ -1,8 +1,8 @@
 const config = require('../../config');
 
 module.exports = {
-  DUMMY_TOKEN_FOR_TESTING: 'dummy_token',
-  DUMMY_USER_ID_FOR_TESTING: 'dummy_user_id',
+  DUMMY_TOKEN: 'dummy_token',
+  DUMMY_USER_ID: 'dummy_user_id',
   DUMMY_POSTS: [
     {
       user_id: 'dummy_user_id',
