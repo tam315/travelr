@@ -51,11 +51,9 @@ const createDummyPosts = async () => {
     },
     'view_count',
   ];
-  const columnSet = new pgPromise.helpers.ColumnSet(column, {
-    table: 'posts',
-  });
-  const query = pgPromise.helpers.insert(DUMMY_POSTS, columnSet);
-  await db.none(query);
+
+  const query = pgPromise.helpers.insert(DUMMY_POSTS, column, 'posts');
+  await db.many(`${query} RETURNING *`);
 };
 
 afterAll(() => {

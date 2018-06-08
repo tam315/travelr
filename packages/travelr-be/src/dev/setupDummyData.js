@@ -58,11 +58,10 @@ const setupDummyUsers = async () => {
   }
 
   const column = ['id', 'display_name', 'is_admin'];
-  const columnSet = new pgPromise.helpers.ColumnSet(column, { table: 'users' });
-  const query = pgPromise.helpers.insert(users, columnSet);
+  const query = pgPromise.helpers.insert(users, column, 'users');
 
   await db.none('DELETE FROM users');
-  await db.none(query);
+  await db.many(`${query} RETURNING *`);
   console.log('succeed addition of users');
 };
 
@@ -116,11 +115,10 @@ const setupDummyPosts = async () => {
     },
     'view_count',
   ];
-  const columnSet = new pgPromise.helpers.ColumnSet(column, { table: 'posts' });
-  const query = pgPromise.helpers.insert(posts, columnSet);
+  const query = pgPromise.helpers.insert(posts, column, 'posts');
 
   await db.none('DELETE FROM posts');
-  await db.none(query);
+  await db.many(`${query} RETURNING *`);
 
   console.log('succeed addition of posts');
 };
@@ -151,11 +149,10 @@ const setupDummyLikes = async () => {
   }
 
   const column = ['post_id', 'user_id'];
-  const columnSet = new pgPromise.helpers.ColumnSet(column, { table: 'likes' });
-  const query = pgPromise.helpers.insert(likes, columnSet);
+  const query = pgPromise.helpers.insert(likes, column, 'likes');
 
   await db.none('DELETE FROM likes');
-  await db.none(query);
+  await db.many(`${query} RETURNING *`);
 
   console.log('succeed addition of likes');
 };
@@ -178,13 +175,10 @@ const setupDummyComments = async () => {
   }
 
   const column = ['post_id', 'user_id', 'datetime', 'comment'];
-  const columnSet = new pgPromise.helpers.ColumnSet(column, {
-    table: 'comments',
-  });
-  const query = pgPromise.helpers.insert(comments, columnSet);
+  const query = pgPromise.helpers.insert(comments, column, 'comments');
 
   await db.none('DELETE FROM comments');
-  await db.none(query);
+  await db.many(`${query} RETURNING *`);
 
   console.log('succeed addition of comments');
 };

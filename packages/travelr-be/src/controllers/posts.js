@@ -160,7 +160,7 @@ exports.createPost = async (req, res, next) => {
   const query = pgPromise.helpers.insert(post, column, 'posts');
 
   try {
-    await db.one(`${query} ${'RETURNING *'}`);
+    await db.one(`${query} RETURNING *`);
     res.sendStatus(200);
   } catch (err) {
     res.status(400).send(err.message);
