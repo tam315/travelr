@@ -12,4 +12,9 @@ module.exports = app => {
   app.get('/posts', PostsController.getPosts);
   app.post('/posts', checkToken, PostsController.createPost);
   app.delete('/posts', checkToken, PostsController.deletePosts);
+  app.get('/posts/:postId', PostsController.getPost);
+  app.get(
+    '/posts/:postId/increment_view_count',
+    PostsController.incrementViewCount,
+  );
 };

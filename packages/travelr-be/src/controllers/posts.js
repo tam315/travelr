@@ -112,7 +112,7 @@ exports.getPosts = async (req, res, next) => {
       shootDate: post.shoot_date,
       lng: post.lng,
       lat: post.lat,
-      viewCount: post.view_count,
+      viewCount: +post.view_count,
       displayName: post.display_name,
       likedCount: +post.liked_count,
       commentsCount: +post.comments_count,
@@ -185,6 +185,55 @@ exports.deletePosts = async (req, res, next) => {
       [userId, postIds],
     );
     res.status(200).json({ count: result.length });
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
+
+exports.getPost = async (req, res, next) => {
+  const { postId } = req.params;
+
+  try {
+    const post = await db.oneOrNone(
+      'SELECT * FROM get_posts WHERE id = $1',
+      postId,
+    );
+
+    if (!post) return res.status(400).send('post not found');
+
+    const response = {
+      postId: post.id,
+      userId: post.user_id,
+      oldImageUrl: post.old_image_url,
+      newImageUrl: post.new_image_url,
+      description: post.description,
+      shootDate: post.shoot_date,
+      lng: post.lng,
+      lat: post.lat,
+      viewCount: +post.view_count,
+      displayName: post.display_name,
+      likedCount: +post.liked_count,
+      commentsCount: +post.comments_count,
+    };
+
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
+
+exports.incrementViewCount = async (req, res, next) => {
+  const { postId } = req.params;
+
+  try {
+    const post = await db.one(
+      'UPDATE posts SET view_count = view_count + 1 WHERE id = $1 RETURNING *',
+      postId,
+    );
+    const response = {
+      viewCount: post.view_count,
+    };
+    res.status(200).json(response);
   } catch (err) {
     res.status(400).send(err.message);
   }

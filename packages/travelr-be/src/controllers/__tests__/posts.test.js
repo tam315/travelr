@@ -239,3 +239,59 @@ describe('DELETE /posts', async () => {
     expect(res.body.count).toBe(2);
   });
 });
+
+describe('GET /posts/:userId', async () => {
+  test('returns 400 and message if post not found', async () => {
+    const invalidPostId = 1234567890;
+    const res = await request(app).get(`/posts/${invalidPostId}`);
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('post not found');
+  });
+
+  test('returns 200 and valid body if post found', async () => {
+    // get post_id of dummy posts
+    const posts = await db.many(
+      'SELECT id, view_count FROM posts WHERE user_id = $1',
+      DUMMY_USER_ID,
+    );
+    const postId = posts[0].id;
+    const res = await request(app).get(`/posts/${postId}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('postId');
+    expect(res.body).toHaveProperty('userId');
+    expect(res.body).toHaveProperty('oldImageUrl');
+    expect(res.body).toHaveProperty('newImageUrl');
+    expect(res.body).toHaveProperty('description');
+    expect(res.body).toHaveProperty('shootDate');
+    expect(res.body).toHaveProperty('lng');
+    expect(res.body).toHaveProperty('lat');
+    expect(res.body).toHaveProperty('viewCount');
+    expect(res.body).toHaveProperty('displayName');
+    expect(res.body).toHaveProperty('likedCount');
+    expect(res.body).toHaveProperty('commentsCount');
+  });
+});
+
+describe('GET /posts/:userId/increment_view_count', async () => {
+  test('returns 400 and message if post not found', async () => {
+    const invalidPostId = 1234567890;
+    const res = await request(app).get(
+      `/posts/${invalidPostId}/increment_view_count`,
+    );
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('No data returned from the query.');
+  });
+
+  test('returns 200 if success', async () => {
+    // get post_id of dummy posts
+    const posts = await db.many(
+      'SELECT id, view_count FROM posts WHERE user_id = $1',
+      DUMMY_USER_ID,
+    );
+    const postId = posts[0].id;
+    const res = await request(app).get(`/posts/${postId}/increment_view_count`);
+
+    expect(res.body.viewCount).toBe(posts[0].view_count + 1);
+  });
+});
