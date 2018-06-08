@@ -12,25 +12,14 @@ const {
 } = require('../../dummies/dummies');
 const { db, pgPromise } = dbHelper;
 
-const deleteDummyPosts = async () => {
-  // delete posts
-  DUMMY_POSTS.forEach(async post => {
-    await db.oneOrNone(
-      'DELETE FROM posts WHERE user_id = $1 RETURNING *',
-      DUMMY_USER_ID,
-    );
-  });
-
-  // delete user
-  await db.oneOrNone(
-    'DELETE FROM users WHERE id = $1 RETURNING *;',
-    DUMMY_USER_ID,
-  );
+const cleanUpDummyPosts = async () => {
+  // // delete dummy posts and user
+  await db.none('DELETE FROM posts WHERE user_id = $1', DUMMY_USER_ID);
+  await db.none('DELETE FROM users WHERE id = $1', DUMMY_USER_ID);
 };
 
-const createDummyPosts = async () => {
-  // delete posts and user
-  await deleteDummyPosts();
+const setupDummyPosts = async () => {
+  await cleanUpDummyPosts();
 
   // create user
   await db.one(
@@ -56,12 +45,13 @@ const createDummyPosts = async () => {
   await db.many(`${query} RETURNING *`);
 };
 
-afterAll(() => {
+afterAll(async () => {
+  await cleanUpDummyPosts();
   pgPromise.end();
 });
 
-beforeAll(async () => {
-  await createDummyPosts();
+beforeEach(async () => {
+  await setupDummyPosts();
 });
 
 describe('GET /posts', async () => {
