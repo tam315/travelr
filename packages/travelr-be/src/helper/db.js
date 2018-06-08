@@ -11,7 +11,4 @@ const db = pgPromise({
   database,
 });
 
-module.exports = {
-  db,
-  pgPromise,
-};
+module.exports = { db };

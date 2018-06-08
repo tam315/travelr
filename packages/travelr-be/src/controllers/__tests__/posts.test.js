@@ -1,3 +1,4 @@
+const pgPromise = require('pg-promise')();
 const request = require('supertest');
 
 const config = require('../../../config');
@@ -10,7 +11,7 @@ const {
   DUMMY_USER_DISPLAY_NAME,
   DUMMY_USER_ID,
 } = require('../../dummies/dummies');
-const { db, pgPromise } = dbHelper;
+const { db } = dbHelper;
 
 const cleanUpDummyPosts = async () => {
   // // delete dummy posts and user

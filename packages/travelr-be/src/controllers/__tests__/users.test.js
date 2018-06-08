@@ -1,8 +1,9 @@
+const pgPromise = require('pg-promise')();
 const request = require('supertest');
 
 const app = require('../../index');
 const dbHelper = require('../../helper/db');
-const { db, pgPromise } = dbHelper;
+const { db } = dbHelper;
 
 const {
   DUMMY_TOKEN,
