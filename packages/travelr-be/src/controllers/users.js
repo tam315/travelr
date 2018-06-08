@@ -9,8 +9,8 @@ exports.createUser = async (req, res, next) => {
   if (!displayName) return res.status(400).send('display name missing');
 
   try {
-    const user = await db.none(
-      'INSERT INTO users (id, display_name) values ($1, $2)',
+    await db.one(
+      'INSERT INTO users (id, display_name) values ($1, $2) RETURNING *',
       [userId, displayName],
     );
 
