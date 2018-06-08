@@ -4,7 +4,11 @@ const app = require('../../index');
 const dbHelper = require('../../helper/db');
 const { db, pgPromise } = dbHelper;
 
-const { DUMMY_TOKEN, DUMMY_USER_ID } = require('../../dummies/dummies');
+const {
+  DUMMY_TOKEN,
+  DUMMY_USER_DISPLAY_NAME,
+  DUMMY_USER_ID,
+} = require('../../dummies/dummies');
 
 const deleteDummyUser = async () => {
   await db.oneOrNone(
@@ -18,7 +22,7 @@ const createDummyUser = async () => {
 
   await db.one(
     'INSERT INTO users(id, display_name) VALUES ($1, $2) RETURNING *;',
-    [DUMMY_USER_ID, 'displayName'],
+    [DUMMY_USER_ID, DUMMY_USER_DISPLAY_NAME],
   );
 };
 
@@ -53,7 +57,7 @@ describe('POST /users', () => {
     await createDummyUser();
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN)
-      .send({ displayName: 'displayName' });
+      .send({ displayName: DUMMY_USER_DISPLAY_NAME });
 
     expect(res.status).toBe(400);
   });
@@ -61,7 +65,7 @@ describe('POST /users', () => {
   test('returns 200 if user created', async () => {
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN)
-      .send({ displayName: 'displayName' });
+      .send({ displayName: DUMMY_USER_DISPLAY_NAME });
 
     expect(res.status).toBe(200);
   });
@@ -111,7 +115,7 @@ describe('PUT /users/:userId', () => {
     const res = await request(app)
       .put(`/users/someInvalidId`)
       .set('authorization', DUMMY_TOKEN)
-      .send({ displayName: 'displayName' });
+      .send({ displayName: DUMMY_USER_DISPLAY_NAME });
 
     expect(res.status).toBe(400);
     expect(res.text).toBe("param doe's not match authenticated user");
@@ -121,7 +125,7 @@ describe('PUT /users/:userId', () => {
     await createDummyUser();
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN)
-      .send({ displayName: 'displayName' });
+      .send({ displayName: DUMMY_USER_DISPLAY_NAME });
 
     expect(res.status).toBe(200);
   });
