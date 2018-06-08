@@ -24,4 +24,12 @@ module.exports = {
       view_count: 50001,
     },
   ],
+  DUMMY_NEW_POST: {
+    oldImageUrl: 'dummy3_old_image_url',
+    newImageUrl: 'dummy3_new_image_url',
+    description: 'dummy3_description',
+    shootDate: '1800-03-03',
+    lng: 10.003,
+    lat: 20.003,
+  },
 };

@@ -10,4 +10,5 @@ module.exports = app => {
   app.put('/users/:userId', checkToken, UsersController.updateUser);
   app.delete('/users/:userId', checkToken, UsersController.deleteUser);
   app.get('/posts', PostsController.getPosts);
+  app.post('/posts', checkToken, PostsController.createPost);
 };

@@ -4,7 +4,9 @@ const config = require('../../../config');
 const app = require('../../index');
 const dbHelper = require('../../helper/db');
 const {
+  DUMMY_NEW_POST,
   DUMMY_POSTS,
+  DUMMY_TOKEN,
   DUMMY_USER_DISPLAY_NAME,
   DUMMY_USER_ID,
 } = require('../../dummies/dummies');
@@ -182,5 +184,30 @@ describe('GET /posts', async () => {
       res.body.find(item => item.commentsCount < min);
 
     expect(fault).toBeFalsy();
+  });
+});
+
+describe('POST /posts', async () => {
+  const baseRequest = () => request(app).post('/posts');
+
+  test('returns 401 if user not authorized', async () => {
+    const res = await baseRequest();
+
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 400 and message if some key is missing in body', async () => {
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
+
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('Some key is missing in body');
+  });
+
+  test('returns 200 if post created', async () => {
+    const res = await baseRequest()
+      .set('authorization', DUMMY_TOKEN)
+      .send(DUMMY_NEW_POST);
+
+    expect(res.status).toBe(200);
   });
 });

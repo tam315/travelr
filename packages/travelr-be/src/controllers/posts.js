@@ -1,5 +1,6 @@
 const pgPromise = require('pg-promise')();
 const { db } = require('../helper/db');
+const config = require('../../config');
 
 exports.getPosts = async (req, res, next) => {
   const {
@@ -117,4 +118,51 @@ exports.getPosts = async (req, res, next) => {
   }));
 
   res.status(200).json(response);
+};
+
+exports.createPost = async (req, res, next) => {
+  const { userId } = req;
+  const {
+    oldImageUrl,
+    newImageUrl,
+    description,
+    shootDate,
+    lng,
+    lat,
+  } = req.body;
+
+  if (!(oldImageUrl && newImageUrl && shootDate && lng && lat))
+    return res.status(400).send('Some key is missing in body');
+
+  const post = {
+    user_id: userId,
+    old_image_url: oldImageUrl,
+    new_image_url: newImageUrl,
+    description,
+    shoot_date: shootDate,
+    geom: pgPromise.as.format('ST_GeomFromText($1, $2)', [
+      `POINT(${lng} ${lat})`,
+      config.SRID,
+    ]),
+  };
+
+  const column = [
+    'user_id',
+    'old_image_url',
+    'new_image_url',
+    'description',
+    'shoot_date',
+    {
+      name: 'geom',
+      mod: '^', // format as raw text
+    },
+  ];
+  const query = pgPromise.helpers.insert(post, column, 'posts');
+
+  try {
+    await db.one(`${query} ${'RETURNING *'}`);
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
 };
