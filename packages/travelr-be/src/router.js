@@ -11,4 +11,5 @@ module.exports = app => {
   app.delete('/users/:userId', checkToken, UsersController.deleteUser);
   app.get('/posts', PostsController.getPosts);
   app.post('/posts', checkToken, PostsController.createPost);
+  app.delete('/posts', checkToken, PostsController.deletePosts);
 };

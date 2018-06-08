@@ -170,3 +170,22 @@ exports.createPost = async (req, res, next) => {
     res.status(400).send(err.message);
   }
 };
+
+exports.deletePosts = async (req, res, next) => {
+  const { userId } = req;
+  const postIds = req.body;
+
+  if (!(postIds instanceof Array) || !postIds.length) {
+    return res.status(400).send('post ids are missing in body');
+  }
+
+  try {
+    const result = await db.many(
+      'DELETE FROM posts WHERE user_id = $1 AND id IN ($2:csv) RETURNING *',
+      [userId, postIds],
+    );
+    res.status(200).json({ count: result.length });
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};

@@ -200,3 +200,42 @@ describe('POST /posts', async () => {
     expect(res.status).toBe(200);
   });
 });
+
+describe('DELETE /posts', async () => {
+  const baseRequest = () => request(app).delete('/posts');
+
+  test('returns 401 if user not authorized', async () => {
+    const res = await baseRequest();
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 400 and message if body is missing', async () => {
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
+    expect(res.status).toBe(400);
+  });
+
+  test('returns 400 and message if body is empty array', async () => {
+    const res = await baseRequest()
+      .set('authorization', DUMMY_TOKEN)
+      .send([]);
+    expect(res.status).toBe(400);
+  });
+
+  test('returns 200 and count if posts deleted', async () => {
+    // get post_id of dummy posts
+    const posts = await db.many(
+      'SELECT id FROM posts WHERE user_id = $1',
+      DUMMY_USER_ID,
+    );
+
+    // array of post ids. e.g. [123, 150]
+    const postIds = posts.map(post => post.id);
+
+    const res = await baseRequest()
+      .set('authorization', DUMMY_TOKEN)
+      .send(postIds);
+
+    expect(res.status).toBe(200);
+    expect(res.body.count).toBe(2);
+  });
+});
