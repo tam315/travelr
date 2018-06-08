@@ -222,6 +222,16 @@ exports.getPost = async (req, res, next) => {
   }
 };
 
+exports.updatePost = async (req, res, next) => {};
+
+exports.deletePost = async (req, res, next) => {};
+
+exports.getComments = async (req, res, next) => {};
+
+exports.createComment = async (req, res, next) => {};
+
+exports.toggleLike = async (req, res, next) => {};
+
 exports.incrementViewCount = async (req, res, next) => {
   const { postId } = req.params;
 
@@ -238,3 +248,7 @@ exports.incrementViewCount = async (req, res, next) => {
     res.status(400).send(err.message);
   }
 };
+
+exports.updateComment = async (req, res, next) => {};
+
+exports.deleteComment = async (req, res, next) => {};
