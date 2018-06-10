@@ -6,7 +6,9 @@
   "scripts": {
     "start": "nodemon ./src/index.js",
     "test": "jest --watch",
-    "dev-initdb": "nodemon src/dev/setupDummyData.js"
+    "dev-initdb": "nodemon src/dev/setupDummyData.js",
+    "up": "docker-compose up -d",
+    "down": "docker-compose down"
   },
   "author": "",
   "license": "ISC",

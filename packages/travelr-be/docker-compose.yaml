@@ -1,0 +1,42 @@
+version: '3.6'
+services:
+  # サービス名を使って名前解決が可能
+  postgis:
+    image: mdillon/postgis:10-alpine
+    container_name: "some-postgis"
+    volumes:
+      - type: "volume"
+        source: postgres
+        target: /var/lib/postgresql/data
+      # バックアップデータ取り出し用
+      - type: "bind"
+        source: c:/backup
+        target: /backup
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_DEV_PASS}
+    networks:
+      backend:
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: "some-pgadmin"
+    volumes:
+      - type: "volume"
+        source: pgadmin
+        target: /var/lib/pgadmin
+    ports:
+      - "80:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: some@dummy.com
+      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_DEV_PASS}
+    networks:
+      backend:
+
+volumes:
+  postgres:
+  pgadmin:
+
+networks:
+  backend:
