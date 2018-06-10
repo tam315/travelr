@@ -1,0 +1,328 @@
+openapi: 3.0.0
+servers:
+  - url: https://localhost:3090
+    description: test server
+info:
+  version: "1.0.0"
+  title: Travelr
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      summary: create user
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      responses:
+        '200':
+          description: success
+  /users/{users.id}:
+    get:
+      tags:
+        - users
+      summary: get UserInfo
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+    put:
+      tags:
+        - users
+      summary: update user
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                displayName:
+                  type: string
+    delete:
+      tags:
+        - users
+      summary: delete user
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+  /posts:
+    get:
+      tags:
+        - /posts
+      summary: get posts
+      parameters:
+        - user_id:
+          name: user_id
+          in: query
+          schema:
+            type: string
+        - description:
+          name: description
+          in: query
+          schema:
+            type: string
+        - min_date:
+          name: min_date
+          in: query
+          schema:
+            type: string
+        - max_date:
+          name: max_date
+          in: query
+          schema:
+            type: string
+        - lng:
+          name: lng
+          in: query
+          schema:
+            type: string
+        - lat:
+          name: lat
+          in: query
+          schema:
+            type: string
+        - radius:
+          name: radius
+          in: query
+          schema:
+            type: string
+        - min_view_count:
+          name: min_view_count
+          in: query
+          schema:
+            type: string
+        - max_view_count:
+          name: max_view_count
+          in: query
+          schema:
+            type: string
+        - min_liked_count:
+          name: min_liked_count
+          in: query
+          schema:
+            type: string
+        - max_liked_count:
+          name: max_liked_count
+          in: query
+          schema:
+            type: string
+        - min_comments_count:
+          name: min_comments_count
+          in: query
+          schema:
+            type: string
+        - max_comments_count:
+          name: max_comments_count
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Post'
+    post:
+      tags:
+        - /posts
+      summary: create post
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostRequest'
+    delete:
+      tags:
+        - /posts
+      summary: delete posts
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                postIDs:
+                  type: array
+                  items:
+                    type: string
+  /posts/{posts.id}:
+    get:
+      tags:
+        - /posts/{posts.id}
+      summary: get post
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Post'
+    put:
+      tags:
+        - /posts/{posts.id}
+      summary: update post
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostRequest'
+    delete:
+      tags:
+        - /posts/{posts.id}
+      summary: delete post
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+  /posts/{posts.id}/comments:
+    get:
+      tags:
+        - /posts/{posts.id}
+      summary: get comments of a post
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+    post:
+      tags:
+        - /posts/{posts.id}
+      summary: create comment
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+  /posts/{posts.id}/toggle_like:
+    post:
+      tags:
+        - /posts/{posts.id}
+      summary: do like or unlike to the specific post
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  likeStatus:
+                    type: boolean
+  /posts/comments/{comments.id}:
+    put:
+      tags:
+        - /posts/comments
+      summary: update comment
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+    delete:
+      tags:
+        - /posts/comments
+      summary: delete comment
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+
+components:
+  schemas:
+    UserInfo:
+      type: object
+      properties:
+        displayName:
+          type: string
+        earnedLike:
+          type: number
+        earnedComments:
+          type: number
+        earnedView:
+          type: number
+    PostRequest:
+      type: object
+      properties:
+        oldImageUrl:
+          type: string
+        newImageUrl:
+          type: string
+        description:
+          type: string
+        shootDate:
+          type: string
+        lng:
+          type: number
+        lat:
+          type: number
+    Post:
+      type: object
+      properties:
+        id:
+          type: number
+        userId:
+          type: string
+        oldImageUrl:
+          type: string
+        newImageUrl:
+          type: string
+        description:
+          type: string
+        shootDate:
+          type: string
+        lng:
+          type: number
+        lat:
+          type: number
+        viewCount:
+          type: number
+        likedCount:
+          type: number
+        commentsCount:
+          type: number
+    CommentRequest:
+      type: object
+      properties:
+        comment:
+          type: string
+    Comment:
+      type: object
+      properties:
+        id:
+          type: number
+        postId:
+          type: number
+        userId:
+          type: string
+        datetime:
+          type: string
+        comment:
+          type: string
+  parameters:
+    authorization:
+      name: authorization
+      in: header
+      description: JWT token from firebase
+      required: true
+      schema:
+        type: string
