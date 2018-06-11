@@ -377,7 +377,6 @@ exports.toggleLike = async (req, res, next) => {
 
     res.sendStatus(200);
   } catch (err) {
-    console.log(err.message);
     res.status(400).send(err.message);
   }
 };
@@ -399,6 +398,37 @@ exports.incrementViewCount = async (req, res, next) => {
   }
 };
 
-exports.updateComment = async (req, res, next) => {};
+exports.updateComment = async (req, res, next) => {
+  const { userId } = req;
+  const { commentId } = req.params;
+  const { comment } = req.body;
 
-exports.deleteComment = async (req, res, next) => {};
+  if (!comment) return res.status(400).send('body missing');
+
+  const query = pgPromise.as.format(
+    `UPDATE comments SET comment = $1 WHERE user_id = $2 AND id = $3 RETURNING *`,
+    [comment, userId, commentId],
+  );
+
+  try {
+    await db.one(query);
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
+
+exports.deleteComment = async (req, res, next) => {
+  const { userId } = req;
+  const { commentId } = req.params;
+
+  try {
+    const comment = await db.one(
+      'DELETE FROM comments WHERE user_id = $1 AND id = $2 RETURNING *',
+      [userId, commentId],
+    );
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};

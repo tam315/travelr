@@ -13,6 +13,7 @@ const {
 } = require('../../dummies/dummies');
 
 let DUMMY_POSTS_IDS;
+let DUMMY_COMMENTS_ID;
 
 const { db } = dbHelper;
 
@@ -52,10 +53,11 @@ const setupDummyDatabase = async () => {
   DUMMY_POSTS_IDS = posts.map(post => post.id);
 
   // create comment for first dummy post
-  await db.one(
+  const comment = await db.one(
     'INSERT INTO comments(post_id, user_id, datetime, comment) VALUES ($1, $2, $3, $4) RETURNING *',
     [DUMMY_POSTS_IDS[0], DUMMY_USER_ID, new Date().toISOString(), 'comment1'],
   );
+  DUMMY_COMMENTS_ID = comment.id;
 };
 
 afterAll(async () => {
@@ -422,5 +424,48 @@ describe('GET /posts/:postId/increment_view_count', async () => {
     );
 
     expect(res.body.viewCount).toBe(posts[0].view_count + 1);
+  });
+});
+
+describe('PUT /posts/comments/:commentId', async () => {
+  const baseRequest = () =>
+    request(app).put(`/posts/comments/${DUMMY_COMMENTS_ID}`);
+
+  test('returns 401 if user not authorized', async () => {
+    const res = await baseRequest();
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 400 and message if no body', async () => {
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('body missing');
+  });
+
+  test('return 200 and valid body if comment updated', async () => {
+    const commentShouldBe = {
+      comment: 'updated_comment',
+    };
+
+    const res = await baseRequest()
+      .set('authorization', DUMMY_TOKEN)
+      .send(commentShouldBe);
+
+    expect(res.status).toBe(200);
+  });
+});
+
+describe('DELETE /posts/comments/:commentId', async () => {
+  const baseRequest = () =>
+    request(app).delete(`/posts/comments/${DUMMY_COMMENTS_ID}`);
+
+  test('returns 401 if user not authorized', async () => {
+    const res = await baseRequest();
+    expect(res.status).toBe(401);
+  });
+
+  test('return 200 if comment deleted', async () => {
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
+    expect(res.status).toBe(200);
   });
 });
