@@ -315,11 +315,72 @@ exports.deletePost = async (req, res, next) => {
   }
 };
 
-exports.getComments = async (req, res, next) => {};
+exports.getComments = async (req, res, next) => {
+  const { postId } = req.params;
 
-exports.createComment = async (req, res, next) => {};
+  const comments = await db.any(
+    'SELECT * FROM get_comments WHERE post_id = $1',
+    postId,
+  );
 
-exports.toggleLike = async (req, res, next) => {};
+  const response = comments.map(comment => ({
+    commentId: comment.id,
+    postId: comment.post_id,
+    userId: comment.user_id,
+    datetime: comment.datetime,
+    comment: comment.comment,
+    displayName: comment.display_name,
+  }));
+
+  res.status(200).json(response);
+};
+
+exports.createComment = async (req, res, next) => {
+  const { userId } = req;
+  const { postId } = req.params;
+  const { comment } = req.body;
+
+  if (!comment) return res.status(400).send('body missing');
+
+  try {
+    await db.one(
+      'INSERT INTO comments(post_id, user_id, datetime, comment) VALUES ($1, $2, $3, $4) RETURNING *',
+      [postId, userId, new Date().toISOString(), comment],
+    );
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
+
+exports.toggleLike = async (req, res, next) => {
+  const { userId } = req;
+  const { postId } = req.params;
+
+  try {
+    const exists = await db.oneOrNone(
+      'SELECT * FROM likes WHERE post_id = $1 AND user_id = $2',
+      [postId, userId],
+    );
+
+    if (exists) {
+      await db.one(
+        'DELETE FROM likes WHERE post_id = $1 AND user_id = $2 RETURNING *',
+        [postId, userId],
+      );
+    } else {
+      await db.one(
+        'INSERT INTO likes(post_id, user_id) VALUES ($1, $2) RETURNING *',
+        [postId, userId],
+      );
+    }
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err.message);
+    res.status(400).send(err.message);
+  }
+};
 
 exports.incrementViewCount = async (req, res, next) => {
   const { postId } = req.params;

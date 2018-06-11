@@ -46,10 +46,16 @@ const setupDummyDatabase = async () => {
     },
     'view_count',
   ];
-
   const query = pgPromise.helpers.insert(DUMMY_POSTS, column, 'posts');
   const posts = await db.many(`${query} RETURNING *`);
+
   DUMMY_POSTS_IDS = posts.map(post => post.id);
+
+  // create comment for first dummy post
+  await db.one(
+    'INSERT INTO comments(post_id, user_id, datetime, comment) VALUES ($1, $2, $3, $4) RETURNING *',
+    [DUMMY_POSTS_IDS[0], DUMMY_USER_ID, new Date().toISOString(), 'comment1'],
+  );
 };
 
 afterAll(async () => {
@@ -316,6 +322,81 @@ describe('DELETE /posts/:postId', async () => {
   test('return 200 and if post deleted', async () => {
     const res = await baseRequest().set('authorization', DUMMY_TOKEN);
     expect(res.status).toBe(200);
+  });
+});
+
+describe('GET /posts/:postId/comments', async () => {
+  test('returns 200 and empty array if comments not found', async () => {
+    const postId = 1234567890;
+    const res = await request(app).get(`/posts/${postId}/comments`);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([]);
+  });
+
+  test('returns 200 and valid body if comments found', async () => {
+    const postId = DUMMY_POSTS_IDS[0];
+    const res = await request(app).get(`/posts/${postId}/comments`);
+
+    expect(res.status).toBe(200);
+    expect(res.body[0]).toHaveProperty('commentId');
+    expect(res.body[0]).toHaveProperty('postId');
+    expect(res.body[0]).toHaveProperty('userId');
+    expect(res.body[0]).toHaveProperty('datetime');
+    expect(res.body[0]).toHaveProperty('comment');
+    expect(res.body[0]).toHaveProperty('displayName');
+  });
+});
+
+describe('POST /posts/:postId/comments', async () => {
+  test('returns 401 if user not authorized', async () => {
+    const postId = 1234567890;
+    const res = await request(app).post(`/posts/${postId}/comments`);
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 400 and message if body is missing', async () => {
+    const postId = DUMMY_POSTS_IDS[0];
+    const res = await request(app)
+      .post(`/posts/${postId}/comments`)
+      .set('authorization', DUMMY_TOKEN);
+
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('body missing');
+  });
+
+  test('returns 200 if comment created', async () => {
+    const postId = DUMMY_POSTS_IDS[0];
+    const res = await request(app)
+      .post(`/posts/${postId}/comments`)
+      .set('authorization', DUMMY_TOKEN)
+      .send({ comment: 'dummy_comment' });
+
+    expect(res.status).toBe(200);
+  });
+});
+
+describe('POST /posts/:postId/toggle_like', async () => {
+  test('returns 401 if user not authorized', async () => {
+    const postId = 1234567890;
+    const res = await request(app).post(`/posts/${postId}/toggle_like`);
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 200 if like created', async () => {
+    const postId = DUMMY_POSTS_IDS[0];
+
+    // like
+    const res1 = await request(app)
+      .post(`/posts/${postId}/toggle_like`)
+      .set('authorization', DUMMY_TOKEN);
+
+    // dislike
+    const res2 = await request(app)
+      .post(`/posts/${postId}/toggle_like`)
+      .set('authorization', DUMMY_TOKEN);
+
+    expect(res1.status).toBe(200);
+    expect(res2.status).toBe(200);
   });
 });
 
