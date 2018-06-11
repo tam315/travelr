@@ -222,9 +222,98 @@ exports.getPost = async (req, res, next) => {
   }
 };
 
-exports.updatePost = async (req, res, next) => {};
+exports.updatePost = async (req, res, next) => {
+  const { userId } = req;
+  const { postId } = req.params;
+  const {
+    oldImageUrl,
+    newImageUrl,
+    description,
+    shootDate,
+    lng,
+    lat,
+  } = req.body;
 
-exports.deletePost = async (req, res, next) => {};
+  const settings = [];
+
+  if (oldImageUrl) {
+    const setting = pgPromise.as.format('old_image_url = $1', oldImageUrl);
+    settings.push(setting);
+  }
+
+  if (newImageUrl) {
+    const setting = pgPromise.as.format('new_image_url = $1', newImageUrl);
+    settings.push(setting);
+  }
+
+  if (description) {
+    const setting = pgPromise.as.format('description = $1', description);
+    settings.push(setting);
+  }
+
+  if (shootDate) {
+    const setting = pgPromise.as.format('shoot_date = $1', shootDate);
+    settings.push(setting);
+  }
+
+  if (lng && lat) {
+    const setting = pgPromise.as.format('geom = ST_GeomFromText($1, $2)', [
+      `POINT(${lng} ${lat})`,
+      config.SRID,
+    ]);
+    settings.push(setting);
+  }
+
+  if (!settings.length) {
+    return res.status(400).send('body missing');
+  }
+
+  const query = pgPromise.as.format(
+    `UPDATE posts SET ${settings.join(
+      ', ',
+    )} WHERE user_id = $1 AND id = $2 RETURNING *`,
+    [userId, postId],
+  );
+
+  try {
+    await db.one(query);
+
+    const post = await db.one('SELECT * FROM get_posts WHERE id = $1', postId);
+    const response = {
+      postId: post.id,
+      userId: post.user_id,
+      oldImageUrl: post.old_image_url,
+      newImageUrl: post.new_image_url,
+      description: post.description,
+      shootDate: post.shoot_date,
+      lng: post.lng,
+      lat: post.lat,
+      viewCount: +post.view_count,
+      displayName: post.display_name,
+      likedCount: +post.liked_count,
+      commentsCount: +post.comments_count,
+    };
+
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
+
+exports.deletePost = async (req, res, next) => {
+  const { userId } = req;
+  const { postId } = req.params;
+
+  try {
+    await db.one(
+      'DELETE FROM posts WHERE user_id = $1 AND id = $2 RETURNING *',
+      [userId, postId],
+    );
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
 
 exports.getComments = async (req, res, next) => {};
 

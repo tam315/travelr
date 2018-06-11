@@ -265,6 +265,60 @@ describe('GET /posts/:postId', async () => {
   });
 });
 
+describe('PUT /posts/:postId', async () => {
+  const baseRequest = () => request(app).put(`/posts/${DUMMY_POSTS_IDS[0]}`);
+
+  test('returns 401 if user not authorized', async () => {
+    const res = await baseRequest();
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 400 and message if no body', async () => {
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('body missing');
+  });
+
+  test('return 200 and updated post if post updated', async () => {
+    const postShouldBe = {
+      oldImageUrl: 'updated_oldImageUrl',
+      newImageUrl: 'updated_newImageUrl',
+      description: 'updated_description',
+      shootDate: '2000-01-01',
+      lng: 10.004,
+      lat: 20.004,
+    };
+
+    const res = await baseRequest()
+      .set('authorization', DUMMY_TOKEN)
+      .send(postShouldBe);
+
+    const updatedPost = res.body;
+
+    // 2000-01-01として記録されているDateをSELECTした場合、
+    // pg-promiseが1999-12-31T15:00:00.000Zとして返してくるため、
+    // ここでは検証対象から除外する
+    delete postShouldBe.shootDate;
+
+    expect(res.status).toBe(200);
+    expect(updatedPost).toMatchObject(postShouldBe);
+  });
+});
+
+describe('DELETE /posts/:postId', async () => {
+  const baseRequest = () => request(app).delete(`/posts/${DUMMY_POSTS_IDS[0]}`);
+
+  test('returns 401 if user not authorized', async () => {
+    const res = await baseRequest();
+    expect(res.status).toBe(401);
+  });
+
+  test('return 200 and if post deleted', async () => {
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
+    expect(res.status).toBe(200);
+  });
+});
+
 describe('GET /posts/:postId/increment_view_count', async () => {
   test('returns 400 and message if post not found', async () => {
     const invalidPostId = 1234567890;
