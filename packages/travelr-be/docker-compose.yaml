@@ -1,15 +1,13 @@
 version: '3.6'
 services:
-  # サービス名を使って名前解決が可能
-  postgis:
+  postgis: # 同一NWに所属していれば、サービス間でサービス名を使って名前解決が可能
     image: mdillon/postgis:10-alpine
     container_name: "some-postgis"
     volumes:
-      - type: "volume"
+      - type: "volume" # DBデータ保存用（ホストから操作できない）
         source: postgres
         target: /var/lib/postgresql/data
-      # バックアップデータ取り出し用
-      - type: "bind"
+      - type: "bind" # バックアップデータ取り出し用（ホストから操作できる）
         source: c:/backup
         target: /backup
     ports:
@@ -17,7 +15,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_DEV_PASS}
     networks:
-      backend:
+      backend: # 'backend'という名前の仮想NWに所属させる
 
   pgadmin4:
     image: dpage/pgadmin4
@@ -34,9 +32,9 @@ services:
     networks:
       backend:
 
-volumes:
+volumes: # コンテナで使用するvolumeの名称を、ここに列挙する必要がある
   postgres:
   pgadmin:
 
-networks:
+networks: # コンテナで使用するNWの名称を、ここに列挙する必要がある
   backend:
