@@ -24,7 +24,7 @@ exports.getUser = async (req, res, next) => {
   const { userId } = req.params;
 
   const user = await db.oneOrNone(
-    'SELECT * FROM get_user WHERE id = $1 LIMIT 1',
+    'SELECT * FROM get_users WHERE id = $1 LIMIT 1',
     userId,
   );
 

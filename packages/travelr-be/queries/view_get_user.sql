@@ -1,6 +1,6 @@
-DROP VIEW IF EXISTS get_user;
+DROP VIEW IF EXISTS get_users;
 
-CREATE VIEW get_user AS
+CREATE VIEW get_users AS
 
 WITH
   -- total likes count for each post
