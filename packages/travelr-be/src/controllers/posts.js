@@ -318,21 +318,25 @@ exports.deletePost = async (req, res, next) => {
 exports.getComments = async (req, res, next) => {
   const { postId } = req.params;
 
-  const comments = await db.any(
-    'SELECT * FROM get_comments WHERE post_id = $1',
-    postId,
-  );
+  try {
+    const comments = await db.manyOrNone(
+      'SELECT * FROM get_comments WHERE post_id = $1',
+      postId,
+    );
 
-  const response = comments.map(comment => ({
-    commentId: comment.id,
-    postId: comment.post_id,
-    userId: comment.user_id,
-    datetime: comment.datetime,
-    comment: comment.comment,
-    displayName: comment.display_name,
-  }));
+    const response = comments.map(comment => ({
+      commentId: comment.id,
+      postId: comment.post_id,
+      userId: comment.user_id,
+      datetime: comment.datetime,
+      comment: comment.comment,
+      displayName: comment.display_name,
+    }));
 
-  res.status(200).json(response);
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
 };
 
 exports.createComment = async (req, res, next) => {

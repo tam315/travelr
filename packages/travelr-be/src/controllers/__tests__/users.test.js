@@ -11,7 +11,7 @@ const {
   DUMMY_USER_ID,
 } = require('../../dummies/dummies');
 
-const deleteDummyUser = async () => {
+const resetDatabase = async () => {
   await db.oneOrNone(
     'DELETE FROM users WHERE id = $1 RETURNING *;',
     DUMMY_USER_ID,
@@ -19,7 +19,7 @@ const deleteDummyUser = async () => {
 };
 
 const createDummyUser = async () => {
-  await deleteDummyUser();
+  await resetDatabase();
 
   await db.one(
     'INSERT INTO users(id, display_name) VALUES ($1, $2) RETURNING *;',
@@ -35,7 +35,7 @@ afterAll(() => {
 });
 
 afterEach(async () => {
-  await deleteDummyUser();
+  await resetDatabase();
 });
 
 describe('POST /users', () => {
