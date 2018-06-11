@@ -17,9 +17,11 @@ let DUMMY_POSTS_IDS;
 const { db } = dbHelper;
 
 const cleanUpDummyDatabase = async () => {
-  // delete dummy user and posts
-  await db.none('DELETE FROM posts WHERE user_id = $1', DUMMY_USER_ID);
-  await db.none('DELETE FROM users WHERE id = $1', DUMMY_USER_ID);
+  // delete dummy user and related records
+  await db.oneOrNone(
+    'DELETE FROM users WHERE id = $1 RETURNING *',
+    DUMMY_USER_ID,
+  );
 };
 
 const setupDummyDatabase = async () => {
