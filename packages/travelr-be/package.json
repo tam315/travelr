@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./src/index.js",
-    "test": "jest --watch",
+    "test": "jest --watch -i",
     "dev-initdb": "nodemon src/dev/setupDummyData.js",
     "up": "docker-compose up -d",
     "down": "docker-compose down"
