@@ -240,7 +240,7 @@ describe('DELETE /posts', async () => {
   });
 });
 
-describe('GET /posts/:userId', async () => {
+describe('GET /posts/:postId', async () => {
   test('returns 400 and message if post not found', async () => {
     const invalidPostId = 1234567890;
     const res = await request(app).get(`/posts/${invalidPostId}`);
@@ -273,7 +273,7 @@ describe('GET /posts/:userId', async () => {
   });
 });
 
-describe('GET /posts/:userId/increment_view_count', async () => {
+describe('GET /posts/:postId/increment_view_count', async () => {
   test('returns 400 and message if post not found', async () => {
     const invalidPostId = 1234567890;
     const res = await request(app).post(
