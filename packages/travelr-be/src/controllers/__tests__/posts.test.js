@@ -11,6 +11,9 @@ const {
   DUMMY_USER_DISPLAY_NAME,
   DUMMY_USER_ID,
 } = require('../../dummies/dummies');
+
+let DUMMY_POSTS_IDS;
+
 const { db } = dbHelper;
 
 const cleanUpDummyDatabase = async () => {
@@ -43,7 +46,8 @@ const setupDummyDatabase = async () => {
   ];
 
   const query = pgPromise.helpers.insert(DUMMY_POSTS, column, 'posts');
-  await db.many(`${query} RETURNING *`);
+  const posts = await db.many(`${query} RETURNING *`);
+  DUMMY_POSTS_IDS = posts.map(post => post.id);
 };
 
 afterAll(async () => {
@@ -222,18 +226,9 @@ describe('DELETE /posts', async () => {
   });
 
   test('returns 200 and count if posts deleted', async () => {
-    // get post_id of dummy posts
-    const posts = await db.many(
-      'SELECT id FROM posts WHERE user_id = $1',
-      DUMMY_USER_ID,
-    );
-
-    // array of post ids. e.g. [123, 150]
-    const postIds = posts.map(post => post.id);
-
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN)
-      .send(postIds);
+      .send(DUMMY_POSTS_IDS);
 
     expect(res.status).toBe(200);
     expect(res.body.count).toBe(2);
@@ -249,12 +244,7 @@ describe('GET /posts/:postId', async () => {
   });
 
   test('returns 200 and valid body if post found', async () => {
-    // get post_id of dummy posts
-    const posts = await db.many(
-      'SELECT id, view_count FROM posts WHERE user_id = $1',
-      DUMMY_USER_ID,
-    );
-    const postId = posts[0].id;
+    const postId = DUMMY_POSTS_IDS[0];
     const res = await request(app).get(`/posts/${postId}`);
 
     expect(res.status).toBe(200);
