@@ -184,7 +184,11 @@ exports.deletePosts = async (req, res, next) => {
       'DELETE FROM posts WHERE user_id = $1 AND id IN ($2:csv) RETURNING *',
       [userId, postIds],
     );
-    res.status(200).json({ count: result.length });
+
+    if (result.length < postIds.length)
+      return res.status(400).send('some posts were not deleted');
+
+    res.sendStatus(200);
   } catch (err) {
     res.status(400).send(err.message);
   }

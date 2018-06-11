@@ -235,13 +235,22 @@ describe('DELETE /posts', async () => {
     expect(res.status).toBe(400);
   });
 
+  test('returns 400 and message if some post not deleted', async () => {
+    const invalidPostId = 1234567890;
+    const res = await baseRequest()
+      .set('authorization', DUMMY_TOKEN)
+      .send([...DUMMY_POSTS_IDS, invalidPostId]);
+
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('some posts were not deleted');
+  });
+
   test('returns 200 and count if posts deleted', async () => {
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN)
       .send(DUMMY_POSTS_IDS);
 
     expect(res.status).toBe(200);
-    expect(res.body.count).toBe(2);
   });
 });
 
