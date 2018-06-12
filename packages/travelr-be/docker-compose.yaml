@@ -4,10 +4,10 @@ services:
     image: mdillon/postgis:10-alpine
     container_name: "some-postgis"
     volumes:
-      - type: "volume" # DBデータ保存用（ホストから操作できない）
+      - type: "volume" # DBデータ保存用（ホストから操作できないタイプ）
         source: postgres
         target: /var/lib/postgresql/data
-      - type: "bind" # バックアップデータ取り出し用（ホストから操作できる）
+      - type: "bind" # バックアップデータ取り出し用（ホストから操作できるタイプ）
         source: c:/backup
         target: /backup
     ports:
