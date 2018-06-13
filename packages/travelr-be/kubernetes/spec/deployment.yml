@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: test-ingress
+  name: my-ingress
 spec:
   backend:
     serviceName: pgadmin4-svc
