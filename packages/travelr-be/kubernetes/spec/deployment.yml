@@ -2,10 +2,20 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: my-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "ip-ingress" # 予約したIPを割り当てる
 spec:
-  backend:
-    serviceName: pgadmin4-svc
-    servicePort: 80
+  tls:
+  - secretName: pgadmin4-tls
+    hosts:
+    - pgadmin4.yuuniworks.com
+  rules:
+  - host: pgadmin4.yuuniworks.com
+    http:
+      paths:
+      - backend:
+          serviceName: pgadmin4-svc
+          servicePort: 80
 ---
 apiVersion: v1
 kind: Service

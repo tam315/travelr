@@ -1,0 +1,19 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: pgadmin4-tls # TLSにつける名前
+  namespace: default
+spec:
+  secretName: pgadmin4-tls # TLSにつける名前
+  issuerRef:
+    name: letsencrypt-prod # 作成したClusterIssuerの名前
+    kind: ClusterIssuer
+  commonName: pgadmin4.yuuniworks.com # ドメイン
+  dnsNames:
+  - pgadmin4.yuuniworks.com # ドメイン
+  acme:
+    config:
+    - http01:
+        ingress: my-ingress # 使用しているIngressの名前
+      domains:
+      - pgadmin4.yuuniworks.com # ドメイン
