@@ -62,8 +62,8 @@ spec:
         image: mdillon/postgis:10-alpine
         resources:
           requests:
-            cpu: 10m
-            memory: 100Mi
+            cpu: 0
+            memory: 0
         ports:
         - containerPort: 5432
         env:
@@ -116,8 +116,8 @@ spec:
         image: dpage/pgadmin4
         resources:
           requests:
-            cpu: 10m
-            memory: 100Mi
+            cpu: 0
+            memory: 0
         ports:
         - containerPort: 80
         env:
