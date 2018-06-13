@@ -74,6 +74,16 @@ spec:
         volumeMounts:
           - mountPath: "/var/lib/postgresql/data"
             name: volume-postgres
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -h
+            - localhost
+            - -U
+            - postgres
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
