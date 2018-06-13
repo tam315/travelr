@@ -18,15 +18,27 @@
 
 ## 構成
 
-| deploy   | pod  | expose                     |
-| -------- | ---- | -------------------------- |
-| pgadmin4 | 1pod | LoadBalancer(外部公開する) |
-| postgres | 1pod | ClusterIP(外部公開しない)  |
-|          |      |                            |
+| name         | type       | expose                              |
+| ------------ | ---------- | ----------------------------------- |
+| my-ingress   | ingress    | Ingress 標準の Load Balancer による |
+| postgres-svc | service    | NodePort                            |
+| pgadmin4-svc | service    | NodePort                            |
+| postgres-dpl | deployment | -                                   |
+| pgadmin4-dpl | deployment | -                                   |
 
-postgres の初期化に失敗する問題を解決するため、
-postgres のデータフォルダをデフォルトのサブフォルダに変更している。
+postgres について、初期化に失敗する問題を解決するため、
+データフォルダをデフォルトのサブフォルダに変更している。
 詳細については deployment.yml のコメントを参照のこと。
+
+## Static IP
+
+Ingress 用に下記を予約済み
+name: ip-ingress
+IP: 35.227.233.102
+
+# Ingress / TLS
+
+tool プロジェクトの notes を参照
 
 ## Persistent Disk
 
