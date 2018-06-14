@@ -2,29 +2,22 @@
 
 ## セットアップ手順メモ
 
-1.  cluster の作成
-1.  kubectl の設定
+tools フォルダを参照
 
-    ```
-    gcloud container clusters get-credentials cluster-1 --zone asia-northeast1-a --project ******
-    ```
+## Ingress 関係
 
-1.  secret の作成とアップロード
-1.  deploy
+- nginx-ingress-controller
+- cert-manager
 
-    ```
-    kubectl create -f .\kubernetes\spec\deployment.yml
-    ```
+## deployment / service
 
-## 構成
-
-| name         | type       | expose                              |
-| ------------ | ---------- | ----------------------------------- |
-| my-ingress   | ingress    | Ingress 標準の Load Balancer による |
-| postgres-svc | service    | NodePort                            |
-| pgadmin4-svc | service    | NodePort                            |
-| postgres-dpl | deployment | -                                   |
-| pgadmin4-dpl | deployment | -                                   |
+| name         | type             | expose   |
+| ------------ | ---------------- | -------- |
+| my-ingress   | ingress resource | -        |
+| postgres-svc | service          | NodePort |
+| pgadmin4-svc | service          | NodePort |
+| postgres-dpl | deployment       | -        |
+| pgadmin4-dpl | deployment       | -        |
 
 postgres について、初期化に失敗する問題を解決するため、
 データフォルダをデフォルトのサブフォルダに変更している。
@@ -32,13 +25,8 @@ postgres について、初期化に失敗する問題を解決するため、
 
 ## Static IP
 
-Ingress 用に下記を予約済み
-name: ip-ingress
-IP: 35.227.233.102
-
-# Ingress / TLS
-
-tool プロジェクトの notes を参照
+下記を予約し、nginx-ingress-controller に割り当て
+IP: 35.189.155.237
 
 ## Persistent Disk
 
