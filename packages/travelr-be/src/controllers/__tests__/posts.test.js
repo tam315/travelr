@@ -279,6 +279,7 @@ describe('GET /posts/:postId', async () => {
     expect(res.body).toHaveProperty('displayName');
     expect(res.body).toHaveProperty('likedCount');
     expect(res.body).toHaveProperty('commentsCount');
+    expect(res.body.comments).toHaveLength(1);
   });
 });
 

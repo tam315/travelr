@@ -205,6 +205,20 @@ exports.getPost = async (req, res, next) => {
 
     if (!post) return res.status(400).send('post not found');
 
+    const comments = await db.manyOrNone(
+      'SELECT * FROM get_comments WHERE post_id = $1',
+      postId,
+    );
+
+    const commentsFormatted = comments.map(comment => ({
+      commentId: comment.id,
+      postId: comment.post_id,
+      userId: comment.user_id,
+      datetime: comment.datetime,
+      comment: comment.comment,
+      displayName: comment.display_name,
+    }));
+
     const response = {
       postId: post.id,
       userId: post.user_id,
@@ -218,6 +232,7 @@ exports.getPost = async (req, res, next) => {
       displayName: post.display_name,
       likedCount: +post.liked_count,
       commentsCount: +post.comments_count,
+      comments: commentsFormatted,
     };
 
     res.status(200).json(response);
