@@ -281,6 +281,20 @@ describe('GET /posts/:postId', async () => {
     expect(res.body).toHaveProperty('commentsCount');
     expect(res.body.comments).toHaveLength(1);
   });
+
+  test('returns view_count incremented by one', async () => {
+    // get post_id of dummy posts
+    const posts = await db.many(
+      'SELECT id, view_count FROM posts WHERE user_id = $1',
+      DUMMY_USER_ID,
+    );
+    const originalPost = posts[0];
+
+    const res = await request(app).get(`/posts/${originalPost.id}`);
+    const returnedPost = res.body;
+
+    expect(returnedPost.viewCount).toBe(originalPost.view_count + 1);
+  });
 });
 
 describe('PUT /posts/:postId', async () => {

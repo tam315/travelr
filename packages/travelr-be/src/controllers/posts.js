@@ -198,13 +198,19 @@ exports.getPost = async (req, res, next) => {
   const { postId } = req.params;
 
   try {
-    const post = await db.oneOrNone(
-      'SELECT * FROM get_posts WHERE id = $1',
+    // increment view_count
+    const incrementedPost = await db.oneOrNone(
+      'UPDATE posts SET view_count = view_count + 1 WHERE id = $1 RETURNING *',
       postId,
     );
 
-    if (!post) return res.status(400).send('post not found');
+    // return 400 if the post not found
+    if (!incrementedPost) return res.status(400).send('post not found');
 
+    // get post
+    const post = await db.one('SELECT * FROM get_posts WHERE id = $1', postId);
+
+    // get comments
     const comments = await db.manyOrNone(
       'SELECT * FROM get_comments WHERE post_id = $1',
       postId,
