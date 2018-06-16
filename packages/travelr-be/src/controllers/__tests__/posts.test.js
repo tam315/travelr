@@ -1,7 +1,6 @@
 const pgPromise = require('pg-promise')();
 const request = require('supertest');
 
-const config = require('../../../config');
 const app = require('../../index');
 const dbHelper = require('../../helper/db');
 const {
@@ -34,7 +33,7 @@ const setupDummyDatabase = async () => {
     [DUMMY_USER_ID, DUMMY_USER_DISPLAY_NAME],
   );
 
-  // create posts
+  // create posts and reserve its IDs
   const column = [
     'user_id',
     'old_image_url',
@@ -166,11 +165,11 @@ describe('GET /posts', async () => {
 
     if (!res.body.length) throw new Error('insufficient data');
 
-    const fault =
-      res.body.find(item => item.likedCount > max) ||
-      res.body.find(item => item.likedCount < min);
+    const isSuccess =
+      !res.body.find(item => item.likedCount > max) &&
+      !res.body.find(item => item.likedCount < min);
 
-    expect(fault).toBeFalsy();
+    expect(isSuccess).toBeTruthy();
   });
 
   test('returns data filtered by comments count', async () => {
@@ -182,11 +181,11 @@ describe('GET /posts', async () => {
 
     if (!res.body.length) throw new Error('insufficient data');
 
-    const fault =
-      res.body.find(item => item.commentsCount > max) ||
-      res.body.find(item => item.commentsCount < min);
+    const isSuccess =
+      !res.body.find(item => item.commentsCount > max) &&
+      !res.body.find(item => item.commentsCount < min);
 
-    expect(fault).toBeFalsy();
+    expect(isSuccess).toBeTruthy();
   });
 });
 
@@ -283,17 +282,18 @@ describe('GET /posts/:postId', async () => {
   });
 
   test('returns view_count incremented by one', async () => {
-    // get post_id of dummy posts
-    const posts = await db.many(
+    // fetch dummy post's original state
+    const [originalPost] = await db.many(
       'SELECT id, view_count FROM posts WHERE user_id = $1',
       DUMMY_USER_ID,
     );
-    const originalPost = posts[0];
 
-    const res = await request(app).get(`/posts/${originalPost.id}`);
-    const returnedPost = res.body;
+    // fetch dummy post using API
+    const { body: updatedPost } = await request(app).get(
+      `/posts/${originalPost.id}`,
+    );
 
-    expect(returnedPost.viewCount).toBe(originalPost.view_count + 1);
+    expect(updatedPost.viewCount).toBe(originalPost.view_count + 1);
   });
 });
 
