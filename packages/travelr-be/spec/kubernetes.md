@@ -4,29 +4,35 @@
 
 tools フォルダを参照
 
-## Ingress 関係
+## クラスタ構成
 
-- nginx-ingress-controller
-- cert-manager
+| name                | type                  | note                 |
+| ------------------- | --------------------- | -------------------- |
+| my-ingress          | ingress resource      | -                    |
+| postgres-svc        | service               | type:NodePort        |
+| pgadmin4-svc        | service               | type:NodePort        |
+| postgres-dpl        | deployment            | -                    |
+| pgadmin-dpl         | deployment            | -                    |
+| pv-postgres         | PersistentVolume      | -                    |
+| pv-pgadmin4         | PersistentVolume      | -                    |
+| pvc-postgres        | PersistentVolumeClaim | -                    |
+| pvc-pgadmin4        | PersistentVolumeClaim | -                    |
+| pgadmin4-tls        | Certificate           | -                    |
+| letsencrypt-staging | ClusterIssuer         | LetsEncrypt テスト用 |
+| letsencrypt-prod    | ClusterIssuer         | LetsEncrypt 本番用   |
 
-## deployment / service
+## Ingress
 
-| name         | type             | expose   |
-| ------------ | ---------------- | -------- |
-| my-ingress   | ingress resource | -        |
-| postgres-svc | service          | NodePort |
-| pgadmin4-svc | service          | NodePort |
-| postgres-dpl | deployment       | -        |
-| pgadmin4-dpl | deployment       | -        |
+- Ingress Controller:
+  - nginx-ingress-controller(35.189.155.237 を割り当て)
+- 証明書管理:
+  - cert-manager
+
+## Deployment
 
 postgres について、初期化に失敗する問題を解決するため、
 データフォルダをデフォルトのサブフォルダに変更している。
 詳細については deployment.yml のコメントを参照のこと。
-
-## Static IP
-
-下記を予約し、nginx-ingress-controller に割り当て
-IP: 35.189.155.237
 
 ## Persistent Disk
 
