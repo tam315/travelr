@@ -205,12 +205,13 @@ describe('POST /posts', async () => {
     expect(res.text).toBe('Some key is missing in body');
   });
 
-  test('returns 200 if post created', async () => {
+  test('returns 200 and post id if post created', async () => {
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN)
       .send(DUMMY_NEW_POST);
 
     expect(res.status).toBe(200);
+    expect(res.body.postId).toBeTruthy();
   });
 });
 
