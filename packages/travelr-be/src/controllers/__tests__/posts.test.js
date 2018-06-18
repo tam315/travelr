@@ -57,6 +57,12 @@ const setupDummyDatabase = async () => {
     [DUMMY_POSTS_IDS[0], DUMMY_USER_ID, new Date().toISOString(), 'comment1'],
   );
   DUMMY_COMMENTS_ID = comment.id;
+
+  // create 'Like' for first dummy post
+  await db.one(
+    'INSERT INTO likes (user_id, post_id) VALUES ($1, $2) RETURNING *',
+    [DUMMY_USER_ID, DUMMY_POSTS_IDS[0]],
+  );
 };
 
 afterAll(async () => {
@@ -423,7 +429,9 @@ describe('POST /posts/:postId/toggle_like', async () => {
       .set('authorization', DUMMY_TOKEN);
 
     expect(res1.status).toBe(200);
+    expect(res1.body.likeStatus).toBeFalsy();
     expect(res2.status).toBe(200);
+    expect(res2.body.likeStatus).toBeTruthy();
   });
 });
 

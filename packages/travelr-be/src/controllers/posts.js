@@ -395,19 +395,23 @@ exports.toggleLike = async (req, res, next) => {
       [postId, userId],
     );
 
+    let response;
+
     if (exists) {
       await db.one(
         'DELETE FROM likes WHERE post_id = $1 AND user_id = $2 RETURNING *',
         [postId, userId],
       );
+      response = { likeStatus: false };
     } else {
       await db.one(
         'INSERT INTO likes(post_id, user_id) VALUES ($1, $2) RETURNING *',
         [postId, userId],
       );
+      response = { likeStatus: true };
     }
 
-    res.sendStatus(200);
+    res.status(200).json(response);
   } catch (err) {
     res.status(400).send(err.message);
   }
