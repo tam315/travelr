@@ -138,7 +138,7 @@ describe('GET /posts', async () => {
   test('returns data filtered by lng, lat, radius', async () => {
     const lng = 10.001;
     const lat = 20.001;
-    const radius = 500; // by meter
+    const radius = 0.5; // by kilo meter
     const res = await request(app).get(
       `/posts?lng=${lng}&lat=${lat}&radius=${radius}`,
     );

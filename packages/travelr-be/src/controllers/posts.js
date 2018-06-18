@@ -51,9 +51,11 @@ exports.getPosts = async (req, res, next) => {
   }
 
   if (lng && lat && radius) {
+    radiusAsMeter = radius * 1000;
+
     const criteria = pgPromise.as.format(
       'ST_DWithin(geom, ST_GeomFromText($1), $2, true)',
-      [`POINT(${lng} ${lat})`, +radius],
+      [`POINT(${lng} ${lat})`, +radiusAsMeter],
     );
     criterions.push(criteria);
   }
