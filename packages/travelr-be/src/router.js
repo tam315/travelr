@@ -27,7 +27,7 @@ module.exports = app => {
     PostsController.createComment,
   );
   app.post(
-    '/posts/:postId/toggle_like',
+    '/posts/:postId/like/toggle',
     checkToken,
     PostsController.toggleLike,
   );

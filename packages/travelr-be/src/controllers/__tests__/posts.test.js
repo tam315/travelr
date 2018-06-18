@@ -408,10 +408,10 @@ describe('POST /posts/:postId/comments', async () => {
   });
 });
 
-describe('POST /posts/:postId/toggle_like', async () => {
+describe('POST /posts/:postId/like/toggle', async () => {
   test('returns 401 if user not authorized', async () => {
     const postId = 1234567890;
-    const res = await request(app).post(`/posts/${postId}/toggle_like`);
+    const res = await request(app).post(`/posts/${postId}/like/toggle`);
     expect(res.status).toBe(401);
   });
 
@@ -420,12 +420,12 @@ describe('POST /posts/:postId/toggle_like', async () => {
 
     // like
     const res1 = await request(app)
-      .post(`/posts/${postId}/toggle_like`)
+      .post(`/posts/${postId}/like/toggle`)
       .set('authorization', DUMMY_TOKEN);
 
     // dislike
     const res2 = await request(app)
-      .post(`/posts/${postId}/toggle_like`)
+      .post(`/posts/${postId}/like/toggle`)
       .set('authorization', DUMMY_TOKEN);
 
     expect(res1.status).toBe(200);
