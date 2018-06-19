@@ -22,3 +22,5 @@
   - install @material-ui/core & @material-ui/icons
   - normalize styles with <CssBaseline />
   - use withStyles() to write css in js
+- jest
+  - add 'setupTestFrameworkScriptFile' to package.json
