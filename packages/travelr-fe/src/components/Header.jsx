@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const styles = {
   title: {
@@ -26,42 +27,46 @@ const styles = {
 };
 
 function Header(props) {
-  const {
-    classes,
-    user: { userId },
-  } = props;
+  const { classes, user } = props;
 
   return (
-    <AppBar>
-      <Toolbar>
-        <Typography variant="title" color="inherit" className={classes.title}>
-          Travelr
-        </Typography>
+    <React.Fragment>
+      <AppBar>
+        <Toolbar>
+          <Typography variant="title" color="inherit" className={classes.title}>
+            Travelr
+          </Typography>
 
-        {userId ? (
-          <React.Fragment>
-            <AccountCircle className={classes.accountCircle} />
-            <Typography
-              variant="body1"
-              color="inherit"
-              className={classes.userName}
-            >
-              {userId}
-            </Typography>
-          </React.Fragment>
-        ) : (
-          <Button color="inherit">Signup / In</Button>
-        )}
+          {user && user.displayName ? (
+            <Button component={Link} to="/account" color="inherit">
+              <AccountCircle className={classes.accountCircle} />
+              <Typography
+                variant="body2"
+                color="inherit"
+                className={classes.userName}
+              >
+                {user.displayName}
+              </Typography>
+            </Button>
+          ) : (
+            <Button component={Link} to="/auth" color="inherit">
+              Signup / In
+            </Button>
+          )}
 
-        <IconButton
-          className={classes.menuButton}
-          color="inherit"
-          aria-label="Menu"
-        >
-          <MenuIcon />
-        </IconButton>
-      </Toolbar>
-    </AppBar>
+          <IconButton
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="Menu"
+          >
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      {/* Dummy toolbar for padding. this toolbar is invisible */}
+      <Toolbar />
+    </React.Fragment>
   );
 }
 

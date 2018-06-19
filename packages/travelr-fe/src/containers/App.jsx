@@ -25,56 +25,60 @@ class App extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Header {...this.props} />
         <BrowserRouter>
-          <Switch>
-            <Route
-              path="/"
-              exact
-              component={props => <PageLanding {...this.props} {...props} />}
-            />
-            <Route
-              path="/auth"
-              component={props => <PageAuth {...this.props} {...props} />}
-            />
-            <Route
-              path="/all-grid"
-              component={props => (
-                <PageViewPostsGrid {...this.props} {...props} />
-              )}
-            />
-            <Route
-              path="/all-map"
-              component={props => (
-                <PageViewPostsMap {...this.props} {...props} />
-              )}
-            />
-            <Route
-              path="/post/create"
-              component={props => <PageCreatePost {...this.props} {...props} />}
-            />
-            <Route
-              path="/post/:postId/edit"
-              component={props => <PageEditPost {...this.props} {...props} />}
-            />
-            <Route
-              path="/post/:postId"
-              component={props => <PageViewPost {...this.props} {...props} />}
-            />
-            <Route
-              path="/account/posts"
-              component={props => (
-                <PageManagePosts {...this.props} {...props} />
-              )}
-            />
-            <Route
-              path="/account"
-              exact
-              component={props => (
-                <PageManageAccount {...this.props} {...props} />
-              )}
-            />
-          </Switch>
+          <React.Fragment>
+            <Header {...this.props} />
+            <Switch>
+              <Route
+                path="/"
+                exact
+                component={props => <PageLanding {...this.props} {...props} />}
+              />
+              <Route
+                path="/auth"
+                component={props => <PageAuth {...this.props} {...props} />}
+              />
+              <Route
+                path="/all-grid"
+                component={props => (
+                  <PageViewPostsGrid {...this.props} {...props} />
+                )}
+              />
+              <Route
+                path="/all-map"
+                component={props => (
+                  <PageViewPostsMap {...this.props} {...props} />
+                )}
+              />
+              <Route
+                path="/post/create"
+                component={props => (
+                  <PageCreatePost {...this.props} {...props} />
+                )}
+              />
+              <Route
+                path="/post/:postId/edit"
+                component={props => <PageEditPost {...this.props} {...props} />}
+              />
+              <Route
+                path="/post/:postId"
+                component={props => <PageViewPost {...this.props} {...props} />}
+              />
+              <Route
+                path="/account/posts"
+                component={props => (
+                  <PageManagePosts {...this.props} {...props} />
+                )}
+              />
+              <Route
+                path="/account"
+                exact
+                component={props => (
+                  <PageManageAccount {...this.props} {...props} />
+                )}
+              />
+            </Switch>
+          </React.Fragment>
         </BrowserRouter>
       </React.Fragment>
     );
