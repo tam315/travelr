@@ -1,0 +1,31 @@
+{
+  "name": "travelr-fe",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "rimraf ./dist && cpx \"./public/**/*\" ./dist && webpack --config webpack.config.js",
+    "serve": "webpack-serve ./webpack.config.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "cpx": "^1.5.0",
+    "css-loader": "^0.28.11",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.3.1",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0",
+    "rimraf": "^2.6.2",
+    "style-loader": "^0.21.0",
+    "webpack": "^4.12.0",
+    "webpack-cli": "^3.0.8",
+    "webpack-serve": "^1.0.4"
+  }
+}
