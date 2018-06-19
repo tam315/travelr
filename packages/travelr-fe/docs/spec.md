@@ -1,0 +1,24 @@
+# Enviroment Setup Memo
+
+- babel
+  - presets
+  - plugins
+- webpack
+  - loader
+  - extension
+- webpack-serve
+  - history api fallback
+- npm
+  - script "serve" and "build"
+- redux
+  - store
+  - actions
+  - reducers
+- react-router
+  - routes
+  - pass all redux props and react-router props to the child container
+- material-ui
+  - add font to index.html file
+  - install @material-ui/core & @material-ui/icons
+  - normalize styles with <CssBaseline />
+  - use withStyles() to write css in js
