@@ -10,7 +10,7 @@ describe('Header component', () => {
   describe('if user is signed out', () => {
     let wrapper;
 
-    beforeEach(() => {
+    beforeAll(() => {
       wrapper = mount(
         <BrowserRouter>
           <Header />
@@ -19,7 +19,12 @@ describe('Header component', () => {
     });
 
     test('shows site title', () => {
-      expect(wrapper.render().text()).toContain('Travelr');
+      expect(
+        wrapper
+          .find(Button)
+          .at(0)
+          .text(),
+      ).toContain('Travelr');
     });
 
     test('shows humberger icon', () => {
@@ -27,15 +32,20 @@ describe('Header component', () => {
     });
 
     test('shows Signup/In button', () => {
-      expect(wrapper.find(Button).text()).toContain('Signup');
+      expect(
+        wrapper
+          .find(Button)
+          .at(1)
+          .html(),
+      ).toContain('Signup');
     });
   });
 
   describe('if user is signed in', () => {
     let wrapper;
 
-    beforeEach(() => {
-      const store = { user: { displayName: 'dummyName' } };
+    beforeAll(() => {
+      const store = { user: { userId: 'dummyId', displayName: 'dummyName' } };
       wrapper = mount(
         <BrowserRouter>
           <Header {...store} />
@@ -44,8 +54,18 @@ describe('Header component', () => {
     });
 
     test('shows button to account page', () => {
-      expect(wrapper.find(Button).find(AccountCircle)).toHaveLength(1);
-      expect(wrapper.find(Button).text()).toContain('dummyName');
+      expect(
+        wrapper
+          .find(Button)
+          .at(1)
+          .find(AccountCircle),
+      ).toHaveLength(1);
+      expect(
+        wrapper
+          .find(Button)
+          .at(1)
+          .text(),
+      ).toContain('dummyName');
     });
   });
 });

@@ -6,13 +6,25 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Menu from './Menu';
+
+const propTypes = {
+  user: PropTypes.object,
+};
+
+const defaultProps = {
+  user: {},
+};
 
 const styles = {
   title: {
+    color: 'white',
+  },
+  spacer: {
     flexGrow: 1,
-    marginLeft: 10,
   },
   accountCircle: {
     marginRight: 10,
@@ -26,48 +38,77 @@ const styles = {
   },
 };
 
-function Header(props) {
-  const { classes, user } = props;
+class Header extends React.Component {
+  constructor(props) {
+    super(props);
 
-  return (
-    <React.Fragment>
-      <AppBar>
-        <Toolbar>
-          <Typography variant="title" color="inherit" className={classes.title}>
-            Travelr
-          </Typography>
+    this.state = {
+      isMenuOpen: false,
+    };
+  }
 
-          {user && user.displayName ? (
-            <Button component={Link} to="/account" color="inherit">
-              <AccountCircle className={classes.accountCircle} />
-              <Typography
-                variant="body2"
-                color="inherit"
-                className={classes.userName}
-              >
-                {user.displayName}
+  toggleMenu = () => {
+    this.setState({ isMenuOpen: !this.state.isMenuOpen });
+  };
+
+  render() {
+    const { classes, user } = this.props;
+    const isUserAuthorized = !!user.userId;
+
+    return (
+      <React.Fragment>
+        <AppBar>
+          <Toolbar>
+            <Button component={Link} to="/" className={classes.title}>
+              <Typography variant="title" color="inherit">
+                Travelr
               </Typography>
             </Button>
-          ) : (
-            <Button component={Link} to="/auth" color="inherit">
-              Signup / In
-            </Button>
-          )}
 
-          <IconButton
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="Menu"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+            <div className={classes.spacer} />
 
-      {/* Dummy toolbar for padding. this toolbar is invisible */}
-      <Toolbar />
-    </React.Fragment>
-  );
+            {isUserAuthorized ? (
+              <Button component={Link} to="/account" color="inherit">
+                <AccountCircle className={classes.accountCircle} />
+                <Typography
+                  variant="body2"
+                  color="inherit"
+                  className={classes.userName}
+                >
+                  {user.displayName}
+                </Typography>
+              </Button>
+            ) : (
+              <Button component={Link} to="/auth" color="inherit">
+                Signup / In
+              </Button>
+            )}
+
+            <IconButton
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="Menu"
+              onClick={this.toggleMenu}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+
+        <Menu
+          isOpen={this.state.isMenuOpen}
+          onClose={this.toggleMenu}
+          isUserAuthorized={isUserAuthorized}
+        />
+
+        {/* Dummy toolbar for padding. this toolbar is invisible */}
+        <Toolbar />
+      </React.Fragment>
+    );
+  }
 }
+
+Header.propTypes = propTypes;
+Header.defaultProps = defaultProps;
 
 export default withStyles(styles)(Header);
