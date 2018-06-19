@@ -286,6 +286,15 @@ describe('GET /posts/:postId', async () => {
     expect(res.body).toHaveProperty('likedCount');
     expect(res.body).toHaveProperty('commentsCount');
     expect(res.body.comments).toHaveLength(1);
+    expect(res.body).not.toHaveProperty('likeStatus');
+  });
+
+  test('returns likeStatus if user_id query param is provided', async () => {
+    const res = await request(app).get(
+      `/posts/${DUMMY_POSTS_IDS[0]}?user_id=${DUMMY_USER_ID}`,
+    );
+
+    expect(res.body.likeStatus).toBe(true);
   });
 
   test('returns view_count incremented by one', async () => {

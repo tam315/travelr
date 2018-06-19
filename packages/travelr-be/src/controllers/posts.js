@@ -199,6 +199,7 @@ exports.deletePosts = async (req, res, next) => {
 
 exports.getPost = async (req, res, next) => {
   const { postId } = req.params;
+  const { user_id } = req.query;
 
   try {
     // increment view_count
@@ -218,6 +219,15 @@ exports.getPost = async (req, res, next) => {
       'SELECT * FROM get_comments WHERE post_id = $1',
       postId,
     );
+
+    // get like status if user_id is provided as a query param
+    let likeStatus;
+    if (user_id) {
+      likeStatus = await db.oneOrNone(
+        'SELECT * FROM likes WHERE user_id = $1 AND post_id = $2',
+        [user_id, postId],
+      );
+    }
 
     const commentsFormatted = comments.map(comment => ({
       commentId: comment.id,
@@ -243,6 +253,8 @@ exports.getPost = async (req, res, next) => {
       commentsCount: +post.comments_count,
       comments: commentsFormatted,
     };
+
+    if (likeStatus) response.likeStatus = !!likeStatus;
 
     res.status(200).json(response);
   } catch (err) {
