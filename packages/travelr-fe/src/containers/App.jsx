@@ -12,6 +12,8 @@ import PageViewPost from '../components/PageViewPost';
 import PageViewPostsGrid from '../components/PageViewPostsGrid';
 import PageViewPostsMap from '../components/PageViewPostsMap';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import CssBaseline from '@material-ui/core/CssBaseline'; // normalize styles
+import Header from '../components/Header';
 
 // ...this.propsを子コンポーネントに渡すことで、
 // すべてのreduxのstoreとactionを子コンポーネントにおいて使えるようにする。
@@ -21,7 +23,9 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 class App extends React.Component {
   render() {
     return (
-      <div>
+      <React.Fragment>
+        <CssBaseline />
+        <Header {...this.props} />
         <BrowserRouter>
           <Switch>
             <Route
@@ -72,7 +76,7 @@ class App extends React.Component {
             />
           </Switch>
         </BrowserRouter>
-      </div>
+      </React.Fragment>
     );
   }
 }
