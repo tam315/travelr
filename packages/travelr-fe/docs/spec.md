@@ -26,3 +26,4 @@
   - use withStyles() to write css in js
 - jest
   - add 'setupTestFrameworkScriptFile' to package.json
+  - jest-fetch-mock https://github.com/jefflau/jest-fetch-mock
