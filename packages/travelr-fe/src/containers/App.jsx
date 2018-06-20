@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { compose } from 'redux';
 import * as actions from '../actions';
+import 'babel-polyfill';
 import Header from '../components/Header';
 import PageAuth from '../components/PageAuth';
 import PageCreatePost from '../components/PageCreatePost';

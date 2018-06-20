@@ -3,6 +3,7 @@
 - babel
   - presets
   - plugins
+  - add 'babel-polyfill' to prevent error when async/await is used
 - webpack
   - loader
   - extension
