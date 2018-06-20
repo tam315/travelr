@@ -4,7 +4,8 @@
   "scripts": {
     "build": "rimraf ./dist && cpx \"./public/**/*\" ./dist && webpack --config webpack.config.js",
     "serve": "webpack-serve ./webpack.config.js",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "lint": "eslint --ext .js,.jsx ./src"
   },
   "author": "",
   "license": "ISC",
@@ -12,6 +13,7 @@
     "@material-ui/core": "^1.2.2",
     "@material-ui/icons": "^1.1.0",
     "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -22,6 +24,11 @@
     "css-loader": "^0.28.11",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.9.1",
     "jest": "^23.1.0",
     "koa-connect": "^2.0.1",
     "prop-types": "^15.6.1",
