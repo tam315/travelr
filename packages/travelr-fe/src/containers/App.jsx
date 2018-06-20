@@ -16,11 +16,6 @@ import PageViewPost from '../components/PageViewPost';
 import PageViewPostsGrid from '../components/PageViewPostsGrid';
 import PageViewPostsMap from '../components/PageViewPostsMap';
 
-// ...this.propsを子コンポーネントに渡すことで、
-// すべてのreduxのstoreとactionを子コンポーネントにおいて使えるようにする。
-//
-// ...propsを渡すことで、react-router関連のオブジェクト
-// （history, location, match）を子コンポーネントにおいて使えるようにする。
 class App extends React.Component {
   render() {
     return (
@@ -30,54 +25,15 @@ class App extends React.Component {
           <React.Fragment>
             <Header {...this.props} />
             <Switch>
-              <Route
-                path="/"
-                exact
-                component={props => <PageLanding {...this.props} {...props} />}
-              />
-              <Route
-                path="/auth"
-                component={props => <PageAuth {...this.props} {...props} />}
-              />
-              <Route
-                path="/all-grid"
-                component={props => (
-                  <PageViewPostsGrid {...this.props} {...props} />
-                )}
-              />
-              <Route
-                path="/all-map"
-                component={props => (
-                  <PageViewPostsMap {...this.props} {...props} />
-                )}
-              />
-              <Route
-                path="/post/create"
-                component={props => (
-                  <PageCreatePost {...this.props} {...props} />
-                )}
-              />
-              <Route
-                path="/post/:postId/edit"
-                component={props => <PageEditPost {...this.props} {...props} />}
-              />
-              <Route
-                path="/post/:postId"
-                component={props => <PageViewPost {...this.props} {...props} />}
-              />
-              <Route
-                path="/account/posts"
-                component={props => (
-                  <PageManagePosts {...this.props} {...props} />
-                )}
-              />
-              <Route
-                path="/account"
-                exact
-                component={props => (
-                  <PageManageAccount {...this.props} {...props} />
-                )}
-              />
+              <Route path="/" exact component={PageLanding} />
+              <Route path="/auth" component={PageAuth} />
+              <Route path="/all-grid" component={PageViewPostsGrid} />
+              <Route path="/all-map" component={PageViewPostsMap} />
+              <Route path="/post/create" component={PageCreatePost} />
+              <Route path="/post/:postId/edit" component={PageEditPost} />
+              <Route path="/post/:postId" component={PageViewPost} />
+              <Route path="/account/posts" component={PageManagePosts} />
+              <Route path="/account" exact component={PageManageAccount} />
             </Switch>
           </React.Fragment>
         </BrowserRouter>

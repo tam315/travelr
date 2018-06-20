@@ -18,7 +18,8 @@
   - reducers
 - react-router
   - routes
-  - pass all redux props and react-router props to the child container
+  - ~~pass all redux props and react-router props to the child container~~
+    (don't pass props to router container otherwise infinite component mount loop occurs)
 - material-ui
   - add font to index.html file
   - install @material-ui/core & @material-ui/icons
