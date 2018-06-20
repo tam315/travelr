@@ -1,5 +1,3 @@
 import React from 'react';
 
-export default () => {
-  return <div>Comment</div>;
-};
+export default () => <div>Comment</div>;

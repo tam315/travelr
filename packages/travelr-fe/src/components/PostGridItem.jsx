@@ -1,5 +1,3 @@
 import React from 'react';
 
-export default () => {
-  return <div>PostGridItem</div>;
-};
+export default () => <div>PostGridItem</div>;

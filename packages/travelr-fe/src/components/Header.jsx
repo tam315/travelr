@@ -13,6 +13,7 @@ import Menu from './Menu';
 
 const propTypes = {
   user: PropTypes.object,
+  classes: PropTypes.object.isRequired,
 };
 
 const defaultProps = {

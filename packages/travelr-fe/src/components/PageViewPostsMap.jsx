@@ -1,5 +1,3 @@
 import React from 'react';
 
-export default () => {
-  return <div>PageViewPostsMap</div>;
-};
+export default () => <div>PageViewPostsMap</div>;

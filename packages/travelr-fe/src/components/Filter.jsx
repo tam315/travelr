@@ -1,5 +1,3 @@
 import React from 'react';
 
-export default () => {
-  return <div>Filter</div>;
-};
+export default () => <div>Filter</div>;

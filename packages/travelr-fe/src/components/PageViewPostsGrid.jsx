@@ -1,5 +1,3 @@
 import React from 'react';
 
-export default () => {
-  return <div>PageViewPostsGrid</div>;
-};
+export default () => <div>PageViewPostsGrid</div>;

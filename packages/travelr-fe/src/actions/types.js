@@ -1,1 +1,3 @@
-export const USER_INFO_CHANGED = 'USER_INFO_CHANGED';
+export default {
+  USER_INFO_CHANGED: 'USER_INFO_CHANGED',
+};

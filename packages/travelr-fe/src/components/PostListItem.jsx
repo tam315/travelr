@@ -1,5 +1,3 @@
 import React from 'react';
 
-export default () => {
-  return <div>PostListItem</div>;
-};
+export default () => <div>PostListItem</div>;

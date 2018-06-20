@@ -1,5 +1,3 @@
 import React from 'react';
 
-export default () => {
-  return <div>PageCreatePost</div>;
-};
+export default () => <div>PageCreatePost</div>;

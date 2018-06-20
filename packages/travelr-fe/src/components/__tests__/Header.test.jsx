@@ -1,10 +1,10 @@
-import React from 'react';
-import { mount, shallow } from 'enzyme';
-import Header from '../Header';
-import { BrowserRouter } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import IconButton from '@material-ui/core/IconButton';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import { mount } from 'enzyme';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import Header from '../Header';
 
 describe('Header component', () => {
   describe('if user is signed out', () => {

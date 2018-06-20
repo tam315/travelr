@@ -10,6 +10,7 @@
   - history api fallback
 - npm
   - script "serve" and "build"
+- airbnb eslint
 - redux
   - store
   - actions

@@ -1,5 +1,3 @@
 import React from 'react';
 
-export default () => {
-  return <div>PageManagePosts</div>;
-};
+export default () => <div>PageManagePosts</div>;

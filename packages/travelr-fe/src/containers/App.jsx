@@ -1,7 +1,10 @@
+import CssBaseline from '@material-ui/core/CssBaseline'; // normalize styles
 import React from 'react';
 import { connect } from 'react-redux';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { compose } from 'redux';
 import * as actions from '../actions';
+import Header from '../components/Header';
 import PageAuth from '../components/PageAuth';
 import PageCreatePost from '../components/PageCreatePost';
 import PageEditPost from '../components/PageEditPost';
@@ -11,9 +14,6 @@ import PageManagePosts from '../components/PageManagePosts';
 import PageViewPost from '../components/PageViewPost';
 import PageViewPostsGrid from '../components/PageViewPostsGrid';
 import PageViewPostsMap from '../components/PageViewPostsMap';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import CssBaseline from '@material-ui/core/CssBaseline'; // normalize styles
-import Header from '../components/Header';
 
 // ...this.propsを子コンポーネントに渡すことで、
 // すべてのreduxのstoreとactionを子コンポーネントにおいて使えるようにする。
