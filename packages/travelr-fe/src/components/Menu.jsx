@@ -83,13 +83,11 @@ function Menu(props) {
   );
 
   return (
-    <div>
-      <Drawer anchor="left" open={isOpen} onClose={onClose}>
-        <div tabIndex={0} role="button" onClick={onClose} onKeyDown={onClose}>
-          {isUserAuthorized ? authorizedMenu : UnauthorizedMenu}
-        </div>
-      </Drawer>
-    </div>
+    <Drawer anchor="left" open={isOpen} onClose={onClose}>
+      <div tabIndex={0} role="button" onClick={onClose} onKeyDown={onClose}>
+        {isUserAuthorized ? authorizedMenu : UnauthorizedMenu}
+      </div>
+    </Drawer>
   );
 }
 
