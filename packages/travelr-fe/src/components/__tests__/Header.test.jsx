@@ -53,19 +53,11 @@ describe('Header component', () => {
       );
     });
 
-    test('shows button to account page', () => {
-      expect(
-        wrapper
-          .find(Button)
-          .at(1)
-          .find(AccountCircle),
-      ).toHaveLength(1);
-      expect(
-        wrapper
-          .find(Button)
-          .at(1)
-          .text(),
-      ).toContain('dummyName');
+    test('shows userStatusButton', () => {
+      const userStatusButton = wrapper.find(Button).at(1);
+
+      expect(userStatusButton.find(AccountCircle)).toHaveLength(1);
+      expect(userStatusButton.text()).toContain('dummyName');
     });
   });
 });

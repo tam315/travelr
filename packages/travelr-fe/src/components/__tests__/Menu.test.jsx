@@ -4,11 +4,11 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import Menu from '../Menu';
 
-describe('Header component', () => {
+describe('Menu component', () => {
   describe('if user is signed out', () => {
     let wrapper;
 
-    beforeEach(() => {
+    beforeAll(() => {
       wrapper = mount(
         <BrowserRouter>
           <Menu isOpen onClose={null} isUserAuthorized={false} />
@@ -44,7 +44,7 @@ describe('Header component', () => {
   describe('if user is signed in', () => {
     let wrapper;
 
-    beforeEach(() => {
+    beforeAll(() => {
       wrapper = mount(
         <BrowserRouter>
           <Menu isOpen isUserAuthorized onClose={null} />
