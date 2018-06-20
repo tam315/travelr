@@ -18,6 +18,7 @@ exports.getPosts = async (req, res, next) => {
     max_liked_count,
     min_comments_count,
     max_comments_count,
+    limit,
   } = req.query;
 
   const criterions = [];
@@ -102,6 +103,12 @@ exports.getPosts = async (req, res, next) => {
     const whereQuery = ` WHERE ${criterions.join(' AND ')}`;
     query = query + whereQuery;
   }
+
+  if (limit) {
+    const limitQuery = pgPromise.as.format(' LIMIT $1', +limit);
+    query = query + limitQuery;
+  }
+
   try {
     const posts = await db.manyOrNone(query);
 

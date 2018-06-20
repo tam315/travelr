@@ -193,6 +193,13 @@ describe('GET /posts', async () => {
 
     expect(isSuccess).toBeTruthy();
   });
+
+  test('returns data filtered by limit count', async () => {
+    const LIMIT = 99;
+    const res = await request(app).get(`/posts?limit=${LIMIT}`);
+
+    expect(res.body.length).toBe(LIMIT);
+  });
 });
 
 describe('POST /posts', async () => {
