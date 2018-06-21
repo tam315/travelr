@@ -9,6 +9,7 @@
   - extension
 - webpack-serve
   - history api fallback
+  - react-svg-loader
 - npm
   - script "serve" and "build"
 - airbnb eslint
@@ -28,3 +29,4 @@
 - jest
   - add 'setupTestFrameworkScriptFile' to package.json
   - jest-fetch-mock https://github.com/jefflau/jest-fetch-mock
+  - moduleNameMapper (for stub SVG files)
