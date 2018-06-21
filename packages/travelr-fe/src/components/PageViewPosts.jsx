@@ -90,7 +90,7 @@ export class _PageViewPosts extends React.Component {
             <PageViewPostsGrid posts={all} />
           </div>
         )}
-        {this.state.tabNumber === 1 && <PageViewPostsMap />}
+        {this.state.tabNumber === 1 && <PageViewPostsMap posts={all} />}
       </div>
     );
   }

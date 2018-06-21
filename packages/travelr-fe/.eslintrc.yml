@@ -34,8 +34,10 @@ env:
 
 # stop no-undef warning about global variables.
 globals:
-  document: true
-  window: true
-  graphql: true
-  localStorage: true
-  fetch: true
+  document:
+  window:
+  graphql:
+  localStorage:
+  fetch:
+  google:
+  MarkerClusterer:
