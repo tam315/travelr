@@ -5,12 +5,17 @@ import { mount } from 'enzyme';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import Header from '../Header';
+import Menu from '../Menu';
+
+jest.mock('../Menu');
 
 describe('Header component', () => {
   describe('if user is signed out', () => {
     let wrapper;
 
     beforeAll(() => {
+      Menu.mockImplementation(() => ({ render: () => <div>mock</div> }));
+
       wrapper = mount(
         <BrowserRouter>
           <Header />

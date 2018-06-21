@@ -5,6 +5,9 @@ import { _PageViewPosts as PageViewPosts } from '../PageViewPosts';
 import PageViewPostsGrid from '../PageViewPostsGrid';
 import PageViewPostsMap from '../PageViewPostsMap';
 
+jest.mock('../PageViewPostsGrid');
+jest.mock('../PageViewPostsMap');
+
 describe('PageViewPosts component', () => {
   test('fetch all posts when componentDidMount', () => {
     const mockCallback = jest.fn();
