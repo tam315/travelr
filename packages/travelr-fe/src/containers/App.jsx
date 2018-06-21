@@ -13,8 +13,7 @@ import PageLanding from '../components/PageLanding';
 import PageManageAccount from '../components/PageManageAccount';
 import PageManagePosts from '../components/PageManagePosts';
 import PageViewPost from '../components/PageViewPost';
-import PageViewPostsGrid from '../components/PageViewPostsGrid';
-import PageViewPostsMap from '../components/PageViewPostsMap';
+import PageViewPosts from '../components/PageViewPosts';
 
 class App extends React.Component {
   render() {
@@ -27,8 +26,8 @@ class App extends React.Component {
             <Switch>
               <Route path="/" exact component={PageLanding} />
               <Route path="/auth" component={PageAuth} />
-              <Route path="/all-grid" component={PageViewPostsGrid} />
-              <Route path="/all-map" component={PageViewPostsMap} />
+              <Route path="/all-grid" component={PageViewPosts} />
+              <Route path="/all-map" component={PageViewPosts} />
               <Route path="/post/create" component={PageCreatePost} />
               <Route path="/post/:postId/edit" component={PageEditPost} />
               <Route path="/post/:postId" component={PageViewPost} />
