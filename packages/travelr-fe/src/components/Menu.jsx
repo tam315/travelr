@@ -1,5 +1,5 @@
 import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -16,6 +16,7 @@ const propTypes = {
   isOpen: PropTypes.bool,
   isUserAuthorized: PropTypes.bool,
   onClose: PropTypes.func,
+  onOpen: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -25,7 +26,7 @@ const defaultProps = {
 };
 
 function Menu(props) {
-  const { isOpen, isUserAuthorized, onClose } = props;
+  const { isOpen, isUserAuthorized, onClose, onOpen } = props;
 
   const authorizedMenu = (
     <React.Fragment>
@@ -83,11 +84,16 @@ function Menu(props) {
   );
 
   return (
-    <Drawer anchor="left" open={isOpen} onClose={onClose}>
+    <SwipeableDrawer
+      anchor="left"
+      open={isOpen}
+      onClose={onClose}
+      onOpen={onOpen}
+    >
       <div tabIndex={0} role="button" onClick={onClose} onKeyDown={onClose}>
         {isUserAuthorized ? authorizedMenu : UnauthorizedMenu}
       </div>
-    </Drawer>
+    </SwipeableDrawer>
   );
 }
 

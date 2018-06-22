@@ -98,6 +98,7 @@ class Header extends React.Component {
 
         <Menu
           isOpen={this.state.isMenuOpen}
+          onOpen={this.toggleMenu}
           onClose={this.toggleMenu}
           isUserAuthorized={isUserAuthorized}
         />
