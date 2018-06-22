@@ -1,4 +1,4 @@
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { _PageViewPosts as PageViewPosts } from '../PageViewPosts';
@@ -11,7 +11,7 @@ jest.mock('../PageViewPostsMap');
 describe('PageViewPosts component', () => {
   test('fetch all posts when componentDidMount', () => {
     const mockCallback = jest.fn();
-    mount(
+    const wrapper = shallow(
       <BrowserRouter>
         <PageViewPosts
           fetchAllPosts={mockCallback}
@@ -21,12 +21,13 @@ describe('PageViewPosts component', () => {
         />
       </BrowserRouter>,
     );
+    wrapper.find(PageViewPosts).dive();
     expect(mockCallback.mock.calls.length).toBe(1);
   });
 
   test('shows grid when pathname is /all-grid', () => {
     const mockCallback = jest.fn();
-    const wrapper = mount(
+    const wrapper = shallow(
       <BrowserRouter>
         <PageViewPosts
           fetchAllPosts={mockCallback}
@@ -36,12 +37,17 @@ describe('PageViewPosts component', () => {
         />
       </BrowserRouter>,
     );
-    expect(wrapper.find(PageViewPostsGrid)).toHaveLength(1);
+    expect(
+      wrapper
+        .find(PageViewPosts)
+        .dive()
+        .find(PageViewPostsGrid),
+    ).toHaveLength(1);
   });
 
   test('shows map when pathname is /all-map', () => {
     const mockCallback = jest.fn();
-    const wrapper = mount(
+    const wrapper = shallow(
       <BrowserRouter>
         <PageViewPosts
           fetchAllPosts={mockCallback}
@@ -51,6 +57,11 @@ describe('PageViewPosts component', () => {
         />
       </BrowserRouter>,
     );
-    expect(wrapper.find(PageViewPostsMap)).toHaveLength(1);
+    expect(
+      wrapper
+        .find(PageViewPosts)
+        .dive()
+        .find(PageViewPostsMap),
+    ).toHaveLength(1);
   });
 });
