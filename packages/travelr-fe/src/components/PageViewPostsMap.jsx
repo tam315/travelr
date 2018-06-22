@@ -33,6 +33,7 @@ class PageViewPostsMap extends React.Component {
 
   componentDidMount = () => {
     this.mapsHelper = new MapsHelper(this.mapRef.current);
+    this.mapsHelper.placePosts(this.props.posts);
   };
 
   componentDidUpdate = () => {

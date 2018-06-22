@@ -37,9 +37,13 @@ describe('PageViewPostsMap component', () => {
     expect(MapsHelper).toHaveBeenCalledTimes(1);
   });
 
-  test('re-render posts when posts are updated', () => {
-    expect(mockPlacePostsFunc).toHaveBeenCalledTimes(0);
-    wrapper.setProps({ posts: DUMMY_POSTS_UPDATED, classes: {} });
+  test('render posts when the component mounted', () => {
     expect(mockPlacePostsFunc).toHaveBeenCalledTimes(1);
+  });
+
+  test('re-render posts when posts are updated', () => {
+    expect(mockPlacePostsFunc).toHaveBeenCalledTimes(1);
+    wrapper.setProps({ posts: DUMMY_POSTS_UPDATED, classes: {} });
+    expect(mockPlacePostsFunc).toHaveBeenCalledTimes(2);
   });
 });
