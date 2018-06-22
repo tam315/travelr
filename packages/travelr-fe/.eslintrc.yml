@@ -15,7 +15,6 @@ rules:
   # no-alert: 0
   # no-underscore-dangle: 0
   # no-unused-expressions: 0
-  # object-curly-newline: 0
   # prettier/prettier: 2
   # quote-props: 0
   # react/jsx-no-target-blank: 0
@@ -27,6 +26,7 @@ rules:
   arrow-parens: 0
   function-paren-newline: 0
   linebreak-style: 0
+  object-curly-newline: 0
 
 env:
   mocha: true
