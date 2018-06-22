@@ -1,3 +1,4 @@
+import Button from '@material-ui/core/Button';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
@@ -63,5 +64,29 @@ describe('PageViewPosts component', () => {
         .dive()
         .find(PageViewPostsMap),
     ).toHaveLength(1);
+  });
+
+  test('show filter button when the filter menu is not displayed', () => {
+    const mockCallback = jest.fn();
+    const wrapper = shallow(
+      <BrowserRouter>
+        <PageViewPosts
+          fetchAllPosts={mockCallback}
+          classes={{}}
+          location={{ pathname: '/all-map' }}
+          history={{}}
+        />
+      </BrowserRouter>,
+    );
+
+    const component = wrapper.find(PageViewPosts).dive();
+
+    // button is enabled initially
+    expect(component.find(Button).props().disabled).toBe(false);
+
+    // button is disables when filter is opened
+    component.setState({ isFilterOpen: true });
+    wrapper.update();
+    expect(component.find(Button).props().disabled).toBe(true);
   });
 });

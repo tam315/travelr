@@ -1,14 +1,17 @@
+import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import IconGrid from '@material-ui/icons/GridOn';
 import IconMap from '@material-ui/icons/Place';
+import IconSearch from '@material-ui/icons/Search';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import actions from '../actions';
+import Filter from './Filter';
 import PageViewPostsGrid from './PageViewPostsGrid';
 import PageViewPostsMap from './PageViewPostsMap';
 
@@ -27,6 +30,11 @@ const defaultProps = {
 const styles = {
   tabsFlexContainer: {
     justifyContent: 'center',
+  },
+  filterButton: {
+    position: 'fixed',
+    bottom: 28,
+    right: 16,
   },
 };
 
@@ -48,6 +56,7 @@ export class _PageViewPosts extends React.Component {
 
     this.state = {
       tabNumber: defaultTabNumber,
+      isFilterOpen: false,
     };
   }
 
@@ -85,12 +94,34 @@ export class _PageViewPosts extends React.Component {
             <Tab icon={<IconMap />} />
           </Tabs>
         </Paper>
+
+        {/* grid view */}
         {this.state.tabNumber === 0 && (
           <div>
             <PageViewPostsGrid posts={all} />
           </div>
         )}
+
+        {/* map view */}
         {this.state.tabNumber === 1 && <PageViewPostsMap posts={all} />}
+
+        {/* filter */}
+        <Filter
+          isOpen={this.state.isFilterOpen}
+          onClose={() => this.setState({ isFilterOpen: false })}
+        />
+
+        {/* filter button */}
+        <Button
+          aria-label="search"
+          className={classes.filterButton}
+          color="primary"
+          disabled={this.state.isFilterOpen}
+          onClick={() => this.setState({ isFilterOpen: true })}
+          variant="fab"
+        >
+          <IconSearch />
+        </Button>
       </div>
     );
   }
