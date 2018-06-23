@@ -3,7 +3,16 @@ import loadJS from '../loadJS';
 
 jest.mock('../loadJS');
 
-const DUMMY_POSTS = ['post1', 'post2', 'post3', 'post4', 'post5'];
+const DUMMY_POSTS = ['post1', 'post2', 'post3'];
+const DUMMY_POSTS_ADDED_LAST = [
+  'post4',
+  'post5',
+  'post6',
+  'post7',
+  'post8',
+  'post9',
+  'post10',
+];
 
 const setGoogleMapsApiMock = () => {
   google = {
@@ -69,45 +78,38 @@ describe('MapsHelper', () => {
 
     mapsHelper.placePosts(DUMMY_POSTS);
     mapsHelper.placePosts(DUMMY_POSTS);
-    mapsHelper.placePosts(DUMMY_POSTS);
-
-    // posts shouldn't be queued
-    expect(mapsHelper.queuedPosts).toHaveLength(0);
+    mapsHelper.placePosts(DUMMY_POSTS_ADDED_LAST);
 
     // markers created immediately each time
-    expect(google.maps.Marker).toHaveBeenCalledTimes(DUMMY_POSTS.length * 3);
-    expect(mapsHelper.queuedPosts).toHaveLength(0);
+    expect(google.maps.Marker).toHaveBeenCalledTimes(
+      DUMMY_POSTS.length * 2 /* eslint-disable-line */ +
+        DUMMY_POSTS_ADDED_LAST.length * 1 /* eslint-disable-line */,
+    );
+    expect(mapsHelper.queuedPosts).toBe(null);
   });
 
-  test('marker creation is queued if the API is not ready', () => {
+  test('marker creation is queued until the API is ready', () => {
     const mapsHelper = new MapsHelper(mapRef);
 
+    // only last posts should be queued
     mapsHelper.placePosts(DUMMY_POSTS);
     mapsHelper.placePosts(DUMMY_POSTS);
-    mapsHelper.placePosts(DUMMY_POSTS);
-    expect(mapsHelper.queuedPosts).toHaveLength(3);
-  });
-
-  test('pended marker creation should be done after the API is loaded', () => {
-    const mapsHelper = new MapsHelper(mapRef);
-
-    // marker creation should be queued
-    mapsHelper.placePosts(DUMMY_POSTS);
-    mapsHelper.placePosts(DUMMY_POSTS);
-    mapsHelper.placePosts(DUMMY_POSTS);
-    expect(mapsHelper.queuedPosts).toHaveLength(3);
+    mapsHelper.placePosts(DUMMY_POSTS_ADDED_LAST);
+    expect(mapsHelper.queuedPosts).toEqual(DUMMY_POSTS_ADDED_LAST);
 
     // simulates the state where the API is ready
     setGoogleMapsApiMock();
     mapsHelper.mapInitializerGenerator(mapRef)();
 
-    // create map
+    // map should be created
     expect(google.maps.Map).toHaveBeenCalledTimes(1);
 
-    // create only the marker of the last queue
-    expect(google.maps.Marker).toHaveBeenCalledTimes(DUMMY_POSTS.length * 1);
+    // marker should be created for the lastly queued posts
+    expect(google.maps.Marker).toHaveBeenCalledTimes(
+      DUMMY_POSTS_ADDED_LAST.length * 1,
+    );
 
     // queue should be reset
-    expect(mapsHelper.queuedPosts).toHaveLength(0);
+    expect(mapsHelper.queuedPosts).toBe(null);
   });
 });

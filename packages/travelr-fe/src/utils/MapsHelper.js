@@ -8,7 +8,7 @@ class MapsHelper {
     this.markers = null; // reference marker instances
     this.markerCluster = null; // reference to the marker cluster
     this.infowindow = null; // reference to the info window which is currently opened
-    this.queuedPosts = []; // pending tasks because map was not initialized
+    this.queuedPosts = null; // pending tasks because map was not initialized
 
     const mapInitializer = this.mapInitializerGenerator(mapRef);
 
@@ -48,9 +48,9 @@ class MapsHelper {
     this.isApiReady = true;
 
     // if there are pengind tasks, execute them.
-    if (this.queuedPosts.length > 0) {
-      this.placePosts(this.queuedPosts.pop());
-      this.queuedPosts = [];
+    if (this.queuedPosts) {
+      this.placePosts(this.queuedPosts);
+      this.queuedPosts = null;
     }
   };
 
@@ -60,7 +60,10 @@ class MapsHelper {
 
   placePosts = posts => {
     // if api is not ready, queue posts and exit funtion
-    if (!this.isApiReady) return this.queuedPosts.push(posts);
+    if (!this.isApiReady) {
+      this.queuedPosts = posts;
+      return;
+    }
 
     // remove previous markers
     if (this.markers) {
@@ -110,8 +113,6 @@ class MapsHelper {
       imagePath:
         'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
     });
-
-    return true;
   };
 }
 
