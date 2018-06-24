@@ -28,6 +28,9 @@ rules:
   linebreak-style: 0
   object-curly-newline: 0
 
+  # HOC適用前（アプリ用）と適用後（Jest用）で同じ名前を使いたいため
+  import/no-named-as-default: 0
+
 env:
   mocha: true
   jest: true
