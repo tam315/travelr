@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { _PageViewPosts as PageViewPosts } from '../PageViewPosts';
+import { PageViewPosts } from '../PageViewPosts';
 import PageViewPostsGrid from '../PageViewPostsGrid';
 import PageViewPostsMap from '../PageViewPostsMap';
 

@@ -8,9 +8,6 @@ import IconMap from '@material-ui/icons/Place';
 import IconSearch from '@material-ui/icons/Search';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import actions from '../actions';
 import Filter from './Filter';
 import PageViewPostsGrid from './PageViewPostsGrid';
 import PageViewPostsMap from './PageViewPostsMap';
@@ -43,7 +40,7 @@ const tabNumberPathMapping = {
   1: '/all-map',
 };
 
-export class _PageViewPosts extends React.Component {
+export class PageViewPosts extends React.Component {
   constructor(props) {
     super(props);
 
@@ -127,14 +124,7 @@ export class _PageViewPosts extends React.Component {
   }
 }
 
-_PageViewPosts.propTypes = propTypes;
-_PageViewPosts.defaultProps = defaultProps;
+PageViewPosts.propTypes = propTypes;
+PageViewPosts.defaultProps = defaultProps;
 
-export default compose(
-  withStyles(styles),
-  connect(
-    // map everything to props
-    state => state,
-    actions,
-  ),
-)(_PageViewPosts);
+export default withStyles(styles)(PageViewPosts);

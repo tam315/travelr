@@ -16,6 +16,14 @@ import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
 
 class App extends React.Component {
+  // these lines are inevitable.
+  // inline functions shouldn't be used as Route's 'component' params.
+  // this causes unexpected component unmount everytime props changes.
+  // see: https://material-ui.com/guides/composition/#caveat-with-inlining
+  renderPageViewPosts = itemProps => (
+    <PageViewPosts {...itemProps} {...this.props} />
+  );
+
   render() {
     return (
       <React.Fragment>
@@ -26,8 +34,8 @@ class App extends React.Component {
             <Switch>
               <Route path="/" exact component={PageLanding} />
               <Route path="/auth" component={PageAuth} />
-              <Route path="/all-grid" component={PageViewPosts} />
-              <Route path="/all-map" component={PageViewPosts} />
+              <Route path="/all-grid" component={this.renderPageViewPosts} />
+              <Route path="/all-map" component={this.renderPageViewPosts} />
               <Route path="/post/create" component={PageCreatePost} />
               <Route path="/post/:postId/edit" component={PageEditPost} />
               <Route path="/post/:postId" component={PageViewPost} />
