@@ -105,7 +105,10 @@ export class PageViewPosts extends React.Component {
         {/* filter */}
         <Filter
           isOpen={this.state.isFilterOpen}
-          onClose={() => this.setState({ isFilterOpen: false })}
+          onClose={criterion => {
+            this.setState({ isFilterOpen: false });
+            // TODO: call fetchAllPosts
+          }}
         />
 
         {/* filter button */}
@@ -114,7 +117,9 @@ export class PageViewPosts extends React.Component {
           className={classes.filterButton}
           color="primary"
           disabled={this.state.isFilterOpen}
-          onClick={() => this.setState({ isFilterOpen: true })}
+          onClick={() =>
+            this.setState({ isFilterOpen: !this.state.isFilterOpen })
+          }
           variant="fab"
         >
           <IconSearch />
