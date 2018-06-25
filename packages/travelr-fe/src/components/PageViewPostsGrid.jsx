@@ -1,8 +1,9 @@
-import PropTypes from 'prop-types';
-import React from 'react';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import StatusBadge from './StatusBadge';
 
 const propTypes = {
@@ -52,7 +53,11 @@ class PageViewPostsGrid extends React.Component {
       <div className={classes.root}>
         <GridList cellHeight={cellHeight} cols={COLS}>
           {posts.map(tile => (
-            <GridListTile key={tile.postId}>
+            <GridListTile
+              key={tile.postId}
+              component={Link}
+              to={`/post/${tile.postId}`}
+            >
               <img src={tile.oldImageUrl} alt={tile.description} />
 
               <div className={classes.likedCount}>

@@ -11,12 +11,19 @@ const DUMMY_POSTS = [
 ];
 
 describe('PageViewPostsGrid component', () => {
-  test('shows tiles and StatusBadges', () => {
-    const wrapper = shallow(
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallow(
       <PageViewPostsGrid posts={DUMMY_POSTS} classes={{}} />,
     ).dive();
+  });
 
+  test('shows tiles', () => {
     expect(wrapper.find(GridListTile)).toHaveLength(2);
+  });
+
+  test('shows StatusBadges', () => {
     expect(
       wrapper
         .find('StatusBadge')
@@ -29,5 +36,11 @@ describe('PageViewPostsGrid component', () => {
         .at(1)
         .prop('count'),
     ).toBe(DUMMY_POSTS[1].likedCount);
+  });
+
+  test('has link to the post page', () => {
+    expect(wrapper.find({ to: `/post/${DUMMY_POSTS[0].postId}` })).toHaveLength(
+      1,
+    );
   });
 });
