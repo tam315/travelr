@@ -23,6 +23,9 @@ class App extends React.Component {
   renderPageViewPosts = itemProps => (
     <PageViewPosts {...itemProps} {...this.props} />
   );
+  renderPageCreatePost = itemProps => (
+    <PageCreatePost {...itemProps} {...this.props} />
+  );
 
   render() {
     return (
@@ -36,7 +39,10 @@ class App extends React.Component {
               <Route path="/auth" component={PageAuth} />
               <Route path="/all-grid" component={this.renderPageViewPosts} />
               <Route path="/all-map" component={this.renderPageViewPosts} />
-              <Route path="/post/create" component={PageCreatePost} />
+              <Route
+                path="/post/create"
+                component={this.renderPageCreatePost}
+              />
               <Route path="/post/:postId/edit" component={PageEditPost} />
               <Route path="/post/:postId" component={PageViewPost} />
               <Route path="/account/posts" component={PageManagePosts} />

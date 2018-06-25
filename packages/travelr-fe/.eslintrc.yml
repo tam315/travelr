@@ -44,3 +44,4 @@ globals:
   fetch:
   google:
   MarkerClusterer:
+  navigator:

@@ -57,4 +57,6 @@ actions.fetchAllPosts = (criterion = {}) => async dispatch => {
   }
 };
 
+actions.createPost = () => async dispatch => {};
+
 export default actions;
