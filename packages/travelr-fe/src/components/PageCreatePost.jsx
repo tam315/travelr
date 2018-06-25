@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 const propTypes = {
   classes: PropTypes.object.isRequired,
   createPost: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 const defaultProps = {};
@@ -91,7 +92,12 @@ export class PageCreatePost extends React.Component {
       lng,
       lat,
     };
-    this.props.createPost(post);
+
+    const successCallback = postId => {
+      this.props.history.push(`/post/${postId}`);
+    };
+
+    this.props.createPost(post, successCallback);
   };
 
   render() {
