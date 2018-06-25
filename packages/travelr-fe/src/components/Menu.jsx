@@ -31,6 +31,7 @@ function Menu(props) {
   const authorizedMenu = (
     <React.Fragment>
       <List>
+        {/* TODO: add account information here */}
         <ListItem button component={Link} to="/all-grid">
           <ListItemIcon>
             <IconPhotoLibrary />
