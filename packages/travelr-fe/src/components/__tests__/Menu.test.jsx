@@ -9,9 +9,15 @@ describe('Menu component', () => {
     let wrapper;
 
     beforeAll(() => {
+      const mockFunction = jest.fn();
       wrapper = mount(
         <BrowserRouter>
-          <Menu isOpen onClose={null} isUserAuthorized={false} />
+          <Menu
+            isOpen
+            onClose={mockFunction}
+            onOpen={mockFunction}
+            isUserAuthorized={false}
+          />
         </BrowserRouter>,
       );
     });
@@ -45,9 +51,16 @@ describe('Menu component', () => {
     let wrapper;
 
     beforeAll(() => {
+      const mockFunction = jest.fn();
+
       wrapper = mount(
         <BrowserRouter>
-          <Menu isOpen isUserAuthorized onClose={null} />
+          <Menu
+            isOpen
+            isUserAuthorized
+            onClose={mockFunction}
+            onOpen={mockFunction}
+          />
         </BrowserRouter>,
       );
     });
