@@ -56,7 +56,7 @@ class PageViewPostsGrid extends React.Component {
               <img src={tile.oldImageUrl} alt={tile.description} />
 
               <div className={classes.likedCount}>
-                <StatusBadge icon="like" count={tile.likedCount} />
+                <StatusBadge icon="like" count={tile.likedCount} size="small" />
               </div>
             </GridListTile>
           ))}
