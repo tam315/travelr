@@ -14,26 +14,16 @@ const DUMMY_POST_DATA = {
   lat: 35.0,
 };
 
-describe('PageViewPost component', () => {
+describe('PageCreatePost component', () => {
   let wrapper;
-  let mockCreatePost;
   let mockHistory;
 
   beforeEach(() => {
-    mockCreatePost = jest.fn((post, successCallback) =>
-      successCallback(DUMMY_POST_ID),
-    );
     mockHistory = {
       push: jest.fn(),
     };
 
-    wrapper = shallow(
-      <PageCreatePost
-        createPost={mockCreatePost}
-        history={mockHistory}
-        classes={{}}
-      />,
-    );
+    wrapper = shallow(<PageCreatePost history={mockHistory} classes={{}} />);
   });
 
   test('renders submit button', () => {
@@ -50,27 +40,45 @@ describe('PageViewPost component', () => {
       .find(Button)
       .last()
       .simulate('click');
-    expect(mockCreatePost).not.toBeCalled();
+    expect(fetch).not.toBeCalled();
   });
 
-  test('submit data if the content is OK', () => {
+  test('submit data if the content is OK', async () => {
+    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_ID }));
     wrapper.setState(DUMMY_POST_DATA);
     wrapper
       .find(Button)
       .last()
       .simulate('click');
 
-    // createPost() should be called
-    expect(mockCreatePost).toBeCalled();
-
     // createPost() should be called with valid args
-    const arg = mockCreatePost.mock.calls[0][0];
-    expect(arg.description).toEqual(DUMMY_POST_DATA.description);
-    expect(arg.shootDate).toEqual(DUMMY_POST_DATA.shootDate);
-    expect(arg.lng).toEqual(DUMMY_POST_DATA.lng);
-    expect(arg.lat).toEqual(DUMMY_POST_DATA.lat);
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOptions = fetch.mock.calls[0][1];
+    const body = JSON.parse(fetchOptions.body);
+    expect(fetch).toBeCalled();
+    expect(fetchUrl).toContain('/posts');
+    expect(fetchOptions.method).toBe('POST');
+    expect(body.description).toEqual(DUMMY_POST_DATA.description);
+    expect(body.shootDate).toEqual(DUMMY_POST_DATA.shootDate);
+    expect(body.lng).toEqual(DUMMY_POST_DATA.lng);
+    expect(body.lat).toEqual(DUMMY_POST_DATA.lat);
+    setTimeout(
+      () => expect(mockHistory.push).toBeCalledWith(`/post/${DUMMY_POST_ID}`),
+      1,
+    );
+  });
 
-    // navigate to created post's page
-    expect(mockHistory.push).toBeCalledWith(`/post/${DUMMY_POST_ID}`);
+  test('navigete to post page if success', async () => {
+    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_ID }));
+    wrapper.setState(DUMMY_POST_DATA);
+    wrapper
+      .find(Button)
+      .last()
+      .simulate('click');
+
+    setTimeout(
+      () => expect(mockHistory.push).toBeCalledWith(`/post/${DUMMY_POST_ID}`),
+      1,
+    );
   });
 });

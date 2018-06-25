@@ -83,38 +83,4 @@ describe('actions', () => {
       });
     });
   });
-
-  describe('createPost', () => {
-    test('makes POST request', async () => {
-      fetch.mockResponse(JSON.stringify({ postId: 12345 }));
-      const thunk = actions.createPost();
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      expect(fetch.mock.calls[0][0]).toContain('/posts');
-      expect(fetch.mock.calls[0][1].method).toBe('POST');
-    });
-
-    test('generates correct action when success', async () => {
-      fetch.mockResponse(JSON.stringify({ postId: 12345 }));
-      const thunk = actions.createPost();
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.CREATE_POST_SUCCESS,
-      });
-    });
-
-    test('generates correct action when fail', async () => {
-      fetch.mockReject(new Error('fake error message'));
-      const thunk = actions.createPost();
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.CREATE_POST_FAIL,
-      });
-    });
-  });
 });

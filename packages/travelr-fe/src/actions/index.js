@@ -1,8 +1,6 @@
 import types from './types';
 import config from '../config';
 
-const DUMMY_TOKEN = 'dummy_token';
-
 const actions = {};
 
 actions.fetchAllPosts = (criterion = {}) => async dispatch => {
@@ -56,28 +54,6 @@ actions.fetchAllPosts = (criterion = {}) => async dispatch => {
     dispatch({
       type: types.FETCH_ALL_POSTS_FAIL,
     });
-  }
-};
-
-actions.createPost = (post, successCallback) => async dispatch => {
-  try {
-    const response = await fetch(`${config.apiUrl}posts`, {
-      method: 'POST',
-      headers: {
-        authorization: DUMMY_TOKEN, // TODO: replace token
-      },
-      body: JSON.stringify(post),
-    });
-
-    if (!response.ok) {
-      dispatch({ type: types.CREATE_POST_FAIL }); // TODO: toast
-    }
-
-    const { postId } = await response.json();
-    dispatch({ type: types.CREATE_POST_SUCCESS }); // TODO: toast
-    successCallback(postId);
-  } catch (err) {
-    dispatch({ type: types.CREATE_POST_FAIL }); // TODO: toast
   }
 };
 

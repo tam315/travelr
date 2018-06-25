@@ -7,14 +7,15 @@ import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import TextField from '@material-ui/core/TextField';
+import config from '../config';
 
 const propTypes = {
   classes: PropTypes.object.isRequired,
-  createPost: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  token: PropTypes.string,
 };
 
-const defaultProps = {};
+const defaultProps = { token: null };
 
 const styles = theme => ({
   root: {
@@ -97,7 +98,30 @@ export class PageCreatePost extends React.Component {
       this.props.history.push(`/post/${postId}`);
     };
 
-    this.props.createPost(post, successCallback);
+    this.createPost(post, successCallback);
+  };
+
+  createPost = async (post, successCallback) => {
+    try {
+      const response = await fetch(`${config.apiUrl}posts`, {
+        method: 'POST',
+        headers: {
+          authorization: this.props.token,
+        },
+        body: JSON.stringify(post),
+      });
+
+      if (!response.ok) {
+        // TODO: toast
+        return;
+      }
+
+      const { postId } = await response.json();
+      // TODO: toast
+      successCallback(postId);
+    } catch (err) {
+      // TODO: toast
+    }
   };
 
   render() {
