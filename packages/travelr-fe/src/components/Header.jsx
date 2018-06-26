@@ -68,6 +68,7 @@ class Header extends React.Component {
 
             <div className={classes.spacer} />
 
+            {/* TODO: hide these when window is narrow */}
             {isUserAuthorized ? (
               <Button component={Link} to="/account" color="inherit">
                 <AccountCircle className={classes.accountCircle} />
