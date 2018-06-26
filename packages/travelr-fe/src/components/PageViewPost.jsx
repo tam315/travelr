@@ -11,10 +11,10 @@ import StatusBadge from './StatusBadge';
 const propTypes = {
   classes: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
-  token: PropTypes.string,
+  user: PropTypes.object.isRequired,
 };
 
-const defaultProps = { token: null };
+const defaultProps = {};
 
 const styles = theme => ({
   root: {
@@ -71,7 +71,7 @@ export class PageViewPost extends React.Component {
     try {
       const response = await fetch(`${config.apiUrl}posts/${postId}/comments`, {
         method: 'POST',
-        headers: { authorization: this.props.token }, // TODO: replace token
+        headers: { authorization: this.props.user.token },
         body: JSON.stringify({ comment }),
       });
 

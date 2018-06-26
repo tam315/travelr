@@ -23,7 +23,9 @@ describe('PageCreatePost component', () => {
       push: jest.fn(),
     };
 
-    wrapper = shallow(<PageCreatePost history={mockHistory} classes={{}} />);
+    wrapper = shallow(
+      <PageCreatePost history={mockHistory} classes={{}} user={{}} />,
+    );
   });
 
   test('renders submit button', () => {

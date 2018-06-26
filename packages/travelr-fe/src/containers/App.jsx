@@ -26,6 +26,9 @@ class App extends React.Component {
   renderPageCreatePost = itemProps => (
     <PageCreatePost {...itemProps} {...this.props} />
   );
+  renderPageViewPost = itemProps => (
+    <PageViewPost {...itemProps} {...this.props} />
+  );
 
   render() {
     return (
@@ -44,7 +47,7 @@ class App extends React.Component {
                 component={this.renderPageCreatePost}
               />
               <Route path="/post/:postId/edit" component={PageEditPost} />
-              <Route path="/post/:postId" component={PageViewPost} />
+              <Route path="/post/:postId" component={this.renderPageViewPost} />
               <Route path="/account/posts" component={PageManagePosts} />
               <Route path="/account" exact component={PageManageAccount} />
             </Switch>

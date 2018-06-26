@@ -39,7 +39,7 @@ describe('PageViewPost component', () => {
   beforeEach(() => {
     fetch.resetMocks();
 
-    wrapper = shallow(<PageViewPost classes={{}} match={match} />);
+    wrapper = shallow(<PageViewPost classes={{}} match={match} user={{}} />);
     wrapper.setState({
       post: dummyPost,
     });

@@ -12,10 +12,10 @@ import config from '../config';
 const propTypes = {
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  token: PropTypes.string,
+  user: PropTypes.object.isRequired,
 };
 
-const defaultProps = { token: null };
+const defaultProps = {};
 
 const styles = theme => ({
   root: {
@@ -106,7 +106,7 @@ export class PageCreatePost extends React.Component {
       const response = await fetch(`${config.apiUrl}posts`, {
         method: 'POST',
         headers: {
-          authorization: this.props.token,
+          authorization: this.props.user.token,
         },
         body: JSON.stringify(post),
       });
