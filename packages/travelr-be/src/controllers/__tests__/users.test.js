@@ -164,3 +164,32 @@ describe('DELETE /users/:userId', () => {
     expect(res.status).toBe(200);
   });
 });
+
+describe('GET /users/token', () => {
+  const baseRequest = () => request(app).get(`/users/token`);
+
+  test('returns 401 if user is not authorized', async () => {
+    const res = await baseRequest();
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 400 and message if user is not found', async () => {
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
+
+    expect(res.status).toBe(400);
+    expect(res.text).toBe('user not found');
+  });
+
+  test('returns 200 and valid body if user is found', async () => {
+    await createDummyUser();
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('userId');
+    expect(res.body).toHaveProperty('displayName');
+    expect(res.body).toHaveProperty('isAdmin');
+    expect(res.body).toHaveProperty('earnedLikes');
+    expect(res.body).toHaveProperty('earnedComments');
+    expect(res.body).toHaveProperty('earnedViews');
+  });
+});
