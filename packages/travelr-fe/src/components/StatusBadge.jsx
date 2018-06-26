@@ -6,17 +6,25 @@ import React from 'react';
 import IconLike from '../icons/like.svg';
 
 const propTypes = {
-  icon: PropTypes.string.isRequired,
   count: PropTypes.number.isRequired,
+  // true: space-between, false: flex-start
+  dense: PropTypes.bool,
+  icon: PropTypes.string.isRequired,
+  // margin between icon and count. only works if 'dense' is true
+  iconMargin: PropTypes.number,
+  noBorder: PropTypes.bool,
   size: PropTypes.oneOf(['small', 'normal']),
 };
 
 const defaultProps = {
+  dense: false,
+  iconMargin: 4,
+  noBorder: false,
   size: 'normal',
 };
 
 function StatusBadge(props) {
-  const { icon, count, size } = props;
+  const { icon, count, size, noBorder, iconMargin, dense } = props;
 
   const isNormalSize = size === 'normal';
 
@@ -37,28 +45,27 @@ function StatusBadge(props) {
     icon: {
       display: 'block',
       height: 8,
-      marginRight: 4,
+      marginRight: iconMargin,
     },
   };
 
   const stylesNormalSize = {
     root: {
       alignItems: 'center',
-      backgroundColor: 'white',
-      border: '1px solid gray',
+      border: noBorder ? null : '1px solid gray',
       borderRadius: 8,
       display: 'flex',
-      justifyContent: 'space-between',
+      justifyContent: dense ? 'flex-start' : 'space-between',
       paddingBottom: 4,
       paddingLeft: 8,
       paddingRight: 8,
       paddingTop: 4,
-      width: '100%',
     },
     icon: {
       display: 'block',
       height: 24,
       width: 24,
+      marginRight: iconMargin,
     },
   };
 
