@@ -223,7 +223,7 @@ exports.getPost = async (req, res, next) => {
 
     // get comments
     const comments = await db.manyOrNone(
-      'SELECT * FROM get_comments WHERE post_id = $1',
+      'SELECT * FROM get_comments WHERE post_id = $1 ORDER BY datetime DESC',
       postId,
     );
 
