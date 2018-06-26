@@ -45,3 +45,5 @@ globals:
   google:
   MarkerClusterer:
   navigator:
+  alert:
+  confirm:
