@@ -1,4 +1,5 @@
 import CssBaseline from '@material-ui/core/CssBaseline'; // normalize styles
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -15,7 +16,15 @@ import PageManagePosts from '../components/PageManagePosts';
 import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
 
+const propTypes = {
+  fetchUserInfo: PropTypes.func.isRequired,
+};
+
 class App extends React.Component {
+  componentDidMount = () => {
+    this.props.fetchUserInfo('dummy_token'); // TODO: get from local storage
+  };
+
   // these lines are inevitable.
   // inline functions shouldn't be used as Route's 'component' params.
   // this causes unexpected component unmount everytime props changes.
@@ -57,6 +66,8 @@ class App extends React.Component {
     );
   }
 }
+
+App.propTypes = propTypes;
 
 // map everything to props
 const mapStateToProps = state => state;

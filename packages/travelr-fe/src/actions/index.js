@@ -57,4 +57,31 @@ actions.fetchAllPosts = (criterion = {}) => async dispatch => {
   }
 };
 
+actions.fetchUserInfo = token => async dispatch => {
+  try {
+    const response = await fetch(`${config.apiUrl}users/token`, {
+      headers: {
+        authorization: token,
+      },
+    });
+
+    if (!response.ok) {
+      dispatch({
+        type: types.FETCH_USER_INFO_FAIL, // TODO: toast
+      });
+      return;
+    }
+
+    const userInfo = await response.json();
+    dispatch({
+      type: types.FETCH_USER_INFO_SUCCESS,
+      payload: { ...userInfo, token },
+    });
+  } catch (err) {
+    dispatch({
+      type: types.FETCH_USER_INFO_FAIL, // TODO: toast
+    });
+  }
+};
+
 export default actions;

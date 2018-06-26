@@ -83,4 +83,59 @@ describe('actions', () => {
       });
     });
   });
+
+  describe('fetchUserInfo', () => {
+    test('generates correct url', async () => {
+      fetch.mockResponse();
+
+      const DUMMY_TOKEN = 'dummy_token';
+
+      const thunk = actions.fetchUserInfo(DUMMY_TOKEN);
+      const mockDispatch = jest.fn();
+      await thunk(mockDispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOptions = fetch.mock.calls[0][1];
+      expect(fetchUrl).toContain('/users/token');
+      expect(fetchOptions.headers.authorization).toBe(DUMMY_TOKEN);
+    });
+
+    test('makes correct action when success', async () => {
+      const DUMMY_TOKEN = 'dummy_token';
+      const DUMMY_RESPONSE = {
+        userId: 'aa',
+        displayName: 'bb',
+        isAdmin: false,
+        token: DUMMY_TOKEN,
+        earnedLikes: 1,
+        earnedComments: 2,
+        earnedViews: 3,
+      };
+
+      fetch.mockResponse(JSON.stringify(DUMMY_RESPONSE));
+
+      const thunk = actions.fetchUserInfo(DUMMY_TOKEN);
+      const mockDispatch = jest.fn();
+      await thunk(mockDispatch);
+
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.FETCH_USER_INFO_SUCCESS,
+        payload: DUMMY_RESPONSE,
+      });
+    });
+
+    test('makes correct action when fail', async () => {
+      fetch.mockReject();
+
+      const DUMMY_TOKEN = 'dummy_token';
+
+      const thunk = actions.fetchUserInfo(DUMMY_TOKEN);
+      const mockDispatch = jest.fn();
+      await thunk(mockDispatch);
+
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.FETCH_USER_INFO_FAIL,
+      });
+    });
+  });
 });
