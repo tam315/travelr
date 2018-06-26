@@ -38,6 +38,9 @@ class App extends React.Component {
   renderPageViewPost = itemProps => (
     <PageViewPost {...itemProps} {...this.props} />
   );
+  renderPageManagePosts = itemProps => (
+    <PageManagePosts {...itemProps} {...this.props} />
+  );
   renderPageManageAccount = itemProps => (
     <PageManageAccount {...itemProps} {...this.props} />
   );
@@ -60,7 +63,10 @@ class App extends React.Component {
               />
               <Route path="/post/:postId/edit" component={PageEditPost} />
               <Route path="/post/:postId" component={this.renderPageViewPost} />
-              <Route path="/account/posts" component={PageManagePosts} />
+              <Route
+                path="/account/posts"
+                component={this.renderPageManagePosts}
+              />
               <Route
                 path="/account"
                 exact
