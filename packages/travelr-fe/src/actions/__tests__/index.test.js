@@ -138,4 +138,102 @@ describe('actions', () => {
       });
     });
   });
+
+  describe('updateUserInfo', () => {
+    const DUMMY_USER = {
+      userId: 'aa',
+      displayName: 'bb',
+      isAdmin: false,
+      token: 'cc',
+    };
+    const DUMMY_NEW_USER_INFO = {
+      displayName: 'dd',
+    };
+
+    test('make a correct fetch and action if success', async () => {
+      fetch.mockResponse();
+
+      const thunk = actions.updateUserInfo(DUMMY_USER, DUMMY_NEW_USER_INFO);
+      const mockDispatch = jest.fn();
+      await thunk(mockDispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOptions = fetch.mock.calls[0][1];
+
+      // make a correct fetch
+      expect(fetchUrl).toContain(`/users/${DUMMY_USER.userId}`);
+      expect(fetchOptions.headers.authorization).toBe(DUMMY_USER.token);
+      expect(fetchOptions.method).toBe('PUT');
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.UPDATE_USER_INFO_SUCCESS,
+        payload: DUMMY_NEW_USER_INFO,
+      });
+    });
+
+    test('make a correct action if fail', async () => {
+      fetch.mockReject();
+
+      const thunk = actions.updateUserInfo(DUMMY_USER, DUMMY_NEW_USER_INFO);
+      const mockDispatch = jest.fn();
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.UPDATE_USER_INFO_FAIL,
+      });
+    });
+  });
+
+  describe('deleteUser', () => {
+    const DUMMY_USER = {
+      userId: 'aa',
+      displayName: 'bb',
+      isAdmin: false,
+      token: 'cc',
+    };
+
+    test('make a correct fetch and action if success', async () => {
+      fetch.mockResponse();
+
+      const mockCallback = jest.fn();
+      const mockDispatch = jest.fn();
+      const thunk = actions.deleteUser(DUMMY_USER, mockCallback);
+      await thunk(mockDispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOptions = fetch.mock.calls[0][1];
+
+      // make a correct fetch
+      expect(fetchUrl).toContain(`/users/${DUMMY_USER.userId}`);
+      expect(fetchOptions.headers.authorization).toBe(DUMMY_USER.token);
+      expect(fetchOptions.method).toBe('DELETE');
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.DELETE_USER_SUCCESS,
+      });
+
+      // callback called
+      expect(mockCallback).toBeCalled();
+    });
+
+    test('make a correct action if fail', async () => {
+      fetch.mockReject();
+
+      const mockCallback = jest.fn();
+      const mockDispatch = jest.fn();
+      const thunk = actions.deleteUser(DUMMY_USER, mockCallback);
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.DELETE_USER_FAIL,
+      });
+
+      // callback shouldn't called
+      expect(mockCallback).not.toBeCalled();
+    });
+  });
 });

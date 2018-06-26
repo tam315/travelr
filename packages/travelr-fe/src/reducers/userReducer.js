@@ -19,6 +19,17 @@ export default (state = INITIAL_STATE, action) => {
         isAdmin,
       };
     }
+    case types.UPDATE_USER_INFO_SUCCESS: {
+      const { displayName } = action.payload;
+
+      return {
+        ...state,
+        displayName,
+      };
+    }
+    case types.DELETE_USER_SUCCESS: {
+      return INITIAL_STATE;
+    }
     default:
       return state;
   }

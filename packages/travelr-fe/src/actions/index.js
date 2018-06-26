@@ -84,4 +84,62 @@ actions.fetchUserInfo = token => async dispatch => {
   }
 };
 
+actions.updateUserInfo = (user, newUserInfo) => async dispatch => {
+  const { userId, token } = user;
+  const { displayName } = newUserInfo;
+  try {
+    const response = await fetch(`${config.apiUrl}users/${userId}`, {
+      method: 'PUT',
+      headers: {
+        authorization: token,
+      },
+      body: JSON.stringify({ displayName }),
+    });
+
+    if (!response.ok) {
+      dispatch({
+        type: types.UPDATE_USER_INFO_FAIL, // TODO: toast
+      });
+      return;
+    }
+
+    dispatch({
+      type: types.UPDATE_USER_INFO_SUCCESS, // TODO: toast
+      payload: { displayName },
+    });
+  } catch (err) {
+    dispatch({
+      type: types.UPDATE_USER_INFO_FAIL, // TODO: toast
+    });
+  }
+};
+
+actions.deleteUser = (user, callback) => async dispatch => {
+  const { userId, token } = user;
+  try {
+    const response = await fetch(`${config.apiUrl}users/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        authorization: token,
+      },
+    });
+
+    if (!response.ok) {
+      dispatch({
+        type: types.DELETE_USER_FAIL, // TODO: toast
+      });
+      return;
+    }
+
+    dispatch({
+      type: types.DELETE_USER_SUCCESS, // TODO: toast
+    });
+    callback();
+  } catch (err) {
+    dispatch({
+      type: types.DELETE_USER_FAIL, // TODO: toast
+    });
+  }
+};
+
 export default actions;
