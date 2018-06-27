@@ -16,12 +16,17 @@ import IconSelectAll from '@material-ui/icons/SelectAll';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import config from '../config';
 import StatusBadge from './StatusBadge';
 
 const propTypes = {
   classes: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
+  posts: PropTypes.object.isRequired,
+  fetchMyPosts: PropTypes.func.isRequired,
+  deleteMyPosts: PropTypes.func.isRequired,
+  selectMyPosts: PropTypes.func.isRequired,
+  selectMyPostsAll: PropTypes.func.isRequired,
+  selectMyPostsReset: PropTypes.func.isRequired,
 };
 
 const defaultProps = {};
@@ -66,103 +71,45 @@ export class PageManagePosts extends React.Component {
 
     this.state = {
       menuAnchorElement: null,
-      posts: [],
-      checkedPostIds: [],
     };
   }
 
   componentDidMount = () => {
-    this.fetchMyPosts();
+    this.props.fetchMyPosts(this.props.user);
   };
 
   componentDidUpdate = prevProps => {
     if (prevProps.user.userId !== this.props.user.userId) {
-      this.fetchMyPosts();
+      this.props.fetchMyPosts(this.props.user);
     }
   };
 
-  onSelectAllClicked = () => {
+  onSelectMyPostsAll = () => {
     this.handleMenuClose();
-
-    const newCheckedPostIds = [];
-
-    this.state.posts.map(post => newCheckedPostIds.push(post.postId));
-    this.setState({
-      checkedPostIds: newCheckedPostIds,
-    });
+    this.props.selectMyPostsAll();
   };
 
-  onDeselectAllClicked = () => {
+  onSelectMyPostsReset = () => {
     this.handleMenuClose();
-
-    this.setState({
-      checkedPostIds: [],
-    });
+    this.props.selectMyPostsReset();
   };
 
-  onDeleteSelectedPostsClicked = () => {
+  onDeleteMyPosts = () => {
+    const {
+      user,
+      posts: { myPostsSelected },
+    } = this.props;
+
     this.handleMenuClose();
-    this.deleteMyPosts();
+    this.props.deleteMyPosts(user, myPostsSelected);
   };
 
   handleMenuClose = () => {
     this.setState({ menuAnchorElement: null });
   };
 
-  handleToggle = postId => () => {
-    const { checkedPostIds } = this.state;
-    const currentIndex = checkedPostIds.indexOf(postId);
-    const newChecked = [...checkedPostIds];
-
-    if (currentIndex === -1) {
-      newChecked.push(postId);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    this.setState({
-      checkedPostIds: newChecked,
-    });
-  };
-
   handleMenuButtonClick = event => {
     this.setState({ menuAnchorElement: event.currentTarget });
-  };
-
-  fetchMyPosts = async () => {
-    const { userId } = this.props.user;
-    try {
-      const response = await fetch(`${config.apiUrl}posts/?user_id=${userId}`);
-      if (!response.ok) {
-        // TODO: toast
-        return;
-      }
-
-      const myPosts = await response.json();
-      this.setState({ posts: myPosts });
-    } catch (err) {
-      // TODO: toast
-    }
-  };
-
-  deleteMyPosts = async () => {
-    try {
-      const response = await fetch(`${config.apiUrl}posts`, {
-        method: 'DELETE',
-        headers: { authorization: this.props.user.token },
-        body: JSON.stringify(this.state.checkedPostIds),
-      });
-
-      if (!response.ok) {
-        // TODO: toast
-        return;
-      }
-      // TODO: toast
-      this.setState({ checkedPostIds: [] });
-      await this.fetchMyPosts();
-    } catch (err) {
-      // TODO: toast
-    }
   };
 
   renderMenu = () => {
@@ -171,17 +118,17 @@ export class PageManagePosts extends React.Component {
       {
         title: 'すべて選択',
         icon: <IconSelectAll />,
-        callback: this.onSelectAllClicked,
+        callback: this.onSelectMyPostsAll,
       },
       {
         title: '選択を解除',
         icon: <IconCancel />,
-        callback: this.onDeselectAllClicked,
+        callback: this.onSelectMyPostsReset,
       },
       {
         title: '選択した投稿を削除',
         icon: <IconDelete />,
-        callback: this.onDeleteSelectedPostsClicked,
+        callback: this.onDeleteMyPosts,
       },
     ];
     return (
@@ -210,63 +157,63 @@ export class PageManagePosts extends React.Component {
   };
 
   renderPosts = () => {
-    const { classes } = this.props;
+    const {
+      classes,
+      posts: { myPosts, myPostsSelected },
+      selectMyPosts,
+    } = this.props;
 
-    if (!this.state.posts) return false;
+    if (!myPosts) return false;
 
     return (
-      <div>
-        <List>
-          <Divider />
-          {this.state.posts.map(post => (
-            <ListItem
-              key={post.postId}
-              dense
-              button
-              divider
-              component={Link}
-              to={`/post/${post.postId}`}
-            >
-              <img
-                src={post.oldImageUrl}
-                alt={post.description}
-                className={classes.image}
+      <List>
+        <Divider />
+        {myPosts.map(post => (
+          <ListItem
+            key={post.postId}
+            dense
+            button
+            divider
+            component={Link}
+            to={`/post/${post.postId}`}
+          >
+            <img
+              src={post.oldImageUrl}
+              alt={post.description}
+              className={classes.image}
+            />
+            <div className={classes.badgesContainer}>
+              <StatusBadge
+                icon="like"
+                count={post.likedCount}
+                noBorder
+                iconMargin={8}
+                dense
               />
-              <div className={classes.badgesContainer}>
-                <StatusBadge
-                  icon="like"
-                  count={post.likedCount}
-                  noBorder
-                  iconMargin={8}
-                  dense
-                />
-                <StatusBadge
-                  icon="comment"
-                  count={post.commentsCount}
-                  noBorder
-                  iconMargin={8}
-                  dense
-                />
-                <StatusBadge
-                  icon="view"
-                  count={post.viewCount}
-                  noBorder
-                  iconMargin={8}
-                  dense
-                />
-              </div>
-              <ListItemSecondaryAction>
-                <Checkbox
-                  onChange={this.handleToggle(post.postId)}
-                  checked={
-                    this.state.checkedPostIds.indexOf(post.postId) !== -1
-                  }
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
-      </div>
+              <StatusBadge
+                icon="comment"
+                count={post.commentsCount}
+                noBorder
+                iconMargin={8}
+                dense
+              />
+              <StatusBadge
+                icon="view"
+                count={post.viewCount}
+                noBorder
+                iconMargin={8}
+                dense
+              />
+            </div>
+            <ListItemSecondaryAction>
+              <Checkbox
+                onChange={() => selectMyPosts([post.postId])}
+                checked={myPostsSelected.indexOf(post.postId) !== -1}
+              />
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
+      </List>
     );
   };
 

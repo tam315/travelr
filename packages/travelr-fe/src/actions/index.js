@@ -142,4 +142,73 @@ actions.deleteUser = (user, callback) => async dispatch => {
   }
 };
 
+actions.fetchMyPosts = user => async dispatch => {
+  const { userId } = user;
+  try {
+    const response = await fetch(`${config.apiUrl}posts?user_id=${userId}`);
+    if (!response.ok) {
+      dispatch({
+        type: types.FETCH_MY_POSTS_FAIL, // TODO: toast
+      });
+      // TODO: toast
+      return;
+    }
+
+    const myPosts = await response.json();
+    dispatch({
+      type: types.FETCH_MY_POSTS_SUCCESS, // TODO: toast
+      payload: myPosts,
+    });
+  } catch (err) {
+    // TODO: toast
+    dispatch({
+      type: types.FETCH_MY_POSTS_FAIL, // TODO: toast
+    });
+  }
+};
+
+actions.deleteMyPosts = (user, postIds) => async dispatch => {
+  const { token } = user;
+
+  try {
+    const response = await fetch(`${config.apiUrl}posts`, {
+      method: 'DELETE',
+      headers: { authorization: token },
+      body: JSON.stringify(postIds),
+    });
+
+    if (!response.ok) {
+      // TODO: toast
+      dispatch({
+        type: types.DELETE_MY_POSTS_FAIL, // TODO: toast
+      });
+      return;
+    }
+
+    dispatch({
+      type: types.DELETE_MY_POSTS_SUCCESS, // TODO: toast
+      payload: postIds,
+    });
+    actions.fetchMyPosts(user)(dispatch);
+  } catch (err) {
+    // TODO: toast
+    dispatch({
+      type: types.DELETE_MY_POSTS_FAIL, // TODO: toast
+    });
+  }
+};
+
+actions.selectMyPosts = postIds => ({
+  type: types.SELECT_MY_POSTS,
+  payload: postIds,
+});
+
+actions.selectMyPostsAll = () => ({
+  type: types.SELECT_MY_POSTS_ALL,
+});
+
+actions.selectMyPostsReset = () => ({
+  type: types.SELECT_MY_POSTS_RESET,
+});
+
 export default actions;

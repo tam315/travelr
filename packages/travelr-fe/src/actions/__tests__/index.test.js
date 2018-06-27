@@ -1,6 +1,60 @@
 import actions from '../index';
 import types from '../types';
 
+const DUMMY_USER_STORE = {
+  userId: 'aa',
+  displayName: 'bb',
+  isAdmin: false,
+  token: 'cc',
+};
+
+const DUMMY_MY_POSTS_BY_API = [
+  {
+    postId: 1,
+    oldImageUrl: 'dummy_oldImageUrl',
+    newImageUrl: 'dummy_newImageUrl',
+    description: 'dummy_description',
+    shootDate: '1999-09-09',
+    lng: 'dummy_lng',
+    lat: 'dummy_lat',
+    viewCount: 100,
+    displayName: 'dummy_displayName',
+    likedCount: 101,
+    commentsCount: 102,
+    comments: [
+      {
+        commentId: 123,
+        userId: 456,
+        datetime: new Date('1985-03-31').toISOString(),
+        comment: 'dummy_comment',
+      },
+    ],
+  },
+  {
+    postId: 2,
+    oldImageUrl: 'dummy_oldImageUrl',
+    newImageUrl: 'dummy_newImageUrl',
+    description: 'dummy_description',
+    shootDate: '1999-09-09',
+    lng: 'dummy_lng',
+    lat: 'dummy_lat',
+    viewCount: 200,
+    displayName: 'dummy_displayName',
+    likedCount: 201,
+    commentsCount: 202,
+    comments: [
+      {
+        commentId: 123,
+        userId: 456,
+        datetime: new Date('1985-03-31').toISOString(),
+        comment: 'dummy_comment',
+      },
+    ],
+  },
+];
+
+const DUMMY_POSTS_IDS = DUMMY_MY_POSTS_BY_API.map(post => post.postId);
+
 beforeEach(() => {
   fetch.resetMocks();
 });
@@ -140,12 +194,6 @@ describe('actions', () => {
   });
 
   describe('updateUserInfo', () => {
-    const DUMMY_USER = {
-      userId: 'aa',
-      displayName: 'bb',
-      isAdmin: false,
-      token: 'cc',
-    };
     const DUMMY_NEW_USER_INFO = {
       displayName: 'dd',
     };
@@ -153,7 +201,10 @@ describe('actions', () => {
     test('make a correct fetch and action if success', async () => {
       fetch.mockResponse();
 
-      const thunk = actions.updateUserInfo(DUMMY_USER, DUMMY_NEW_USER_INFO);
+      const thunk = actions.updateUserInfo(
+        DUMMY_USER_STORE,
+        DUMMY_NEW_USER_INFO,
+      );
       const mockDispatch = jest.fn();
       await thunk(mockDispatch);
 
@@ -161,8 +212,8 @@ describe('actions', () => {
       const fetchOptions = fetch.mock.calls[0][1];
 
       // make a correct fetch
-      expect(fetchUrl).toContain(`/users/${DUMMY_USER.userId}`);
-      expect(fetchOptions.headers.authorization).toBe(DUMMY_USER.token);
+      expect(fetchUrl).toContain(`/users/${DUMMY_USER_STORE.userId}`);
+      expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
       expect(fetchOptions.method).toBe('PUT');
 
       // make a correct action
@@ -175,7 +226,10 @@ describe('actions', () => {
     test('make a correct action if fail', async () => {
       fetch.mockReject();
 
-      const thunk = actions.updateUserInfo(DUMMY_USER, DUMMY_NEW_USER_INFO);
+      const thunk = actions.updateUserInfo(
+        DUMMY_USER_STORE,
+        DUMMY_NEW_USER_INFO,
+      );
       const mockDispatch = jest.fn();
       await thunk(mockDispatch);
 
@@ -234,6 +288,122 @@ describe('actions', () => {
 
       // callback shouldn't called
       expect(mockCallback).not.toBeCalled();
+    });
+  });
+
+  describe('fetchMyPosts', () => {
+    test('generate a correct url', async () => {
+      fetch.mockResponse();
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+      await thunk(mockDispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+
+      // make a correct fetch
+      expect(fetchUrl).toContain(`/posts?user_id=${DUMMY_USER_STORE.userId}`);
+    });
+
+    test('make a correct action if test succeed', async () => {
+      fetch.mockResponse(JSON.stringify(DUMMY_MY_POSTS_BY_API));
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.FETCH_MY_POSTS_SUCCESS,
+        payload: DUMMY_MY_POSTS_BY_API,
+      });
+    });
+
+    test('make a correct action if test failed', async () => {
+      fetch.mockReject();
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.FETCH_MY_POSTS_FAIL,
+      });
+    });
+  });
+
+  describe('deleteMyPosts', () => {
+    test('generate a correct url', async () => {
+      fetch.mockResponse();
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.deleteMyPosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
+      await thunk(mockDispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOptions = fetch.mock.calls[0][1];
+      const body = JSON.parse(fetchOptions.body);
+
+      // make a correct fetch
+      expect(fetchUrl).toContain('/posts');
+      expect(fetchOptions.method).toBe('DELETE');
+      expect(body).toEqual(DUMMY_POSTS_IDS);
+    });
+
+    test('make a correct action if test succeed', async () => {
+      fetch.mockResponse();
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.deleteMyPosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.DELETE_MY_POSTS_SUCCESS,
+        payload: DUMMY_POSTS_IDS,
+      });
+    });
+
+    test('make a correct action if test failed', async () => {
+      fetch.mockReject();
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.deleteMyPosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.DELETE_MY_POSTS_FAIL,
+      });
+    });
+  });
+
+  describe('selectMyPosts', () => {
+    test('make a correct action if success', () => {
+      const action = actions.selectMyPosts(DUMMY_POSTS_IDS);
+      expect(action).toEqual({
+        type: types.SELECT_MY_POSTS,
+        payload: DUMMY_POSTS_IDS,
+      });
+    });
+  });
+
+  describe('selectMyPostsAll', () => {
+    test('make a correct action if success', () => {
+      const action = actions.selectMyPostsAll();
+      expect(action).toEqual({
+        type: types.SELECT_MY_POSTS_ALL,
+      });
+    });
+  });
+
+  describe('selectMyPostsReset', () => {
+    test('make a correct action if success', () => {
+      const action = actions.selectMyPostsReset();
+      expect(action).toEqual({
+        type: types.SELECT_MY_POSTS_RESET,
+      });
     });
   });
 });
