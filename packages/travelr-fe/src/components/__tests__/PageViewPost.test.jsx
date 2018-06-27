@@ -1,8 +1,9 @@
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 import { shallow } from 'enzyme';
 import React from 'react';
 import ReactCompareImage from 'react-compare-image';
+import { DUMMY_POSTS } from '../../config/dummies';
 import { PageViewPost } from '../PageViewPost';
 import StatusBadge from '../StatusBadge';
 
@@ -12,26 +13,7 @@ jest.mock('../StatusBadge');
 const match = { params: { postId: 12345 } };
 
 // dummy data from the API
-const dummyPost = {
-  oldImageUrl: 'dummy_oldImageUrl',
-  newImageUrl: 'dummy_newImageUrl',
-  description: 'dummy_description',
-  shootDate: '1999-09-09',
-  lng: 'dummy_lng',
-  lat: 'dummy_lat',
-  viewCount: 'dummy_viewCount',
-  displayName: 'dummy_displayName',
-  likedCount: 'dummy_likedCount',
-  commentsCount: 'dummy_commentsCount',
-  comments: [
-    {
-      commentId: 123,
-      userId: 456,
-      datetime: new Date('1985-03-31'),
-      comment: 'dummy_comment',
-    },
-  ],
-};
+const DUMMY_POST = DUMMY_POSTS[0];
 
 describe('PageViewPost component', () => {
   let wrapper;
@@ -41,7 +23,7 @@ describe('PageViewPost component', () => {
 
     wrapper = shallow(<PageViewPost classes={{}} match={match} user={{}} />);
     wrapper.setState({
-      post: dummyPost,
+      post: DUMMY_POST,
     });
   });
 
@@ -61,26 +43,26 @@ describe('PageViewPost component', () => {
         .find(Typography)
         .at(0)
         .html(),
-    ).toContain(dummyPost.displayName);
+    ).toContain(DUMMY_POST.displayName);
     // description
     expect(
       wrapper
         .find(Typography)
         .at(1)
         .html(),
-    ).toContain(dummyPost.description);
+    ).toContain(DUMMY_POST.description);
     // shootDate
     expect(
       wrapper
         .find(Typography)
         .at(2)
         .html(),
-    ).toContain(dummyPost.shootDate);
+    ).toContain(DUMMY_POST.shootDate);
     // comment writing form
     expect(wrapper.find({ placeholder: 'コメントを書く' })).toHaveLength(1);
     // comments
     expect(wrapper.find({ className: 'comment' }).html()).toContain(
-      dummyPost.comments[0].comment,
+      DUMMY_POST.comments[0].comment,
     );
   });
 

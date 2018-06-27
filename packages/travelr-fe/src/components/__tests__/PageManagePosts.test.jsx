@@ -4,61 +4,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import MenuItem from '@material-ui/core/MenuItem';
 import { shallow } from 'enzyme';
 import React from 'react';
+import { DUMMY_POSTS, DUMMY_USER_STORE } from '../../config/dummies';
 import { PageManagePosts } from '../PageManagePosts';
 
 describe('PageManagePosts component', () => {
-  const DUMMY_USER = {
-    userId: 'aaa',
-    displayName: 'bbb',
-    isAdmin: false,
-    token: 'ccc',
-  };
-
-  const DUMMY_MY_POSTS = [
-    {
-      postId: 1,
-      oldImageUrl: 'dummy_oldImageUrl',
-      newImageUrl: 'dummy_newImageUrl',
-      description: 'dummy_description',
-      shootDate: '1999-09-09',
-      lng: 'dummy_lng',
-      lat: 'dummy_lat',
-      viewCount: 100,
-      displayName: 'dummy_displayName',
-      likedCount: 101,
-      commentsCount: 102,
-      comments: [
-        {
-          commentId: 123,
-          userId: 456,
-          datetime: new Date('1985-03-31'),
-          comment: 'dummy_comment',
-        },
-      ],
-    },
-    {
-      postId: 2,
-      oldImageUrl: 'dummy_oldImageUrl',
-      newImageUrl: 'dummy_newImageUrl',
-      description: 'dummy_description',
-      shootDate: '1999-09-09',
-      lng: 'dummy_lng',
-      lat: 'dummy_lat',
-      viewCount: 200,
-      displayName: 'dummy_displayName',
-      likedCount: 201,
-      commentsCount: 202,
-      comments: [
-        {
-          commentId: 123,
-          userId: 456,
-          datetime: new Date('1985-03-31'),
-          comment: 'dummy_comment',
-        },
-      ],
-    },
-  ];
-
   let mock;
   let wrapper;
 
@@ -78,8 +27,8 @@ describe('PageManagePosts component', () => {
 
     wrapper = shallow(
       <PageManagePosts
-        user={DUMMY_USER}
-        posts={{ myPosts: DUMMY_MY_POSTS, myPostsSelected: [] }}
+        user={DUMMY_USER_STORE}
+        posts={{ myPosts: DUMMY_POSTS, myPostsSelected: [] }}
         classes={{}}
         fetchMyPosts={mock.actions.fetchMyPosts}
         deleteMyPosts={mock.actions.deleteMyPosts}
@@ -153,12 +102,12 @@ describe('PageManagePosts component', () => {
   test('selectMyPosts() called when a checkbox is clicked', () => {
     wrapper
       .find(Checkbox)
-      .at(0)
+      .at(2)
       .simulate('change');
 
     expect(mock.actions.selectMyPosts).toHaveBeenCalledTimes(1);
     expect(mock.actions.selectMyPosts).toHaveBeenCalledWith([
-      DUMMY_MY_POSTS[0].postId,
+      DUMMY_POSTS[2].postId,
     ]);
   });
 
@@ -167,6 +116,6 @@ describe('PageManagePosts component', () => {
       wrapper
         .find(ListItem)
         .filterWhere(node => node.prop('to').includes('/post/')),
-    ).toHaveLength(DUMMY_MY_POSTS.length);
+    ).toHaveLength(DUMMY_POSTS.length);
   });
 });

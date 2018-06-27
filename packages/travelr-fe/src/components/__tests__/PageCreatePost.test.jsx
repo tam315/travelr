@@ -3,9 +3,9 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import { PageCreatePost } from '../PageCreatePost';
 
-const DUMMY_POST_ID = 12345;
+const DUMMY_POST_ID_CREATED = 12345;
 
-const DUMMY_POST_DATA = {
+const DUMMY_POST_DATA_TO_CREATE = {
   oldImageFilePath: 'dummy',
   newImageFilePath: 'dummy',
   description: 'dummy_description',
@@ -46,8 +46,8 @@ describe('PageCreatePost component', () => {
   });
 
   test('submit data if the content is OK', async () => {
-    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_ID }));
-    wrapper.setState(DUMMY_POST_DATA);
+    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_ID_CREATED }));
+    wrapper.setState(DUMMY_POST_DATA_TO_CREATE);
     wrapper
       .find(Button)
       .last()
@@ -60,26 +60,32 @@ describe('PageCreatePost component', () => {
     expect(fetch).toBeCalled();
     expect(fetchUrl).toContain('/posts');
     expect(fetchOptions.method).toBe('POST');
-    expect(body.description).toEqual(DUMMY_POST_DATA.description);
-    expect(body.shootDate).toEqual(DUMMY_POST_DATA.shootDate);
-    expect(body.lng).toEqual(DUMMY_POST_DATA.lng);
-    expect(body.lat).toEqual(DUMMY_POST_DATA.lat);
+    expect(body.description).toEqual(DUMMY_POST_DATA_TO_CREATE.description);
+    expect(body.shootDate).toEqual(DUMMY_POST_DATA_TO_CREATE.shootDate);
+    expect(body.lng).toEqual(DUMMY_POST_DATA_TO_CREATE.lng);
+    expect(body.lat).toEqual(DUMMY_POST_DATA_TO_CREATE.lat);
     setTimeout(
-      () => expect(mockHistory.push).toBeCalledWith(`/post/${DUMMY_POST_ID}`),
+      () =>
+        expect(mockHistory.push).toBeCalledWith(
+          `/post/${DUMMY_POST_ID_CREATED}`,
+        ),
       1,
     );
   });
 
   test('navigete to post page if success', async () => {
-    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_ID }));
-    wrapper.setState(DUMMY_POST_DATA);
+    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_ID_CREATED }));
+    wrapper.setState(DUMMY_POST_DATA_TO_CREATE);
     wrapper
       .find(Button)
       .last()
       .simulate('click');
 
     setTimeout(
-      () => expect(mockHistory.push).toBeCalledWith(`/post/${DUMMY_POST_ID}`),
+      () =>
+        expect(mockHistory.push).toBeCalledWith(
+          `/post/${DUMMY_POST_ID_CREATED}`,
+        ),
       1,
     );
   });

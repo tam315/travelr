@@ -1,14 +1,10 @@
 import GridListTile from '@material-ui/core/GridListTile';
 import { shallow } from 'enzyme';
 import React from 'react';
+import { DUMMY_POSTS } from '../../config/dummies';
 import PageViewPostsGrid from '../PageViewPostsGrid';
 
 jest.mock('react-router-dom');
-
-const DUMMY_POSTS = [
-  { postId: 1, likedCount: 888 },
-  { postId: 2, likedCount: 999 },
-];
 
 describe('PageViewPostsGrid component', () => {
   let wrapper;
@@ -20,7 +16,7 @@ describe('PageViewPostsGrid component', () => {
   });
 
   test('shows tiles', () => {
-    expect(wrapper.find(GridListTile)).toHaveLength(2);
+    expect(wrapper.find(GridListTile)).toHaveLength(DUMMY_POSTS.length);
   });
 
   test('shows StatusBadges', () => {

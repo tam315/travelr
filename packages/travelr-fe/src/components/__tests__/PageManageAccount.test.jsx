@@ -4,6 +4,7 @@ import IconDone from '@material-ui/icons/Done';
 import IconEdit from '@material-ui/icons/Edit';
 import { shallow } from 'enzyme';
 import React from 'react';
+import { DUMMY_USER_STORE } from '../../config/dummies';
 import { PageManageAccount } from '../PageManageAccount';
 
 describe('PageManageAccount component', () => {
@@ -15,13 +16,6 @@ describe('PageManageAccount component', () => {
     history: { push: jest.fn() },
   };
 
-  const DUMMY_USER = {
-    userId: 'aaa',
-    displayName: 'bbb',
-    isAdmin: false,
-    token: 'ccc',
-  };
-
   let wrapper;
 
   beforeEach(() => {
@@ -30,7 +24,7 @@ describe('PageManageAccount component', () => {
         updateUserInfo={mock.actions.updateUserInfo}
         deleteUser={mock.actions.deleteUser}
         history={mock.history}
-        user={DUMMY_USER}
+        user={DUMMY_USER_STORE}
         classes={{}}
       />,
     );
@@ -43,12 +37,14 @@ describe('PageManageAccount component', () => {
         .find({ variant: 'subheading' })
         .children()
         .text(),
-    ).toBe(DUMMY_USER.displayName);
+    ).toBe(DUMMY_USER_STORE.displayName);
   });
 
   test('shows editable displayName after edit button is clicked', () => {
     wrapper.find(IconEdit).simulate('click');
-    expect(wrapper.find(Input).prop('value')).toBe(DUMMY_USER.displayName);
+    expect(wrapper.find(Input).prop('value')).toBe(
+      DUMMY_USER_STORE.displayName,
+    );
   });
 
   test('invoke updateUserInfo() after finish edit button is clicked', () => {

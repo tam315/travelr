@@ -1,5 +1,6 @@
 import postsReducer from '../postsReducer';
 import types from '../../actions/types';
+import { DUMMY_POSTS, DUMMY_POSTS_IDS } from '../../config/dummies';
 
 const INITIAL_STATE = {
   all: [],
@@ -8,9 +9,6 @@ const INITIAL_STATE = {
   myPostsSelected: [],
   currentPost: {},
 };
-
-const DUMMY_POSTS = [{ postId: 1 }, { postId: 2 }, { postId: 3 }];
-const DUMMY_POSTS_IDS = DUMMY_POSTS.map(post => post.postId);
 
 describe('posts reducer', () => {
   test('FETCH_ALL_POSTS_SUCCESS', () => {

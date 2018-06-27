@@ -1,20 +1,14 @@
 import { mount } from 'enzyme';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import PageViewPostsMap from '../PageViewPostsMap';
+import { DUMMY_POSTS } from '../../config/dummies';
 import MapsHelper from '../../utils/MapsHelper';
+import PageViewPostsMap from '../PageViewPostsMap';
 
 jest.mock('../../utils/MapsHelper');
 
-const DUMMY_POSTS = [
-  { postId: 1, likedCount: 888 },
-  { postId: 2, likedCount: 999 },
-];
-
-const DUMMY_POSTS_UPDATED = [
-  { postId: 3, likedCount: 888 },
-  { postId: 4, likedCount: 999 },
-];
+const DUMMY_POSTS_ORIGINAL = DUMMY_POSTS.slice(0, -2);
+const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
 
 let wrapper;
 let mockPlacePostsFunc;
@@ -28,7 +22,7 @@ describe('PageViewPostsMap component', () => {
 
     wrapper = mount(
       <BrowserRouter>
-        <PageViewPostsMap posts={DUMMY_POSTS} classes={{}} />
+        <PageViewPostsMap posts={DUMMY_POSTS_ORIGINAL} classes={{}} />
       </BrowserRouter>,
     );
   });
