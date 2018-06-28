@@ -406,4 +406,13 @@ describe('actions', () => {
       });
     });
   });
+
+  describe('reduceSnackbarQueue', () => {
+    test('make a correct action', () => {
+      const action = actions.reduceSnackbarQueue();
+      expect(action).toEqual({
+        type: types.REDUCE_SNACKBAR_QUEUE,
+      });
+    });
+  });
 });

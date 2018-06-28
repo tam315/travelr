@@ -211,4 +211,8 @@ actions.selectMyPostsReset = () => ({
   type: types.SELECT_MY_POSTS_RESET,
 });
 
+actions.reduceSnackbarQueue = () => ({
+  type: types.REDUCE_SNACKBAR_QUEUE,
+});
+
 export default actions;

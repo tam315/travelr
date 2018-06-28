@@ -15,6 +15,7 @@ import PageManageAccount from '../components/PageManageAccount';
 import PageManagePosts from '../components/PageManagePosts';
 import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
+import SnackbarService from '../components/SnackbarService';
 
 const propTypes = {
   fetchUserInfo: PropTypes.func.isRequired,
@@ -49,6 +50,7 @@ class App extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
+        <SnackbarService {...this.props} />
         <BrowserRouter>
           <React.Fragment>
             <Header {...this.props} />
