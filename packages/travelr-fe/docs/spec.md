@@ -30,3 +30,4 @@
   - add 'setupTestFrameworkScriptFile' to package.json
   - jest-fetch-mock https://github.com/jefflau/jest-fetch-mock
   - moduleNameMapper (for stub SVG files)
+- flow
