@@ -5,7 +5,8 @@
     "build": "rimraf ./dist && cpx \"./public/**/*\" ./dist && webpack --config webpack.config.js",
     "serve": "webpack-serve ./webpack.config.js",
     "test": "jest --watch",
-    "lint": "eslint --ext .js,.jsx ./src"
+    "lint": "eslint --ext .js,.jsx ./src",
+    "resetflow": "flow stop && flow"
   },
   "author": "",
   "license": "ISC",
