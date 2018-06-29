@@ -307,12 +307,12 @@ describe('actions', () => {
     });
   });
 
-  describe('deleteMyPosts', () => {
+  describe('deletePosts', () => {
     test('generate a correct url', async () => {
       fetch.mockResponse();
 
       const mockDispatch = jest.fn();
-      const thunk = actions.deleteMyPosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
+      const thunk = actions.deletePosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
       await thunk(mockDispatch);
 
       const fetchUrl = fetch.mock.calls[0][0];
@@ -329,7 +329,7 @@ describe('actions', () => {
       fetch.mockResponse();
 
       const mockDispatch = jest.fn();
-      const thunk = actions.deleteMyPosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
+      const thunk = actions.deletePosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
       await thunk(mockDispatch);
 
       // make a correct action
@@ -343,7 +343,7 @@ describe('actions', () => {
       fetch.mockReject();
 
       const mockDispatch = jest.fn();
-      const thunk = actions.deleteMyPosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
+      const thunk = actions.deletePosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
       await thunk(mockDispatch);
 
       // make a correct action

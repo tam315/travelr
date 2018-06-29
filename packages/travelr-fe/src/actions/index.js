@@ -218,7 +218,7 @@ actions.fetchMyPosts = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   }
 };
 
-actions.deleteMyPosts = (user: UserStore, postIds: Array<number>) => async (
+actions.deletePosts = (user: UserStore, postIds: Array<number>) => async (
   dispatch: Dispatch<any>,
 ) => {
   const { token } = user;

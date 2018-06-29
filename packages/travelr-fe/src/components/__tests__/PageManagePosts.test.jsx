@@ -22,7 +22,7 @@ describe('PageManagePosts component', () => {
     mock = {
       actions: {
         fetchMyPosts: jest.fn(),
-        deleteMyPosts: jest.fn(),
+        deletePosts: jest.fn(),
         selectMyPosts: jest.fn(),
         selectMyPostsAll: jest.fn(),
         selectMyPostsReset: jest.fn(),
@@ -36,7 +36,7 @@ describe('PageManagePosts component', () => {
         posts={DUMMY_POSTS_STORE}
         classes={{}}
         fetchMyPosts={mock.actions.fetchMyPosts}
-        deleteMyPosts={mock.actions.deleteMyPosts}
+        deletePosts={mock.actions.deletePosts}
         selectMyPosts={mock.actions.selectMyPosts}
         selectMyPostsAll={mock.actions.selectMyPostsAll}
         selectMyPostsReset={mock.actions.selectMyPostsReset}
@@ -96,12 +96,12 @@ describe('PageManagePosts component', () => {
     expect(mock.actions.selectMyPostsReset).toHaveBeenCalledTimes(1);
   });
 
-  test('deleteMyPosts() called when the menu item is clicked', () => {
+  test('deletePosts() called when the menu item is clicked', () => {
     wrapper
       .find(MenuItem)
       .at(2)
       .simulate('click');
-    expect(mock.actions.deleteMyPosts).toHaveBeenCalledTimes(1);
+    expect(mock.actions.deletePosts).toHaveBeenCalledTimes(1);
   });
 
   test('selectMyPosts() called when a checkbox is clicked', () => {

@@ -58,7 +58,7 @@ type Props = {
   user: UserStore,
   posts: PostsStore,
   fetchMyPosts: any => any,
-  deleteMyPosts(user: UserStore, postIds: Array<number>): any,
+  deletePosts(user: UserStore, postIds: Array<number>): any,
   selectMyPosts(postIds: Array<number>): any,
   selectMyPostsAll(): any,
   selectMyPostsReset(): any,
@@ -93,14 +93,14 @@ export class PageManagePosts extends React.Component<Props, State> {
     this.props.selectMyPostsReset();
   };
 
-  onDeleteMyPosts = () => {
+  onDeletePosts = () => {
     const {
       user,
       posts: { myPostsSelected },
     } = this.props;
 
     this.handleMenuClose();
-    this.props.deleteMyPosts(user, myPostsSelected);
+    this.props.deletePosts(user, myPostsSelected);
   };
 
   handleMenuClose = () => {
@@ -127,7 +127,7 @@ export class PageManagePosts extends React.Component<Props, State> {
       {
         title: '選択した投稿を削除',
         icon: <IconDelete />,
-        callback: this.onDeleteMyPosts,
+        callback: this.onDeletePosts,
       },
     ];
     return (
