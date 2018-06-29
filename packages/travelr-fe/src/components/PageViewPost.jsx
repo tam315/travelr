@@ -3,9 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import ReactCompareImage from 'react-compare-image';
-import config from '../config';
 import StatusBadge from './StatusBadge';
-import type { Post, Comment, UserStore } from '../config/types';
+import type { PostsStore, UserStore } from '../config/types';
 import type { Match } from 'react-router-dom';
 import PageViewPostComments from './PageViewPostComments';
 
@@ -33,17 +32,12 @@ type Props = {
   classes: any,
   match: Match,
   user: UserStore,
-  createComment: (user: UserStore, postId: number, comment: string) => any,
+  posts: PostsStore,
+  createComment: (user: UserStore, postId: number, comment: string) => void,
+  fetchPost: (postId: number) => void,
 };
 
-type State = {
-  post: ?Post,
-};
-
-export class PageViewPost extends React.Component<Props, State> {
-  state = {
-    post: null,
-  };
+export class PageViewPost extends React.Component<Props> {
   postId: number;
 
   constructor(props: Props) {
@@ -57,23 +51,7 @@ export class PageViewPost extends React.Component<Props, State> {
   }
 
   componentDidMount = () => {
-    this.fetchPost(this.postId); // TODO: pass userId as 2nd arg
-  };
-
-  fetchPost = async (postId: number) => {
-    try {
-      const response = await fetch(`${config.apiUrl}posts/${postId}`);
-
-      if (!response.ok) {
-        // TODO: toast
-        return;
-      }
-
-      const post = await response.json();
-      this.setState({ post });
-    } catch (err) {
-      // TODO: toast
-    }
+    this.props.fetchPost(this.postId); // TODO: pass userId as 2nd arg
   };
 
   handleChange(e: SyntheticInputEvent<HTMLElement>, stateKeyName: string) {
@@ -84,21 +62,11 @@ export class PageViewPost extends React.Component<Props, State> {
     this.props.createComment(this.props.user, this.postId, comment);
   };
 
-  renderComments = (comments: Array<Comment>): Array<React.Element<any>> =>
-    comments.map(item => (
-      <div key={item.commentId} className="comment">
-        <Typography variant="body2">{item.displayName}</Typography>
-        <Typography>{item.comment}</Typography>
-        <Typography variant="caption">
-          {new Date(item.datetime).toISOString().substr(0, 10)}
-        </Typography>
-        {/* TODO: add comment edit & delete button */}
-      </div>
-    ));
-
   render() {
     const { classes } = this.props;
-    if (!this.state.post) return <div />;
+    const { currentPost } = this.props.posts;
+
+    if (!currentPost) return <div />;
     const {
       oldImageUrl,
       newImageUrl,
@@ -111,7 +79,7 @@ export class PageViewPost extends React.Component<Props, State> {
       likedCount,
       commentsCount,
       comments,
-    } = this.state.post;
+    } = currentPost;
 
     return (
       <div className={classes.root}>

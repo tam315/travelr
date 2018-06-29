@@ -185,6 +185,7 @@ export const DUMMY_POSTS_STORE: PostsStore = {
   allFilter: DUMMY_FILTER_CRITERION,
   myPosts: DUMMY_POSTS,
   myPostsSelected: [],
+  currentPost: DUMMY_POSTS[0],
 };
 
 export const DUMMY_USER_STORE: UserStore = {

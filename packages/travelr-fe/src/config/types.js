@@ -69,6 +69,7 @@ export type PostsStore = {
   allFilter: any, // TODO specify this
   myPosts: Array<Post>,
   myPostsSelected: Array<number>,
+  currentPost: ?Post,
 };
 
 export type UserStore = {

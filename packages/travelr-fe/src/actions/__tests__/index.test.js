@@ -209,6 +209,48 @@ describe('actions', () => {
     });
   });
 
+  describe('fetchPost', () => {
+    const DUMMY_POST_ID = 123;
+
+    test('generates correct url', async () => {
+      const thunk = actions.fetchPost(DUMMY_POST_ID);
+      const mockDispatch = jest.fn();
+      await thunk(mockDispatch);
+
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(fetch.mock.calls[0][0]).toContain(`/posts/${DUMMY_POST_ID}`);
+    });
+
+    test('makes correct action when success', async () => {
+      fetch.mockResponseOnce(JSON.stringify(DUMMY_POSTS[0]));
+      const thunk = actions.fetchPost(DUMMY_POST_ID);
+      const mockDispatch = jest.fn();
+      await thunk(mockDispatch);
+
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.FETCH_POST_START,
+      });
+      expect(mockDispatch.mock.calls[1][0]).toEqual({
+        type: types.FETCH_POST_SUCCESS,
+        payload: DUMMY_POSTS[0],
+      });
+    });
+
+    test('makes correct action when fail', async () => {
+      fetch.mockReject();
+      const thunk = actions.fetchPost(DUMMY_POST_ID);
+      const mockDispatch = jest.fn();
+      await thunk(mockDispatch);
+
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.FETCH_POST_START,
+      });
+      expect(mockDispatch.mock.calls[1][0]).toEqual({
+        type: types.FETCH_POST_FAIL,
+      });
+    });
+  });
+
   describe('createPost', () => {
     let mock;
     let thunk;

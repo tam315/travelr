@@ -7,6 +7,7 @@ const INITIAL_STATE: PostsStore = {
   allFilter: {},
   myPosts: [],
   myPostsSelected: [],
+  currentPost: null,
 };
 
 const postsReducer = (
@@ -18,6 +19,16 @@ const postsReducer = (
       return {
         ...state,
         all: action.payload,
+      };
+    case actionTypes.FETCH_POST_START:
+      return {
+        ...state,
+        currentPost: null,
+      };
+    case actionTypes.FETCH_POST_SUCCESS:
+      return {
+        ...state,
+        currentPost: action.payload,
       };
     case actionTypes.FETCH_MY_POSTS_SUCCESS:
       return {

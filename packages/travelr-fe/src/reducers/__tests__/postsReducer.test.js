@@ -9,6 +9,7 @@ const INITIAL_STATE: PostsStore = {
   allFilter: {},
   myPosts: [],
   myPostsSelected: [],
+  currentPost: null,
 };
 
 describe('posts reducer', () => {
@@ -21,6 +22,38 @@ describe('posts reducer', () => {
     const expected = {
       ...INITIAL_STATE,
       all: DUMMY_POSTS,
+    };
+
+    expect(postsReducer(undefined, action)).toEqual(expected);
+  });
+
+  test('FETCH_POST_START', () => {
+    const stateHavingCurrentPost = {
+      ...INITIAL_STATE,
+      currentPost: DUMMY_POSTS[0],
+    };
+
+    const action = {
+      type: types.FETCH_POST_START,
+    };
+
+    const expected = {
+      ...INITIAL_STATE,
+      currentPost: null,
+    };
+
+    expect(postsReducer(stateHavingCurrentPost, action)).toEqual(expected);
+  });
+
+  test('FETCH_POST_SUCCESS', () => {
+    const action = {
+      type: types.FETCH_POST_SUCCESS,
+      payload: DUMMY_POSTS[0],
+    };
+
+    const expected = {
+      ...INITIAL_STATE,
+      currentPost: DUMMY_POSTS[0],
     };
 
     expect(postsReducer(undefined, action)).toEqual(expected);

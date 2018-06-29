@@ -31,6 +31,7 @@ describe('appReducer', () => {
       ['DELETE_USER_SUCCESS', 'アカウントを削除しました'],
       ['DELETE_USER_FAIL', 'アカウントの情報に失敗しました'],
       ['FETCH_ALL_POSTS_FAIL', '投稿の取得に失敗しました'],
+      ['FETCH_POST_FAIL', '投稿の取得に失敗しました'],
       ['CREATE_POST_SUCCESS', '投稿を作成しました'],
       ['CREATE_POST_FAIL', '投稿の作成に失敗しました'],
       ['FETCH_MY_POSTS_FAIL', '投稿の取得に失敗しました'],

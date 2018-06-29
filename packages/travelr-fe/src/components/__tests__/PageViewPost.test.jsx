@@ -3,7 +3,11 @@ import Typography from '@material-ui/core/Typography';
 import { shallow } from 'enzyme';
 import React from 'react';
 import ReactCompareImage from 'react-compare-image';
-import { DUMMY_POSTS, DUMMY_USER_STORE } from '../../config/dummies';
+import {
+  DUMMY_POSTS,
+  DUMMY_USER_STORE,
+  DUMMY_POSTS_STORE,
+} from '../../config/dummies';
 import { PageViewPost } from '../PageViewPost';
 import PageViewPostComments from '../PageViewPostComments';
 import StatusBadge from '../StatusBadge';
@@ -24,6 +28,7 @@ describe('PageViewPost component', () => {
     fetch.resetMocks();
     mock = {
       createComment: jest.fn(),
+      fetchPost: jest.fn(),
     };
 
     wrapper = shallow(
@@ -32,17 +37,16 @@ describe('PageViewPost component', () => {
         // $FlowIgnore
         match={match}
         user={DUMMY_USER_STORE}
+        posts={DUMMY_POSTS_STORE}
         createComment={mock.createComment}
+        fetchPost={mock.fetchPost}
       />,
     );
-    wrapper.setState({
-      post: DUMMY_POST,
-    });
   });
 
-  test('fetch post when componentDidMount', () => {
-    expect(fetch).toBeCalledTimes(1);
-    expect(fetch.mock.calls[0][0]).toContain(`/posts/${match.params.postId}`);
+  test('fetchPost() is called when componentDidMount', () => {
+    expect(mock.fetchPost).toBeCalled();
+    expect(mock.fetchPost).toBeCalledWith(match.params.postId);
   });
 
   test('render necessary parts', () => {
@@ -75,7 +79,7 @@ describe('PageViewPost component', () => {
     expect(wrapper.find(PageViewPostComments)).toHaveLength(1);
   });
 
-  test('createPost() ', () => {
+  test('createPost() is called by PageViewPostComments', () => {
     wrapper
       .find(PageViewPostComments)
       .dive()

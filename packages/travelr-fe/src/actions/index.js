@@ -159,6 +159,34 @@ actions.fetchAllPosts = (criterion: FilterCriterion = {}) => async (
   }
 };
 
+actions.fetchPost = (postId: number) => async (dispatch: Dispatch<any>) => {
+  dispatch({
+    type: actionTypes.FETCH_POST_START,
+  });
+
+  try {
+    const response = await fetch(`${config.apiUrl}posts/${postId}`);
+
+    if (!response.ok) {
+      dispatch({
+        type: actionTypes.FETCH_POST_FAIL,
+      });
+      return;
+    }
+
+    const post = await response.json();
+
+    dispatch({
+      type: actionTypes.FETCH_POST_SUCCESS,
+      payload: post,
+    });
+  } catch (err) {
+    dispatch({
+      type: actionTypes.FETCH_POST_FAIL,
+    });
+  }
+};
+
 actions.createPost = (
   user: UserStore,
   newPost: NewPost,
