@@ -1,3 +1,4 @@
+// @flow
 import ListItem from '@material-ui/core/ListItem';
 import { mount } from 'enzyme';
 import React from 'react';

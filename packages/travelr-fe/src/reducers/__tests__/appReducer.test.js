@@ -1,3 +1,4 @@
+// @flow
 import appReducer from '../appReducer';
 import types from '../../actions/types';
 

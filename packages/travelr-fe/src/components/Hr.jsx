@@ -1,17 +1,8 @@
-import PropTypes from 'prop-types';
+// @flow
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
-
-const propTypes = {
-  text: PropTypes.string,
-  classes: PropTypes.object.isRequired,
-};
-
-const defaultProps = {
-  text: null,
-};
 
 const styles = theme => ({
   withInnerText: {
@@ -43,7 +34,12 @@ const styles = theme => ({
   },
 });
 
-const Hr = ({ text, classes }) => {
+type Props = {
+  classes: any,
+  text?: string,
+};
+
+const Hr = ({ text, classes }: Props) => {
   if (text) {
     return (
       <div className={classes.withInnerText}>
@@ -62,8 +58,5 @@ const Hr = ({ text, classes }) => {
     </div>
   );
 };
-
-Hr.propTypes = propTypes;
-Hr.defaultProps = defaultProps;
 
 export default withStyles(styles)(Hr);

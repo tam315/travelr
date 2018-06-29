@@ -1,13 +1,14 @@
+// @flow
 import postsReducer from '../postsReducer';
 import types from '../../actions/types';
 import { DUMMY_POSTS, DUMMY_POSTS_IDS } from '../../config/dummies';
+import type { PostsStore } from '../../config/types';
 
-const INITIAL_STATE = {
+const INITIAL_STATE: PostsStore = {
   all: [],
   allFilter: {},
   myPosts: [],
   myPostsSelected: [],
-  currentPost: {},
 };
 
 describe('posts reducer', () => {

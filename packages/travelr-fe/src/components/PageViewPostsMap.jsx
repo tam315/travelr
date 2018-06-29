@@ -1,7 +1,12 @@
+// @flow
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import MapsHelper from '../utils/MapsHelper';
+import type { Post } from '../config/types';
+
+type ReactObjRef<ElementType: React.ElementType> = {
+  current: null | React.ElementRef<ElementType>,
+};
 
 // header height is:
 //   64px if the window width is same or bigger than 600px
@@ -15,25 +20,26 @@ const styles = {
   },
 };
 
-const propTypes = {
-  posts: PropTypes.array,
-  classes: PropTypes.object.isRequired,
+type Props = {
+  posts: Array<Post>,
+  classes: any,
 };
 
-const defaultProps = {
-  posts: [],
-};
+class PageViewPostsMap extends React.Component<Props> {
+  mapRef: ReactObjRef<'div'>;
+  mapsHelper: MapsHelper;
 
-class PageViewPostsMap extends React.Component {
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
 
     this.mapRef = React.createRef(); // div element for google maps
   }
 
   componentDidMount = () => {
-    this.mapsHelper = new MapsHelper(this.mapRef.current);
-    this.mapsHelper.placePosts(this.props.posts);
+    if (this.mapRef.current) {
+      this.mapsHelper = new MapsHelper(this.mapRef.current);
+      this.mapsHelper.placePosts(this.props.posts);
+    }
   };
 
   componentDidUpdate = () => {
@@ -45,8 +51,5 @@ class PageViewPostsMap extends React.Component {
     return <div ref={this.mapRef} className={classes.mapContainer} />;
   };
 }
-
-PageViewPostsMap.propTypes = propTypes;
-PageViewPostsMap.defaultProps = defaultProps;
 
 export default withStyles(styles)(PageViewPostsMap);

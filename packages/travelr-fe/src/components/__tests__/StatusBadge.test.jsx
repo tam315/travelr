@@ -1,3 +1,4 @@
+// @flow
 import IconComment from '@material-ui/icons/Comment';
 import IconView from '@material-ui/icons/Visibility';
 import { shallow } from 'enzyme';

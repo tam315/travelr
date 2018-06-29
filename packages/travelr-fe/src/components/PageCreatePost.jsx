@@ -1,21 +1,15 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
+// @flow
 import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
-import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
+import Input from '@material-ui/core/Input';
+import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import * as React from 'react';
 import config from '../config';
-
-const propTypes = {
-  classes: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-};
-
-const defaultProps = {};
+import type { RouterHistory } from 'react-router-dom';
+import type { UserStore, NewPost } from '../config/types';
 
 const styles = theme => ({
   root: {
@@ -31,18 +25,30 @@ const styles = theme => ({
   },
 });
 
-export class PageCreatePost extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      oldImageFilePath: '',
-      newImageFilePath: '',
-      description: '',
-      shootDate: '',
-      lng: null,
-      lat: null,
-    };
-  }
+type Props = {
+  classes: any,
+  history: RouterHistory,
+  user: UserStore,
+};
+
+type State = {
+  oldImageFilePath: string,
+  newImageFilePath: string,
+  description: string,
+  shootDate: string,
+  lng: ?number,
+  lat: ?number,
+};
+
+export class PageCreatePost extends React.Component<Props, State> {
+  state = {
+    oldImageFilePath: '',
+    newImageFilePath: '',
+    description: '',
+    shootDate: '',
+    lng: null,
+    lat: null,
+  };
 
   getCurrentPosition = () => {
     if ('geolocation' in navigator) {
@@ -57,9 +63,9 @@ export class PageCreatePost extends React.Component {
     }
   };
 
-  handleChange(e, name) {
+  handleChange(e: SyntheticInputEvent<>, stateKayName: string) {
     e.preventDefault();
-    this.setState({ [name]: e.target.value });
+    this.setState({ [stateKayName]: e.target.value });
   }
 
   handleSubmit = () => {
@@ -85,7 +91,7 @@ export class PageCreatePost extends React.Component {
 
     // TODO: upload images to firebase and get the url
 
-    const post = {
+    const post: NewPost = {
       oldImageUrl: 'dummyurl1',
       newImageUrl: 'dummyurl2',
       description,
@@ -94,14 +100,14 @@ export class PageCreatePost extends React.Component {
       lat,
     };
 
-    const successCallback = postId => {
+    const successCallback = (postId: number): void => {
       this.props.history.push(`/post/${postId}`);
     };
 
     this.createPost(post, successCallback);
   };
 
-  createPost = async (post, successCallback) => {
+  createPost = async (post: NewPost, successCallback: number => any) => {
     try {
       const response = await fetch(`${config.apiUrl}posts`, {
         method: 'POST',
@@ -200,8 +206,5 @@ export class PageCreatePost extends React.Component {
     );
   }
 }
-
-PageCreatePost.propTypes = propTypes;
-PageCreatePost.defaultProps = defaultProps;
 
 export default withStyles(styles)(PageCreatePost);

@@ -1,3 +1,4 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Divider from '@material-ui/core/Divider';
@@ -13,23 +14,10 @@ import Typography from '@material-ui/core/Typography';
 import IconCancel from '@material-ui/icons/Cancel';
 import IconDelete from '@material-ui/icons/Delete';
 import IconSelectAll from '@material-ui/icons/SelectAll';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import StatusBadge from './StatusBadge';
-
-const propTypes = {
-  classes: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-  posts: PropTypes.object.isRequired,
-  fetchMyPosts: PropTypes.func.isRequired,
-  deleteMyPosts: PropTypes.func.isRequired,
-  selectMyPosts: PropTypes.func.isRequired,
-  selectMyPostsAll: PropTypes.func.isRequired,
-  selectMyPostsReset: PropTypes.func.isRequired,
-};
-
-const defaultProps = {};
+import type { UserStore, PostsStore } from '../config/types';
 
 const styles = theme => ({
   root: {
@@ -65,20 +53,31 @@ const styles = theme => ({
   },
 });
 
-export class PageManagePosts extends React.Component {
-  constructor(props) {
-    super(props);
+type Props = {
+  classes: any,
+  user: UserStore,
+  posts: PostsStore,
+  fetchMyPosts: any => any,
+  deleteMyPosts(user: UserStore, postIds: Array<number>): any,
+  selectMyPosts(postIds: Array<number>): any,
+  selectMyPostsAll(): any,
+  selectMyPostsReset(): any,
+};
 
-    this.state = {
-      menuAnchorElement: null,
-    };
-  }
+type State = {
+  menuAnchorElement: ?HTMLElement,
+};
+
+export class PageManagePosts extends React.Component<Props, State> {
+  state = {
+    menuAnchorElement: null,
+  };
 
   componentDidMount = () => {
     this.props.fetchMyPosts(this.props.user);
   };
 
-  componentDidUpdate = prevProps => {
+  componentDidUpdate = (prevProps: Props) => {
     if (prevProps.user.userId !== this.props.user.userId) {
       this.props.fetchMyPosts(this.props.user);
     }
@@ -108,7 +107,7 @@ export class PageManagePosts extends React.Component {
     this.setState({ menuAnchorElement: null });
   };
 
-  handleMenuButtonClick = event => {
+  handleMenuButtonClick = (event: SyntheticInputEvent<HTMLElement>) => {
     this.setState({ menuAnchorElement: event.currentTarget });
   };
 
@@ -235,8 +234,5 @@ export class PageManagePosts extends React.Component {
     );
   }
 }
-
-PageManagePosts.propTypes = propTypes;
-PageManagePosts.defaultProps = defaultProps;
 
 export default withStyles(styles)(PageManagePosts);

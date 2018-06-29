@@ -1,38 +1,43 @@
-import types from '../actions/types';
+// @flow
+import type { PostsStore } from '../config/types';
+import actionTypes from '../actions/types';
 
-const INITIAL_STATE = {
+const INITIAL_STATE: PostsStore = {
   all: [],
   allFilter: {},
   myPosts: [],
   myPostsSelected: [],
-  currentPost: {},
 };
 
-export default (state = INITIAL_STATE, action) => {
+const postsReducer = (
+  state: PostsStore = INITIAL_STATE,
+  action: any,
+): PostsStore => {
   switch (action.type) {
-    case types.FETCH_ALL_POSTS_SUCCESS:
+    case actionTypes.FETCH_ALL_POSTS_SUCCESS:
       return {
         ...state,
         all: action.payload,
       };
-
-    case types.FETCH_MY_POSTS_SUCCESS:
+    case actionTypes.FETCH_MY_POSTS_SUCCESS:
       return {
         ...state,
         myPosts: action.payload,
       };
 
-    case types.DELETE_MY_POSTS_SUCCESS: {
+    case actionTypes.DELETE_MY_POSTS_SUCCESS: {
       return {
         ...state,
         myPostsSelected: [],
       };
     }
 
-    case types.SELECT_MY_POSTS: {
+    case actionTypes.SELECT_MY_POSTS: {
       const postIds = action.payload;
       const { myPostsSelected } = state;
-      const newChecked = [...myPostsSelected];
+      const newChecked: Array<number> = [...myPostsSelected];
+
+      if (!postIds) return state;
 
       postIds.forEach(postId => {
         const currentIndex = newChecked.indexOf(postId);
@@ -50,7 +55,7 @@ export default (state = INITIAL_STATE, action) => {
       };
     }
 
-    case types.SELECT_MY_POSTS_ALL: {
+    case actionTypes.SELECT_MY_POSTS_ALL: {
       const myAllPostsIds = state.myPosts.map(post => post.postId);
       return {
         ...state,
@@ -58,7 +63,7 @@ export default (state = INITIAL_STATE, action) => {
       };
     }
 
-    case types.SELECT_MY_POSTS_RESET: {
+    case actionTypes.SELECT_MY_POSTS_RESET: {
       return {
         ...state,
         myPostsSelected: [],
@@ -69,3 +74,5 @@ export default (state = INITIAL_STATE, action) => {
       return state;
   }
 };
+
+export default postsReducer;

@@ -1,25 +1,26 @@
-import types from '../actions/types';
+// @flow
+import type { Action, UserStore } from '../config/types';
+import actionTypes from '../actions/types';
 
-const INITIAL_STATE = {
-  userId: null,
-  token: null,
-  displayName: null,
-  isAdmin: null,
+const INITIAL_STATE: UserStore = {
+  userId: '',
+  token: '',
+  displayName: '',
+  isAdmin: false,
+  earnedLikes: 0,
+  earnedComments: 0,
+  earnedViews: 0,
 };
 
-export default (state = INITIAL_STATE, action) => {
+export default (
+  state: UserStore = INITIAL_STATE,
+  action: Action<UserStore>,
+): UserStore => {
   switch (action.type) {
-    case types.FETCH_USER_INFO_SUCCESS: {
-      const { userId, token, displayName, isAdmin } = action.payload;
-
-      return {
-        userId,
-        token,
-        displayName,
-        isAdmin,
-      };
+    case actionTypes.FETCH_USER_INFO_SUCCESS: {
+      return action.payload;
     }
-    case types.UPDATE_USER_INFO_SUCCESS: {
+    case actionTypes.UPDATE_USER_INFO_SUCCESS: {
       const { displayName } = action.payload;
 
       return {
@@ -27,7 +28,7 @@ export default (state = INITIAL_STATE, action) => {
         displayName,
       };
     }
-    case types.DELETE_USER_SUCCESS: {
+    case actionTypes.DELETE_USER_SUCCESS: {
       return INITIAL_STATE;
     }
     default:

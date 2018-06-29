@@ -1,27 +1,29 @@
+// @flow
 import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
-import PropTypes from 'prop-types';
 import React from 'react';
+import type { AppStore } from '../config/types';
 
-const propTypes = {
-  app: PropTypes.object.isRequired,
-  reduceSnackbarQueue: PropTypes.func.isRequired,
+type Props = {
+  app: AppStore,
+  reduceSnackbarQueue: void => void,
 };
 
-export class SnackbarService extends React.Component {
-  constructor(props) {
-    super(props);
+type State = {
+  message: string,
+  isOpen: boolean,
+};
 
-    // this variable is required since 'this.state' is asynchronous
-    // and not suitable for judging the current processing state
-    this.isProcessing = false;
+export class SnackbarService extends React.Component<Props, State> {
+  // this variable is required since 'this.state' is asynchronous
+  // and not suitable for judging the current processing state
+  isProcessing: boolean = false;
 
-    this.state = {
-      message: '',
-      isOpen: false,
-    };
-  }
+  state = {
+    message: '',
+    isOpen: false,
+  };
 
   componentDidUpdate = () => {
     const { snackbarQueue } = this.props.app;
@@ -39,7 +41,7 @@ export class SnackbarService extends React.Component {
     if (this.isProcessing) return;
 
     if (snackbarQueue.length) {
-      this.isProcessing = true;
+      this.isProcessing = false;
 
       this.setState({
         message: snackbarQueue[0],
@@ -78,7 +80,5 @@ export class SnackbarService extends React.Component {
     );
   }
 }
-
-SnackbarService.propTypes = propTypes;
 
 export default SnackbarService;

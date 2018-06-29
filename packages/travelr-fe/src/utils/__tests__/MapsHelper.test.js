@@ -1,18 +1,11 @@
 import MapsHelper from '../MapsHelper';
 import loadJS from '../loadJS';
+import { DUMMY_POSTS } from '../../config/dummies';
 
 jest.mock('../loadJS');
 
-const DUMMY_POSTS = ['post1', 'post2', 'post3'];
-const DUMMY_POSTS_ADDED_LAST = [
-  'post4',
-  'post5',
-  'post6',
-  'post7',
-  'post8',
-  'post9',
-  'post10',
-];
+const DUMMY_POSTS_ORIGINAL = DUMMY_POSTS.slice(0, -2);
+const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
 
 const setGoogleMapsApiMock = () => {
   google = {
@@ -76,14 +69,14 @@ describe('MapsHelper', () => {
     setGoogleMapsApiMock();
     const mapsHelper = new MapsHelper(mapRef);
 
-    mapsHelper.placePosts(DUMMY_POSTS);
-    mapsHelper.placePosts(DUMMY_POSTS);
-    mapsHelper.placePosts(DUMMY_POSTS_ADDED_LAST);
+    mapsHelper.placePosts(DUMMY_POSTS_ORIGINAL);
+    mapsHelper.placePosts(DUMMY_POSTS_ORIGINAL);
+    mapsHelper.placePosts(DUMMY_POSTS_UPDATED);
 
     // markers created immediately each time
     expect(google.maps.Marker).toHaveBeenCalledTimes(
-      DUMMY_POSTS.length * 2 /* eslint-disable-line */ +
-        DUMMY_POSTS_ADDED_LAST.length * 1 /* eslint-disable-line */,
+      DUMMY_POSTS_ORIGINAL.length * 2 /* eslint-disable-line */ +
+        DUMMY_POSTS_UPDATED.length * 1 /* eslint-disable-line */,
     );
     expect(mapsHelper.queuedPosts).toBe(null);
   });
@@ -92,10 +85,10 @@ describe('MapsHelper', () => {
     const mapsHelper = new MapsHelper(mapRef);
 
     // only last posts should be queued
-    mapsHelper.placePosts(DUMMY_POSTS);
-    mapsHelper.placePosts(DUMMY_POSTS);
-    mapsHelper.placePosts(DUMMY_POSTS_ADDED_LAST);
-    expect(mapsHelper.queuedPosts).toEqual(DUMMY_POSTS_ADDED_LAST);
+    mapsHelper.placePosts(DUMMY_POSTS_ORIGINAL);
+    mapsHelper.placePosts(DUMMY_POSTS_ORIGINAL);
+    mapsHelper.placePosts(DUMMY_POSTS_UPDATED);
+    expect(mapsHelper.queuedPosts).toEqual(DUMMY_POSTS_UPDATED);
 
     // simulates the state where the API is ready
     setGoogleMapsApiMock();
@@ -106,7 +99,7 @@ describe('MapsHelper', () => {
 
     // marker should be created for the lastly queued posts
     expect(google.maps.Marker).toHaveBeenCalledTimes(
-      DUMMY_POSTS_ADDED_LAST.length * 1,
+      DUMMY_POSTS_UPDATED.length * 1,
     );
 
     // queue should be reset

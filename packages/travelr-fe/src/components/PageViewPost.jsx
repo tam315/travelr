@@ -1,20 +1,14 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import ReactCompareImage from 'react-compare-image';
 import config from '../config';
 import StatusBadge from './StatusBadge';
-
-const propTypes = {
-  classes: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-};
-
-const defaultProps = {};
+import type { UserStore, Post, Comment } from '../config/types';
+import type { Match } from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -36,22 +30,39 @@ const styles = theme => ({
   },
 });
 
-export class PageViewPost extends React.Component {
-  constructor(props) {
+type Props = {
+  classes: any,
+  match: Match,
+  user: UserStore,
+};
+
+type State = {
+  post: ?Post,
+  comment: string,
+};
+
+export class PageViewPost extends React.Component<Props, State> {
+  state = {
+    post: null,
+    comment: '',
+  };
+  postId: number;
+
+  constructor(props: Props) {
     super(props);
 
-    this.postId = this.props.match.params.postId;
-    this.state = {
-      post: {},
-      comment: '',
-    };
+    const { postId } = this.props.match.params;
+
+    if (postId) {
+      this.postId = Number(postId);
+    }
   }
 
   componentDidMount = () => {
     this.fetchPost(this.postId); // TODO: pass userId as 2nd arg
   };
 
-  fetchPost = async postId => {
+  fetchPost = async (postId: number) => {
     try {
       const response = await fetch(`${config.apiUrl}posts/${postId}`);
 
@@ -67,7 +78,7 @@ export class PageViewPost extends React.Component {
     }
   };
 
-  createComment = async (postId, comment) => {
+  createComment = async (postId: number, comment: string) => {
     try {
       const response = await fetch(`${config.apiUrl}posts/${postId}/comments`, {
         method: 'POST',
@@ -86,11 +97,11 @@ export class PageViewPost extends React.Component {
     }
   };
 
-  handleChange(e, name) {
-    this.setState({ [name]: e.target.value });
+  handleChange(e: SyntheticInputEvent<HTMLElement>, stateKeyName: string) {
+    this.setState({ [stateKeyName]: e.target.value });
   }
 
-  renderComments = comments =>
+  renderComments = (comments: Array<Comment>): Array<React.Element<any>> =>
     comments.map(item => (
       <div key={item.commentId} className="comment">
         <Typography variant="body2">{item.displayName}</Typography>
@@ -104,6 +115,7 @@ export class PageViewPost extends React.Component {
 
   render() {
     const { classes } = this.props;
+    if (!this.state.post) return <div />;
     const {
       oldImageUrl,
       newImageUrl,
@@ -117,9 +129,6 @@ export class PageViewPost extends React.Component {
       commentsCount,
       comments,
     } = this.state.post;
-
-    // return nothing if the data is not fetched yet
-    if (!oldImageUrl) return <div />;
 
     return (
       <div className={classes.root}>
@@ -141,7 +150,7 @@ export class PageViewPost extends React.Component {
           </Typography>
 
           <div style={{ width: '100%', height: '150px', background: 'gray' }}>
-            google maps goes here
+            google maps goes here {lng} {lat}
           </div>
 
           <Input
@@ -168,8 +177,5 @@ export class PageViewPost extends React.Component {
     );
   }
 }
-
-PageViewPost.propTypes = propTypes;
-PageViewPost.defaultProps = defaultProps;
 
 export default withStyles(styles)(PageViewPost);

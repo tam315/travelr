@@ -1,3 +1,4 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import { shallow } from 'enzyme';
 import React from 'react';
@@ -44,7 +45,38 @@ describe('Filter component', () => {
   });
 
   test('onClose should be called when the "filter" button pressed', () => {
+    // console.log(wrapper.find(TextField).debug());
+
+    // wrapper.find(TextField).forEach(textField => {
+    //   textField.simulate('change', { target: { value: 'Changed' } });
+    //   // textField.setProps({ value: 'a' });
+    //   console.log(textField.debug());
+    // });
+    // wrapper.update();
+    wrapper.setState({
+      displayName: 'dummy',
+      description: 'dummy',
+      shootDate: {
+        min: 10,
+        max: 10,
+      },
+      radius: 10,
+      likedCount: {
+        min: 10,
+        max: 10,
+      },
+      commentsCount: {
+        min: 10,
+        max: 10,
+      },
+      viewCount: {
+        min: 10,
+        max: 10,
+      },
+    });
+
     wrapper.find(Button).simulate('click');
+
     expect(mockCallback).toBeCalled();
     expect(mockCallback.mock.calls[0][0]).toHaveProperty('displayName');
     expect(mockCallback.mock.calls[0][0]).toHaveProperty('description');

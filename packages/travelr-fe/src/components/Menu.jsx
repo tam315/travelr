@@ -1,3 +1,4 @@
+// @flow
 import Divider from '@material-ui/core/Divider';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import List from '@material-ui/core/List';
@@ -8,24 +9,17 @@ import IconAccountCircle from '@material-ui/icons/AccountCircle';
 import IconAddPhoto from '@material-ui/icons/AddAPhoto';
 import IconPhotoLibrary from '@material-ui/icons/PhotoLibrary';
 import IconViewList from '@material-ui/icons/ViewList';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const propTypes = {
-  isOpen: PropTypes.bool,
-  isUserAuthorized: PropTypes.bool,
-  onClose: PropTypes.func,
-  onOpen: PropTypes.func.isRequired,
+type Props = {
+  isOpen: boolean,
+  isUserAuthorized: boolean,
+  onClose: any => any,
+  onOpen: any => any,
 };
 
-const defaultProps = {
-  isOpen: false,
-  isUserAuthorized: false,
-  onClose: null,
-};
-
-function Menu(props) {
+function Menu(props: Props) {
   const { isOpen, isUserAuthorized, onClose, onOpen } = props;
 
   const authorizedMenu = (
@@ -97,8 +91,5 @@ function Menu(props) {
     </SwipeableDrawer>
   );
 }
-
-Menu.propTypes = propTypes;
-Menu.defaultProps = defaultProps;
 
 export default Menu;

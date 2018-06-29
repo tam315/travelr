@@ -1,3 +1,4 @@
+// @flow
 import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import IconDone from '@material-ui/icons/Done';
@@ -23,6 +24,7 @@ describe('PageManageAccount component', () => {
       <PageManageAccount
         updateUserInfo={mock.actions.updateUserInfo}
         deleteUser={mock.actions.deleteUser}
+        // $FlowIgnore
         history={mock.history}
         user={DUMMY_USER_STORE}
         classes={{}}

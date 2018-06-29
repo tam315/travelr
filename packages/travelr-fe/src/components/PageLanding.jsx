@@ -1,13 +1,9 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-const propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 const styles = theme => ({
   container: {
@@ -22,7 +18,11 @@ const styles = theme => ({
   },
 });
 
-function PageLanding(props) {
+type Props = {
+  classes: any,
+};
+
+function PageLanding(props: Props) {
   const { classes } = props;
   return (
     <div className={classes.container}>
@@ -45,7 +45,5 @@ function PageLanding(props) {
     </div>
   );
 }
-
-PageLanding.propTypes = propTypes;
 
 export default withStyles(styles)(PageLanding);

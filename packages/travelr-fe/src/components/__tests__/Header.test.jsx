@@ -1,48 +1,44 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import Header from '../Header';
-import Menu from '../Menu';
-
-jest.mock('../Menu');
 
 describe('Header component', () => {
   describe('if user is signed out', () => {
     let wrapper;
 
     beforeAll(() => {
-      Menu.mockImplementation(() => ({ render: () => <div>mock</div> }));
-
-      wrapper = mount(
-        <BrowserRouter>
-          <Header />
-        </BrowserRouter>,
-      );
+      wrapper = shallow(<Header user={{}} />);
     });
 
     test('shows site title', () => {
       expect(
         wrapper
+          .dive()
           .find(Button)
           .at(0)
+          .children()
+          .children()
           .text(),
-      ).toContain('Travelr');
+      ).toBe('Travelr');
     });
 
     test('shows humberger icon', () => {
-      expect(wrapper.find(IconButton)).toHaveLength(1);
+      expect(wrapper.dive().find(IconButton)).toHaveLength(1);
     });
 
     test('shows Signup/In button', () => {
       expect(
         wrapper
+          .dive()
           .find(Button)
           .at(1)
-          .html(),
-      ).toContain('Signup');
+          .children()
+          .text(),
+      ).toContain('Signup / In');
     });
   });
 
@@ -51,18 +47,22 @@ describe('Header component', () => {
 
     beforeAll(() => {
       const store = { user: { userId: 'dummyId', displayName: 'dummyName' } };
-      wrapper = mount(
-        <BrowserRouter>
-          <Header {...store} />
-        </BrowserRouter>,
-      );
+      wrapper = shallow(<Header {...store} />);
     });
 
     test('shows userStatusButton', () => {
-      const userStatusButton = wrapper.find(Button).at(1);
+      const userStatus = wrapper
+        .dive()
+        .find(Button)
+        .at(1);
 
-      expect(userStatusButton.find(AccountCircle)).toHaveLength(1);
-      expect(userStatusButton.text()).toContain('dummyName');
+      expect(userStatus.find(AccountCircle)).toHaveLength(1);
+      expect(
+        userStatus
+          .children()
+          .children()
+          .text(),
+      ).toBe('dummyName');
     });
   });
 });

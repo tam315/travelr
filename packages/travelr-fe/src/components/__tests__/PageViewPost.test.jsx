@@ -1,9 +1,10 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { shallow } from 'enzyme';
 import React from 'react';
 import ReactCompareImage from 'react-compare-image';
-import { DUMMY_POSTS } from '../../config/dummies';
+import { DUMMY_POSTS, DUMMY_USER_STORE } from '../../config/dummies';
 import { PageViewPost } from '../PageViewPost';
 import StatusBadge from '../StatusBadge';
 
@@ -21,7 +22,14 @@ describe('PageViewPost component', () => {
   beforeEach(() => {
     fetch.resetMocks();
 
-    wrapper = shallow(<PageViewPost classes={{}} match={match} user={{}} />);
+    wrapper = shallow(
+      <PageViewPost
+        classes={{}}
+        // $FlowIgnore
+        match={match}
+        user={DUMMY_USER_STORE}
+      />,
+    );
     wrapper.setState({
       post: DUMMY_POST,
     });

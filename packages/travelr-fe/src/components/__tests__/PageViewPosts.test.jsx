@@ -16,6 +16,7 @@ describe('PageViewPosts component', () => {
           classes={{}}
           location={{}}
           history={{}}
+          posts={{}}
         />
       </BrowserRouter>,
     );
@@ -32,6 +33,7 @@ describe('PageViewPosts component', () => {
           classes={{}}
           location={{ pathname: '/all-grid' }}
           history={{}}
+          posts={{}}
         />
       </BrowserRouter>,
     );
@@ -52,6 +54,7 @@ describe('PageViewPosts component', () => {
           classes={{}}
           location={{ pathname: '/all-map' }}
           history={{}}
+          posts={{}}
         />
       </BrowserRouter>,
     );
@@ -72,6 +75,7 @@ describe('PageViewPosts component', () => {
           classes={{}}
           location={{ pathname: '/all-map' }}
           history={{}}
+          posts={{}}
         />
       </BrowserRouter>,
     );

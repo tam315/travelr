@@ -1,3 +1,4 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import Divider from '@material-ui/core/Divider';
@@ -10,21 +11,10 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import IconExpandLess from '@material-ui/icons/ExpandLess';
 import IconExpandMore from '@material-ui/icons/ExpandMore';
-import PropTypes from 'prop-types';
 import React from 'react';
 import InputRange from 'react-input-range';
 import '../css/reactInputRange.css';
-
-const propTypes = {
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
-  classes: PropTypes.object.isRequired,
-};
-
-const defaultProps = {
-  isOpen: false,
-  onClose: null,
-};
+import type { FilterCriterion } from '../config/types';
 
 const styles = {
   paper: {
@@ -51,62 +41,111 @@ const styles = {
   },
 };
 
-export class Filter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      shootDate: {
-        min: 0,
-        max: 100,
-      },
-      likedCount: {
-        min: 0,
-        max: 100,
-      },
-      commentsCount: {
-        min: 0,
-        max: 100,
-      },
-      viewCount: {
-        min: 0,
-        max: 100,
-      },
-      placeName: '',
-      radius: '',
-      displayName: '',
-      description: '',
-      isListGroup1Open: false, // 「場所で探す」
-      isListGroup2Open: false, // 「その他の条件で探す」
-    };
-  }
+type Props = {
+  isOpen: boolean,
+  onClose: FilterCriterion => void,
+  classes: any,
+};
 
-  handleChange(e, name) {
-    this.setState({ [name]: e.target.value });
+type State = {
+  shootDate: {
+    min: number,
+    max: number,
+  },
+  likedCount: {
+    min: number,
+    max: number,
+  },
+  commentsCount: {
+    min: number,
+    max: number,
+  },
+  viewCount: {
+    min: number,
+    max: number,
+  },
+  placeName: string,
+  radius: string,
+  displayName: string,
+  description: string,
+  isListGroup1Open: boolean, // 「場所で探す」
+  isListGroup2Open: boolean, // 「その他の条件で探す」
+};
+
+export class Filter extends React.Component<Props, State> {
+  static defaultProps = {
+    isOpen: false,
+    onClose: null,
+  };
+
+  state = {
+    shootDate: {
+      min: 0,
+      max: 100,
+    },
+    likedCount: {
+      min: 0,
+      max: 100,
+    },
+    commentsCount: {
+      min: 0,
+      max: 100,
+    },
+    viewCount: {
+      min: 0,
+      max: 100,
+    },
+    placeName: '',
+    radius: '',
+    displayName: '',
+    description: '',
+    isListGroup1Open: false,
+    isListGroup2Open: false,
+  };
+
+  handleChange(e: SyntheticInputEvent<>, stateKeyName: string) {
+    this.setState({ [stateKeyName]: e.target.value });
   }
 
   callbackWithCriterion = () => {
     const { onClose } = this.props;
     const criterion = {};
 
-    criterion.displayName = this.state.displayName || null;
-    criterion.description = this.state.description || null;
-    criterion.minDate = this.state.shootDate.min || null;
-    criterion.maxDate = this.state.shootDate.max || null;
-    // TODO: lat lng radius
+    const {
+      displayName,
+      description,
+      shootDate,
+      radius,
+      viewCount,
+      likedCount,
+      commentsCount,
+    } = this.state;
+
+    if (displayName) criterion.displayName = displayName;
+    if (description) criterion.description = description;
+    if (shootDate.min) criterion.minDate = String(shootDate.min); // TODO 日付に変換
+    if (shootDate.max) criterion.maxDate = String(shootDate.max); // TODO 日付に変換
+    if (radius) criterion.radius = Number(radius);
+    if (viewCount.min) criterion.minViewCount = viewCount.min;
+    if (viewCount.max) criterion.maxViewCount = viewCount.max;
+    if (likedCount.min) criterion.minLikedCount = likedCount.min;
+    if (likedCount.max) criterion.maxLikedCount = likedCount.max;
+    if (commentsCount.min) criterion.minCommentsCount = commentsCount.min;
+    if (commentsCount.max) criterion.maxCommentsCount = commentsCount.max;
     criterion.lat = 40;
     criterion.lng = 140;
-    criterion.radius = this.state.radius || null;
-    criterion.minViewCount = this.state.viewCount.min || null;
-    criterion.maxViewCount = this.state.viewCount.max || null;
-    criterion.minLikedCount = this.state.likedCount.min || null;
-    criterion.maxLikedCount = this.state.likedCount.max || null;
-    criterion.minCommentsCount = this.state.commentsCount.min || null;
-    criterion.maxCommentsCount = this.state.commentsCount.max || null;
+    // TODO: lat lng radius
 
     onClose(criterion);
   };
 
-  renderListItem = item => {
+  renderListItem = (item: {
+    title: string,
+    stateKeyName: string,
+    min?: number,
+    max?: number,
+    formatLabel?: number => string,
+  }) => {
     const {
       title,
       stateKeyName,
@@ -270,8 +309,5 @@ export class Filter extends React.Component {
     );
   }
 }
-
-Filter.propTypes = propTypes;
-Filter.defaultProps = defaultProps;
 
 export default withStyles(styles)(Filter);

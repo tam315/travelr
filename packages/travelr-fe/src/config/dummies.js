@@ -1,14 +1,16 @@
-export const DUMMY_USER_STORE = {
-  userId: 'DUMMY_USER_ID',
-  displayName: 'DUMMY_USER_DISPLAY_NAME',
-  isAdmin: false,
-  token: 'DUMMY_USER_TOKEN',
-};
+// @flow
+import type {
+  AppStore,
+  FilterCriterion,
+  Post,
+  PostsStore,
+  UserStore,
+} from './types';
 
 // the same format as:
 //   - the data that 'store' has
-//   - the data that API returned
-export const DUMMY_POSTS = [
+//   - the data that API returns
+export const DUMMY_POSTS: Array<Post> = [
   {
     postId: 1,
     oldImageUrl: 'dummy_oldImageUrl1',
@@ -24,9 +26,11 @@ export const DUMMY_POSTS = [
     comments: [
       {
         commentId: 701,
-        userId: 801,
-        datetime: new Date('1985-03-01'),
+        userId: 'dummy_userId1',
+        datetime: '1985-03-01',
         comment: 'dummy_comment1',
+        postId: 1,
+        displayName: 'dummy_comment_displayName1',
       },
     ],
   },
@@ -45,9 +49,11 @@ export const DUMMY_POSTS = [
     comments: [
       {
         commentId: 702,
-        userId: 802,
-        datetime: new Date('2985-03-02'),
+        userId: 'dummy_userId2',
+        datetime: '2985-03-02',
         comment: 'dummy_comment2',
+        postId: 2,
+        displayName: 'dummy_comment_displayName2',
       },
     ],
   },
@@ -66,9 +72,11 @@ export const DUMMY_POSTS = [
     comments: [
       {
         commentId: 703,
-        userId: 803,
-        datetime: new Date('3985-03-03'),
+        userId: 'dummy_userId3',
+        datetime: '3985-03-03',
         comment: 'dummy_comment3',
+        postId: 3,
+        displayName: 'dummy_comment_displayName3',
       },
     ],
   },
@@ -87,9 +95,11 @@ export const DUMMY_POSTS = [
     comments: [
       {
         commentId: 704,
-        userId: 804,
-        datetime: new Date('4985-03-04'),
+        userId: 'dummy_userId4',
+        datetime: '4985-03-04',
         comment: 'dummy_comment4',
+        postId: 4,
+        displayName: 'dummy_comment_displayName4',
       },
     ],
   },
@@ -108,12 +118,55 @@ export const DUMMY_POSTS = [
     comments: [
       {
         commentId: 705,
-        userId: 805,
-        datetime: new Date('5985-03-05'),
+        userId: 'dummy_userId5',
+        datetime: '5985-03-05',
         comment: 'dummy_comment5',
+        postId: 5,
+        displayName: 'dummy_comment_displayName5',
       },
     ],
   },
 ];
 
-export const DUMMY_POSTS_IDS = DUMMY_POSTS.map(post => post.postId);
+export const DUMMY_POSTS_IDS: Array<number> = DUMMY_POSTS.map(
+  post => post.postId,
+);
+
+export const DUMMY_FILTER_CRITERION: FilterCriterion = {
+  userId: 'dummy_userId',
+  displayName: 'dummy_displayName',
+  description: 'dummy_description',
+  minDate: '1990-01-01',
+  maxDate: '1999-12-31',
+  lng: 1,
+  lat: 2,
+  radius: 3,
+  minViewCount: 4,
+  maxViewCount: 5,
+  minLikedCount: 6,
+  maxLikedCount: 7,
+  minCommentsCount: 8,
+  maxCommentsCount: 9,
+  limit: 10,
+};
+
+export const DUMMY_APP_STORE: AppStore = {
+  snackbarQueue: [],
+};
+
+export const DUMMY_POSTS_STORE: PostsStore = {
+  all: DUMMY_POSTS,
+  allFilter: DUMMY_FILTER_CRITERION,
+  myPosts: DUMMY_POSTS,
+  myPostsSelected: [],
+};
+
+export const DUMMY_USER_STORE: UserStore = {
+  userId: 'DUMMY_USER_ID',
+  displayName: 'DUMMY_USER_DISPLAY_NAME',
+  isAdmin: false,
+  token: 'DUMMY_USER_TOKEN',
+  earnedLikes: 123,
+  earnedComments: 456,
+  earnedViews: 789,
+};

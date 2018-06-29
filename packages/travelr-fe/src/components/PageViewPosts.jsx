@@ -1,3 +1,4 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
@@ -6,23 +7,12 @@ import Tabs from '@material-ui/core/Tabs';
 import IconGrid from '@material-ui/icons/GridOn';
 import IconMap from '@material-ui/icons/Place';
 import IconSearch from '@material-ui/icons/Search';
-import PropTypes from 'prop-types';
 import React from 'react';
 import Filter from './Filter';
 import PageViewPostsGrid from './PageViewPostsGrid';
 import PageViewPostsMap from './PageViewPostsMap';
-
-const propTypes = {
-  classes: PropTypes.object.isRequired,
-  fetchAllPosts: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
-  posts: PropTypes.object,
-};
-
-const defaultProps = {
-  posts: {},
-};
+import type { Location, RouterHistory } from 'react-router-dom';
+import type { FilterCriterion, PostsStore } from '../config/types';
 
 const styles = {
   tabsFlexContainer: {
@@ -35,21 +25,32 @@ const styles = {
   },
 };
 
-const tabNumberPathMapping = {
-  0: '/all-grid',
-  1: '/all-map',
+const pathTabnumberMapping = {
+  '/all-grid': 0,
+  '/all-map': 1,
 };
 
-export class PageViewPosts extends React.Component {
-  constructor(props) {
+type Props = {
+  classes: any,
+  fetchAllPosts(criterion: FilterCriterion): any,
+  history: RouterHistory,
+  location: Location,
+  posts: PostsStore,
+};
+
+type State = {
+  tabNumber: number,
+  isFilterOpen: boolean,
+};
+
+export class PageViewPosts extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     const { pathname } = this.props.location;
 
     // switch child component based on pathname
-    let defaultTabNumber = 0;
-    if (pathname === tabNumberPathMapping[0]) defaultTabNumber = 0;
-    if (pathname === tabNumberPathMapping[1]) defaultTabNumber = 1;
+    const defaultTabNumber = pathTabnumberMapping[pathname];
 
     this.state = {
       tabNumber: defaultTabNumber,
@@ -61,12 +62,17 @@ export class PageViewPosts extends React.Component {
     this.props.fetchAllPosts({ limit: 100 });
   };
 
-  handleTabChange = (event, tabNumber) => {
+  handleTabChange = (event: SyntheticEvent<HTMLElement>, tabNumber: number) => {
     this.setState({
       tabNumber,
     });
+
+    let redirectTo;
+    if (tabNumber === 0) redirectTo = '/all-grid';
+    if (tabNumber === 1) redirectTo = '/all-map';
+
     // synchronize URL with the currently displayed component
-    this.props.history.push(tabNumberPathMapping[tabNumber]);
+    if (redirectTo) this.props.history.push(redirectTo);
   };
 
   render() {
@@ -105,9 +111,10 @@ export class PageViewPosts extends React.Component {
         {/* filter */}
         <Filter
           isOpen={this.state.isFilterOpen}
-          onClose={criterion => {
+          onClose={(criterion: FilterCriterion) => {
             this.setState({ isFilterOpen: false });
             // TODO: call fetchAllPosts
+            console.log(criterion);
           }}
         />
 
@@ -128,8 +135,5 @@ export class PageViewPosts extends React.Component {
     );
   }
 }
-
-PageViewPosts.propTypes = propTypes;
-PageViewPosts.defaultProps = defaultProps;
 
 export default withStyles(styles)(PageViewPosts);

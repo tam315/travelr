@@ -1,19 +1,19 @@
+// @flow
 import Typography from '@material-ui/core/Typography';
 import IconComment from '@material-ui/icons/Comment';
 import IconView from '@material-ui/icons/Visibility';
-import PropTypes from 'prop-types';
 import React from 'react';
 import IconLike from '../icons/like.svg';
 
-const propTypes = {
-  count: PropTypes.number.isRequired,
+type Props = {
+  count: number,
   // true: space-between, false: flex-start
-  dense: PropTypes.bool,
-  icon: PropTypes.string.isRequired,
+  dense?: boolean,
+  icon: string,
   // margin between icon and count. only works if 'dense' is true
-  iconMargin: PropTypes.number,
-  noBorder: PropTypes.bool,
-  size: PropTypes.oneOf(['small', 'normal']),
+  iconMargin?: number,
+  noBorder?: boolean,
+  size?: 'small' | 'normal',
 };
 
 const defaultProps = {
@@ -23,7 +23,7 @@ const defaultProps = {
   size: 'normal',
 };
 
-function StatusBadge(props) {
+function StatusBadge(props: Props) {
   const { icon, count, size, noBorder, iconMargin, dense } = props;
 
   const isNormalSize = size === 'normal';
@@ -106,7 +106,6 @@ function StatusBadge(props) {
   );
 }
 
-StatusBadge.propTypes = propTypes;
 StatusBadge.defaultProps = defaultProps;
 
 export default StatusBadge;

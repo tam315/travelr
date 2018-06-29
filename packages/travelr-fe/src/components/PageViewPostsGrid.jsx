@@ -1,19 +1,11 @@
+// @flow
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import StatusBadge from './StatusBadge';
-
-const propTypes = {
-  posts: PropTypes.array,
-  classes: PropTypes.object.isRequired,
-};
-
-const defaultProps = {
-  posts: [],
-};
+import type { Post } from '../config/types';
 
 const MAX_WIDTH = 528;
 
@@ -30,7 +22,12 @@ const styles = {
   },
 };
 
-class PageViewPostsGrid extends React.Component {
+type Props = {
+  posts: Array<Post>,
+  classes: any,
+};
+
+class PageViewPostsGrid extends React.Component<Props> {
   renderPosts = () => {
     const { posts } = this.props;
 
@@ -70,8 +67,5 @@ class PageViewPostsGrid extends React.Component {
     );
   }
 }
-
-PageViewPostsGrid.propTypes = propTypes;
-PageViewPostsGrid.defaultProps = defaultProps;
 
 export default withStyles(styles)(PageViewPostsGrid);

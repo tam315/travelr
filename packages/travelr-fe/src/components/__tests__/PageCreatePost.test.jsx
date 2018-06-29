@@ -1,7 +1,9 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { PageCreatePost } from '../PageCreatePost';
+import { DUMMY_USER_STORE } from '../../config/dummies';
 
 const DUMMY_POST_ID_CREATED = 12345;
 
@@ -24,7 +26,12 @@ describe('PageCreatePost component', () => {
     };
 
     wrapper = shallow(
-      <PageCreatePost history={mockHistory} classes={{}} user={{}} />,
+      <PageCreatePost
+        // $FlowIgnore
+        history={mockHistory}
+        classes={{}}
+        user={DUMMY_USER_STORE}
+      />,
     );
   });
 

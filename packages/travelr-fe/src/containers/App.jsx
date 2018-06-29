@@ -1,5 +1,5 @@
+// @flow
 import CssBaseline from '@material-ui/core/CssBaseline'; // normalize styles
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -16,14 +16,16 @@ import PageManagePosts from '../components/PageManagePosts';
 import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
 import SnackbarService from '../components/SnackbarService';
+import type { UserStore } from '../config/types';
+import { DUMMY_USER_STORE } from '../config/dummies';
 
-const propTypes = {
-  fetchUserInfo: PropTypes.func.isRequired,
+type Props = {
+  fetchUserInfo(user: UserStore): void,
 };
 
-class App extends React.Component {
+class App extends React.Component<Props> {
   componentDidMount = () => {
-    this.props.fetchUserInfo('dummy_token'); // TODO: get from local storage
+    this.props.fetchUserInfo(DUMMY_USER_STORE); // TODO: get from local storage
   };
 
   // these lines are inevitable.
@@ -50,6 +52,7 @@ class App extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
+        {/* $FlowIgnore */}
         <SnackbarService {...this.props} />
         <BrowserRouter>
           <React.Fragment>
@@ -81,8 +84,6 @@ class App extends React.Component {
     );
   }
 }
-
-App.propTypes = propTypes;
 
 // map everything to props
 const mapStateToProps = state => state;

@@ -1,3 +1,4 @@
+// @flow
 import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -6,16 +7,8 @@ import IconEdit from '@material-ui/icons/Edit';
 import PropTypes from 'prop-types';
 import React from 'react';
 import StatusBadge from './StatusBadge';
-
-const propTypes = {
-  classes: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
-  updateUserInfo: PropTypes.func.isRequired,
-  deleteUser: PropTypes.func.isRequired,
-};
-
-const defaultProps = {};
+import type { UserStore } from '../config/types';
+import type { RouterHistory } from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -45,19 +38,28 @@ const styles = theme => ({
   },
 });
 
-export class PageManageAccount extends React.Component {
-  constructor(props) {
-    super(props);
+type Props = {
+  classes: any,
+  user: UserStore,
+  history: RouterHistory,
+  updateUserInfo: PropTypes.func.isRequired,
+  deleteUser: PropTypes.func.isRequired,
+};
 
-    this.state = {
-      isEditMode: false,
-      displayName: props.user.displayName,
-    };
-  }
+type State = {
+  isEditMode: boolean,
+  displayName: string,
+};
+
+export class PageManageAccount extends React.Component<Props, State> {
+  state = {
+    isEditMode: false,
+    displayName: this.props.user.displayName,
+  };
 
   componentDidMount = async () => {};
 
-  componentDidUpdate = prevProps => {
+  componentDidUpdate = (prevProps: Props) => {
     // because the user information may not be fetched yet
     // when this component is mounted.
     const prevName = prevProps.user.displayName;
@@ -68,7 +70,7 @@ export class PageManageAccount extends React.Component {
     }
   };
 
-  handleChange = e => {
+  handleChange = (e: SyntheticInputEvent<>) => {
     this.setState({
       displayName: e.target.value,
     });
@@ -143,8 +145,5 @@ export class PageManageAccount extends React.Component {
     );
   }
 }
-
-PageManageAccount.propTypes = propTypes;
-PageManageAccount.defaultProps = defaultProps;
 
 export default withStyles(styles)(PageManageAccount);

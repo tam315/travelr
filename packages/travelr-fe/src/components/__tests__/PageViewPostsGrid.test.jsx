@@ -1,3 +1,4 @@
+// @flow
 import GridListTile from '@material-ui/core/GridListTile';
 import { shallow } from 'enzyme';
 import React from 'react';

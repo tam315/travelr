@@ -1,14 +1,22 @@
+// @flow
 import config from '../config';
 import loadJS from './loadJS';
+import type { Post } from '../config/types';
+
+declare var google: any;
+declare var MarkerClusterer: any;
+type Marker = { setMap(any): any };
 
 class MapsHelper {
-  constructor(mapRef) {
-    this.isApiReady = false; // whether maps api is loaded and ready
-    this.map = null; // reference to the maps div element
-    this.markers = null; // reference marker instances
-    this.markerCluster = null; // reference to the marker cluster
-    this.infowindow = null; // reference to the info window which is currently opened
-    this.queuedPosts = null; // pending tasks because map was not initialized
+  isApiReady: boolean = false; // whether maps api is loaded and ready
+  map: HTMLElement; // reference to the maps div element
+  markers: Array<Marker> = []; // reference marker instances
+  markerCluster: any; // reference to the marker cluster
+  infowindow: any; // reference to the info window which is currently opened
+  queuedPosts: ?Array<Post>; // pending tasks because map was not initialized
+
+  constructor(mapRef: HTMLElement) {
+    this.queuedPosts = null;
 
     const mapInitializer = this.mapInitializerGenerator(mapRef);
 
@@ -30,7 +38,7 @@ class MapsHelper {
     mapInitializer();
   }
 
-  mapInitializerGenerator = mapRef => () => {
+  mapInitializerGenerator = (mapRef: HTMLElement) => () => {
     const gotsuCity = new google.maps.LatLng(35.011892, 132.221816);
     // create map
     this.map = new google.maps.Map(mapRef, {
@@ -58,7 +66,7 @@ class MapsHelper {
     if (this.infowindow) this.infowindow.close();
   };
 
-  placePosts = posts => {
+  placePosts = (posts: Array<Post>) => {
     // if api is not ready, queue posts and exit funtion
     if (!this.isApiReady) {
       this.queuedPosts = posts;
@@ -66,12 +74,9 @@ class MapsHelper {
     }
 
     // remove previous markers
-    if (this.markers) {
+    if (this.markers.length) {
       this.markers.forEach(marker => {
         marker.setMap(null);
-        // remove memory allocation
-        marker.infowindow = null; /* eslint-disable-line */
-        marker = null; /* eslint-disable-line */
       });
     }
 
@@ -102,7 +107,7 @@ class MapsHelper {
         this.closePreviousInfowindow();
         // preserve the info window for later closing
         this.infowindow = marker.infowindow;
-        marker.infowindow.open(this.map, marker);
+        this.infowindow.open(this.map, marker);
       });
 
       return marker;

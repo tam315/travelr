@@ -1,3 +1,4 @@
+// @flow
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import {
@@ -7,13 +8,8 @@ import {
 } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import PropTypes from 'prop-types';
 import React from 'react';
 import Hr from './Hr';
-
-const propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 const googleTheme = createMuiTheme({
   palette: {
@@ -37,7 +33,11 @@ const styles = theme => ({
   },
 });
 
-const PageAuth = props => {
+type Props = {
+  classes: any,
+};
+
+const PageAuth = (props: Props) => {
   const { classes } = props;
 
   return (
@@ -81,7 +81,5 @@ const PageAuth = props => {
     </div>
   );
 };
-
-PageAuth.propTypes = propTypes;
 
 export default withStyles(styles)(PageAuth);

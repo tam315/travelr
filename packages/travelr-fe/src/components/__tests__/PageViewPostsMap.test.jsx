@@ -2,6 +2,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { DUMMY_POSTS } from '../../config/dummies';
+// @flow
 import MapsHelper from '../../utils/MapsHelper';
 import PageViewPostsMap from '../PageViewPostsMap';
 

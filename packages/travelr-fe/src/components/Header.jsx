@@ -1,3 +1,4 @@
+// @flow
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -6,19 +7,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Menu from './Menu';
-
-const propTypes = {
-  user: PropTypes.object,
-  classes: PropTypes.object.isRequired,
-};
-
-const defaultProps = {
-  user: {},
-};
+import type { UserStore } from '../config/types';
 
 const styles = {
   title: {
@@ -39,14 +31,19 @@ const styles = {
   },
 };
 
-class Header extends React.Component {
-  constructor(props) {
-    super(props);
+type Props = {
+  user: UserStore,
+  classes: any,
+};
 
-    this.state = {
-      isMenuOpen: false,
-    };
-  }
+type State = {
+  isMenuOpen: boolean,
+};
+
+class Header extends React.Component<Props, State> {
+  state = {
+    isMenuOpen: false,
+  };
 
   toggleMenu = () => {
     this.setState({ isMenuOpen: !this.state.isMenuOpen });
@@ -110,8 +107,5 @@ class Header extends React.Component {
     );
   }
 }
-
-Header.propTypes = propTypes;
-Header.defaultProps = defaultProps;
 
 export default withStyles(styles)(Header);

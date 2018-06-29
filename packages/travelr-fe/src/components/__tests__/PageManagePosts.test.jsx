@@ -1,10 +1,15 @@
+// @flow
 import { ListItem } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import MenuItem from '@material-ui/core/MenuItem';
 import { shallow } from 'enzyme';
 import React from 'react';
-import { DUMMY_POSTS, DUMMY_USER_STORE } from '../../config/dummies';
+import {
+  DUMMY_POSTS,
+  DUMMY_USER_STORE,
+  DUMMY_POSTS_STORE,
+} from '../../config/dummies';
 import { PageManagePosts } from '../PageManagePosts';
 
 describe('PageManagePosts component', () => {
@@ -28,7 +33,7 @@ describe('PageManagePosts component', () => {
     wrapper = shallow(
       <PageManagePosts
         user={DUMMY_USER_STORE}
-        posts={{ myPosts: DUMMY_POSTS, myPostsSelected: [] }}
+        posts={DUMMY_POSTS_STORE}
         classes={{}}
         fetchMyPosts={mock.actions.fetchMyPosts}
         deleteMyPosts={mock.actions.deleteMyPosts}

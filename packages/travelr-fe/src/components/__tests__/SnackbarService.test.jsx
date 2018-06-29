@@ -1,6 +1,8 @@
+// @flow
 import { shallow, mount } from 'enzyme';
 import React from 'react';
 import { SnackbarService } from '../SnackbarService';
+import { DUMMY_APP_STORE } from '../../config/dummies';
 
 describe('SnackbarService component', () => {
   let wrapper;
@@ -15,7 +17,7 @@ describe('SnackbarService component', () => {
 
     wrapper = shallow(
       <SnackbarService
-        app={{}}
+        app={DUMMY_APP_STORE}
         reduceSnackbarQueue={mock.actions.reduceSnackbarQueue}
       />,
     );
@@ -58,7 +60,7 @@ describe('SnackbarService component', () => {
 
     wrapper = mount(
       <SnackbarService
-        app={{}}
+        app={DUMMY_APP_STORE}
         reduceSnackbarQueue={mock.actions.reduceSnackbarQueue}
       />,
     );
