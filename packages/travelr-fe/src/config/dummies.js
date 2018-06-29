@@ -2,6 +2,7 @@
 import type {
   AppStore,
   FilterCriterion,
+  NewPost,
   Post,
   PostsStore,
   UserStore,
@@ -131,6 +132,15 @@ export const DUMMY_POSTS: Array<Post> = [
 export const DUMMY_POSTS_IDS: Array<number> = DUMMY_POSTS.map(
   post => post.postId,
 );
+
+export const DUMMY_NEW_POST: NewPost = {
+  oldImageUrl: 'dummy',
+  newImageUrl: 'dummy',
+  description: 'dummy_description',
+  shootDate: '1985-3-31',
+  lng: 135.0,
+  lat: 35.0,
+};
 
 export const DUMMY_FILTER_CRITERION: FilterCriterion = {
   userId: 'dummy_userId',

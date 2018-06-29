@@ -1,5 +1,10 @@
 // @flow
-import type { UserStore, NewUserInfo, FilterCriterion } from '../config/types';
+import type {
+  FilterCriterion,
+  NewPost,
+  NewUserInfo,
+  UserStore,
+} from '../config/types';
 import config from '../config';
 import actionTypes from './types';
 import type { Dispatch } from 'redux';
@@ -150,6 +155,40 @@ actions.fetchAllPosts = (criterion: FilterCriterion = {}) => async (
   } catch (err) {
     dispatch({
       type: actionTypes.FETCH_ALL_POSTS_FAIL,
+    });
+  }
+};
+
+actions.createPost = (
+  user: UserStore,
+  newPost: NewPost,
+  successCallback: any => any,
+) => async (dispatch: Dispatch<any>) => {
+  try {
+    const response = await fetch(`${config.apiUrl}posts`, {
+      method: 'POST',
+      headers: {
+        authorization: user.token,
+      },
+      body: JSON.stringify(newPost),
+    });
+
+    if (!response.ok) {
+      dispatch({
+        type: actionTypes.CREATE_POST_FAIL,
+      });
+      return;
+    }
+
+    const { postId } = await response.json();
+    dispatch({
+      type: actionTypes.CREATE_POST_SUCCESS,
+      payload: postId,
+    });
+    successCallback(postId);
+  } catch (err) {
+    dispatch({
+      type: actionTypes.CREATE_POST_FAIL,
     });
   }
 };

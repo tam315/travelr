@@ -7,7 +7,7 @@ import { DUMMY_USER_STORE } from '../../config/dummies';
 
 const DUMMY_POST_ID_CREATED = 12345;
 
-const DUMMY_POST_DATA_TO_CREATE = {
+const DUMMY_STATE = {
   oldImageFilePath: 'dummy',
   newImageFilePath: 'dummy',
   description: 'dummy_description',
@@ -18,19 +18,21 @@ const DUMMY_POST_DATA_TO_CREATE = {
 
 describe('PageCreatePost component', () => {
   let wrapper;
-  let mockHistory;
+  let mock;
 
   beforeEach(() => {
-    mockHistory = {
-      push: jest.fn(),
+    mock = {
+      history: { push: jest.fn() },
+      createPost: jest.fn((user, newPost, callback) => callback()),
     };
 
     wrapper = shallow(
       <PageCreatePost
         // $FlowIgnore
-        history={mockHistory}
+        history={mock.history}
         classes={{}}
         user={DUMMY_USER_STORE}
+        createPost={mock.createPost}
       />,
     );
   });
@@ -53,36 +55,18 @@ describe('PageCreatePost component', () => {
   });
 
   test('submit data if the content is OK', async () => {
-    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_ID_CREATED }));
-    wrapper.setState(DUMMY_POST_DATA_TO_CREATE);
+    wrapper.setState(DUMMY_STATE);
     wrapper
       .find(Button)
       .last()
       .simulate('click');
 
-    // createPost() should be called with valid args
-    const fetchUrl = fetch.mock.calls[0][0];
-    const fetchOptions = fetch.mock.calls[0][1];
-    const body = JSON.parse(fetchOptions.body);
-    expect(fetch).toBeCalled();
-    expect(fetchUrl).toContain('/posts');
-    expect(fetchOptions.method).toBe('POST');
-    expect(body.description).toEqual(DUMMY_POST_DATA_TO_CREATE.description);
-    expect(body.shootDate).toEqual(DUMMY_POST_DATA_TO_CREATE.shootDate);
-    expect(body.lng).toEqual(DUMMY_POST_DATA_TO_CREATE.lng);
-    expect(body.lat).toEqual(DUMMY_POST_DATA_TO_CREATE.lat);
-    setTimeout(
-      () =>
-        expect(mockHistory.push).toBeCalledWith(
-          `/post/${DUMMY_POST_ID_CREATED}`,
-        ),
-      1,
-    );
+    expect(mock.createPost).toBeCalled();
   });
 
   test('navigete to post page if success', async () => {
     fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_ID_CREATED }));
-    wrapper.setState(DUMMY_POST_DATA_TO_CREATE);
+    wrapper.setState(DUMMY_STATE);
     wrapper
       .find(Button)
       .last()
@@ -90,7 +74,7 @@ describe('PageCreatePost component', () => {
 
     setTimeout(
       () =>
-        expect(mockHistory.push).toBeCalledWith(
+        expect(mock.history.push).toBeCalledWith(
           `/post/${DUMMY_POST_ID_CREATED}`,
         ),
       1,

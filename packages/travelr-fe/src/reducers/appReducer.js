@@ -13,16 +13,6 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
       newState.snackbarQueue.shift();
       return newState;
     }
-    case actionTypes.FETCH_ALL_POSTS_FAIL: {
-      return {
-        snackbarQueue: [...state.snackbarQueue, '投稿の取得に失敗しました'],
-      };
-    }
-    case actionTypes.CREATE_POST_FAIL: {
-      return {
-        snackbarQueue: [...state.snackbarQueue, '投稿の取得に失敗しました'],
-      };
-    }
     case actionTypes.FETCH_USER_INFO_FAIL: {
       return {
         snackbarQueue: [
@@ -55,6 +45,21 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
           ...state.snackbarQueue,
           'アカウントの情報に失敗しました',
         ],
+      };
+    }
+    case actionTypes.FETCH_ALL_POSTS_FAIL: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, '投稿の取得に失敗しました'],
+      };
+    }
+    case actionTypes.CREATE_POST_SUCCESS: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, '投稿を作成しました'],
+      };
+    }
+    case actionTypes.CREATE_POST_FAIL: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, '投稿の作成に失敗しました'],
       };
     }
     case actionTypes.FETCH_MY_POSTS_FAIL: {

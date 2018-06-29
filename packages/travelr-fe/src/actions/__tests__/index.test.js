@@ -1,9 +1,10 @@
 // @flow
 import {
-  DUMMY_POSTS,
-  DUMMY_POSTS_IDS,
-  DUMMY_USER_STORE,
   DUMMY_FILTER_CRITERION,
+  DUMMY_NEW_POST,
+  DUMMY_POSTS_IDS,
+  DUMMY_POSTS,
+  DUMMY_USER_STORE,
 } from '../../config/dummies';
 import actions from '../index';
 import types from '../types';
@@ -204,6 +205,63 @@ describe('actions', () => {
 
       expect(mockDispatch.mock.calls[0][0]).toEqual({
         type: types.FETCH_ALL_POSTS_FAIL,
+      });
+    });
+  });
+
+  describe('createPost', () => {
+    let mock;
+    let thunk;
+
+    beforeEach(() => {
+      mock = {
+        callback: jest.fn(),
+        dispatch: jest.fn(),
+      };
+      thunk = actions.createPost(
+        DUMMY_USER_STORE,
+        DUMMY_NEW_POST,
+        mock.callback,
+      );
+    });
+
+    test('generates correct url and body', async () => {
+      await thunk(mock.dispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOption = fetch.mock.calls[0][1];
+      const fetchBody = JSON.parse(fetchOption.body);
+
+      expect(fetchUrl).toContain('/posts');
+      expect(fetchOption.method).toContain('POST');
+      expect(fetchBody).toEqual(DUMMY_NEW_POST);
+    });
+
+    test('makes correct action when success', async () => {
+      const mockNewPostId = 123;
+      fetch.mockResponse(JSON.stringify({ postId: mockNewPostId }));
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.CREATE_POST_SUCCESS,
+        payload: mockNewPostId,
+      });
+    });
+
+    test('callback is invoked when success', async () => {
+      const mockNewPostId = 123;
+      fetch.mockResponse(JSON.stringify({ postId: mockNewPostId }));
+      await thunk(mock.dispatch);
+
+      expect(mock.callback).toBeCalledWith(mockNewPostId);
+    });
+
+    test('makes correct action when fail', async () => {
+      fetch.mockReject();
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.CREATE_POST_FAIL,
       });
     });
   });

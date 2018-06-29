@@ -7,7 +7,6 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
-import config from '../config';
 import type { RouterHistory } from 'react-router-dom';
 import type { UserStore, NewPost } from '../config/types';
 
@@ -29,6 +28,11 @@ type Props = {
   classes: any,
   history: RouterHistory,
   user: UserStore,
+  createPost: (
+    user: UserStore,
+    newPost: NewPost,
+    successCallback: (any) => any,
+  ) => void,
 };
 
 type State = {
@@ -69,6 +73,7 @@ export class PageCreatePost extends React.Component<Props, State> {
   }
 
   handleSubmit = () => {
+    const { user } = this.props;
     const {
       oldImageFilePath,
       newImageFilePath,
@@ -91,7 +96,7 @@ export class PageCreatePost extends React.Component<Props, State> {
 
     // TODO: upload images to firebase and get the url
 
-    const post: NewPost = {
+    const newPost: NewPost = {
       oldImageUrl: 'dummyurl1',
       newImageUrl: 'dummyurl2',
       description,
@@ -104,30 +109,7 @@ export class PageCreatePost extends React.Component<Props, State> {
       this.props.history.push(`/post/${postId}`);
     };
 
-    this.createPost(post, successCallback);
-  };
-
-  createPost = async (post: NewPost, successCallback: number => any) => {
-    try {
-      const response = await fetch(`${config.apiUrl}posts`, {
-        method: 'POST',
-        headers: {
-          authorization: this.props.user.token,
-        },
-        body: JSON.stringify(post),
-      });
-
-      if (!response.ok) {
-        // TODO: toast
-        return;
-      }
-
-      const { postId } = await response.json();
-      // TODO: toast
-      successCallback(postId);
-    } catch (err) {
-      // TODO: toast
-    }
+    this.props.createPost(user, newPost, successCallback);
   };
 
   render() {
