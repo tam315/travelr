@@ -193,31 +193,6 @@ actions.createPost = (
   }
 };
 
-actions.fetchMyPosts = (user: UserStore) => async (dispatch: Dispatch<any>) => {
-  const { userId } = user;
-  try {
-    const response = await fetch(`${config.apiUrl}posts?user_id=${userId}`);
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.FETCH_MY_POSTS_FAIL, // TODO: toast
-      });
-      // TODO: toast
-      return;
-    }
-
-    const myPosts = await response.json();
-    dispatch({
-      type: actionTypes.FETCH_MY_POSTS_SUCCESS, // TODO: toast
-      payload: myPosts,
-    });
-  } catch (err) {
-    // TODO: toast
-    dispatch({
-      type: actionTypes.FETCH_MY_POSTS_FAIL, // TODO: toast
-    });
-  }
-};
-
 actions.deletePosts = (user: UserStore, postIds: Array<number>) => async (
   dispatch: Dispatch<any>,
 ) => {
@@ -247,6 +222,31 @@ actions.deletePosts = (user: UserStore, postIds: Array<number>) => async (
     // TODO: toast
     dispatch({
       type: actionTypes.DELETE_MY_POSTS_FAIL, // TODO: toast
+    });
+  }
+};
+
+actions.fetchMyPosts = (user: UserStore) => async (dispatch: Dispatch<any>) => {
+  const { userId } = user;
+  try {
+    const response = await fetch(`${config.apiUrl}posts?user_id=${userId}`);
+    if (!response.ok) {
+      dispatch({
+        type: actionTypes.FETCH_MY_POSTS_FAIL, // TODO: toast
+      });
+      // TODO: toast
+      return;
+    }
+
+    const myPosts = await response.json();
+    dispatch({
+      type: actionTypes.FETCH_MY_POSTS_SUCCESS, // TODO: toast
+      payload: myPosts,
+    });
+  } catch (err) {
+    // TODO: toast
+    dispatch({
+      type: actionTypes.FETCH_MY_POSTS_FAIL, // TODO: toast
     });
   }
 };

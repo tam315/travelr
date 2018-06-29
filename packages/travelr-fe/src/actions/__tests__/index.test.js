@@ -266,47 +266,6 @@ describe('actions', () => {
     });
   });
 
-  describe('fetchMyPosts', () => {
-    test('generate a correct url', async () => {
-      fetch.mockResponse();
-
-      const mockDispatch = jest.fn();
-      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
-      await thunk(mockDispatch);
-
-      const fetchUrl = fetch.mock.calls[0][0];
-
-      // make a correct fetch
-      expect(fetchUrl).toContain(`/posts?user_id=${DUMMY_USER_STORE.userId}`);
-    });
-
-    test('make a correct action if test succeed', async () => {
-      fetch.mockResponse(JSON.stringify(DUMMY_POSTS));
-
-      const mockDispatch = jest.fn();
-      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
-      await thunk(mockDispatch);
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_MY_POSTS_SUCCESS,
-        payload: DUMMY_POSTS,
-      });
-    });
-
-    test('make a correct action if test failed', async () => {
-      fetch.mockReject();
-
-      const mockDispatch = jest.fn();
-      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
-      await thunk(mockDispatch);
-
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_MY_POSTS_FAIL,
-      });
-    });
-  });
-
   describe('deletePosts', () => {
     test('generate a correct url', async () => {
       fetch.mockResponse();
@@ -349,6 +308,47 @@ describe('actions', () => {
       // make a correct action
       expect(mockDispatch.mock.calls[0][0]).toEqual({
         type: types.DELETE_MY_POSTS_FAIL,
+      });
+    });
+  });
+
+  describe('fetchMyPosts', () => {
+    test('generate a correct url', async () => {
+      fetch.mockResponse();
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+      await thunk(mockDispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+
+      // make a correct fetch
+      expect(fetchUrl).toContain(`/posts?user_id=${DUMMY_USER_STORE.userId}`);
+    });
+
+    test('make a correct action if test succeed', async () => {
+      fetch.mockResponse(JSON.stringify(DUMMY_POSTS));
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+      await thunk(mockDispatch);
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.FETCH_MY_POSTS_SUCCESS,
+        payload: DUMMY_POSTS,
+      });
+    });
+
+    test('make a correct action if test failed', async () => {
+      fetch.mockReject();
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.FETCH_MY_POSTS_FAIL,
       });
     });
   });
