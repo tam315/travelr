@@ -381,6 +381,54 @@ describe('actions', () => {
     });
   });
 
+  describe('createComment', () => {
+    let mock;
+    let thunk;
+    const DUMMY_COMMENT = 'dummy_comment';
+    const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
+
+    beforeEach(() => {
+      mock = {
+        dispatch: jest.fn(),
+      };
+      thunk = actions.createComment(
+        DUMMY_USER_STORE,
+        DUMMY_POST_ID,
+        DUMMY_COMMENT,
+      );
+    });
+
+    test('generates correct url and body', async () => {
+      await thunk(mock.dispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOption = fetch.mock.calls[0][1];
+      const fetchBody = JSON.parse(fetchOption.body);
+
+      expect(fetchUrl).toContain(`/posts/${DUMMY_POST_ID}/comments`);
+      expect(fetchOption.method).toContain('POST');
+      expect(fetchBody).toEqual({ comment: DUMMY_COMMENT });
+    });
+
+    test('makes correct action when success', async () => {
+      fetch.mockResponse();
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.CREATE_COMMENT_SUCCESS,
+      });
+    });
+
+    test('makes correct action when fail', async () => {
+      fetch.mockReject();
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.CREATE_COMMENT_FAIL,
+      });
+    });
+  });
+
   describe('reduceSnackbarQueue', () => {
     test('make a correct action', () => {
       const action = actions.reduceSnackbarQueue();

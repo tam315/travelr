@@ -1,14 +1,13 @@
 // @flow
-import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import ReactCompareImage from 'react-compare-image';
 import config from '../config';
 import StatusBadge from './StatusBadge';
-import type { UserStore, Post, Comment } from '../config/types';
+import type { Post, Comment, UserStore } from '../config/types';
 import type { Match } from 'react-router-dom';
+import PageViewPostComments from './PageViewPostComments';
 
 const styles = theme => ({
   root: {
@@ -34,17 +33,16 @@ type Props = {
   classes: any,
   match: Match,
   user: UserStore,
+  createComment: (user: UserStore, postId: number, comment: string) => any,
 };
 
 type State = {
   post: ?Post,
-  comment: string,
 };
 
 export class PageViewPost extends React.Component<Props, State> {
   state = {
     post: null,
-    comment: '',
   };
   postId: number;
 
@@ -78,28 +76,13 @@ export class PageViewPost extends React.Component<Props, State> {
     }
   };
 
-  createComment = async (postId: number, comment: string) => {
-    try {
-      const response = await fetch(`${config.apiUrl}posts/${postId}/comments`, {
-        method: 'POST',
-        headers: { authorization: this.props.user.token },
-        body: JSON.stringify({ comment }),
-      });
-
-      if (!response.ok) {
-        // TODO: toast
-        return;
-      }
-
-      await this.fetchPost(this.postId);
-    } catch (err) {
-      // TODO: toast
-    }
-  };
-
   handleChange(e: SyntheticInputEvent<HTMLElement>, stateKeyName: string) {
     this.setState({ [stateKeyName]: e.target.value });
   }
+
+  handleCreateComment = (comment: string) => {
+    this.props.createComment(this.props.user, this.postId, comment);
+  };
 
   renderComments = (comments: Array<Comment>): Array<React.Element<any>> =>
     comments.map(item => (
@@ -153,25 +136,10 @@ export class PageViewPost extends React.Component<Props, State> {
             google maps goes here {lng} {lat}
           </div>
 
-          <Input
-            placeholder="コメントを書く"
-            value={this.state.comment}
-            onChange={e => this.handleChange(e, 'comment')}
+          <PageViewPostComments
+            comments={comments}
+            onCreateComment={this.handleCreateComment}
           />
-          {this.state.comment && (
-            <Button
-              onClick={() =>
-                this.createComment(this.postId, this.state.comment)
-              }
-              color="primary"
-              size="large"
-              variant="contained"
-            >
-              コメントする
-            </Button>
-          )}
-
-          {this.renderComments(comments)}
         </div>
       </div>
     );

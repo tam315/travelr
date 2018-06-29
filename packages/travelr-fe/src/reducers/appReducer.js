@@ -77,6 +77,16 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
         snackbarQueue: [...state.snackbarQueue, '投稿の削除に失敗しました'],
       };
     }
+    case actionTypes.CREATE_COMMENT_SUCCESS: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, 'コメントを投稿しました'],
+      };
+    }
+    case actionTypes.CREATE_COMMENT_FAIL: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, 'コメントの投稿に失敗しました'],
+      };
+    }
     default:
       return state;
   }

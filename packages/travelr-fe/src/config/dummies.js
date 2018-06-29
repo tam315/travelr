@@ -33,6 +33,22 @@ export const DUMMY_POSTS: Array<Post> = [
         postId: 1,
         displayName: 'dummy_comment_displayName1',
       },
+      {
+        commentId: 791,
+        userId: 'dummy_userId1',
+        datetime: '1985-03-01',
+        comment: 'dummy_comment1',
+        postId: 1,
+        displayName: 'dummy_comment_displayName1',
+      },
+      {
+        commentId: 781,
+        userId: 'dummy_userId1',
+        datetime: '1985-03-01',
+        comment: 'dummy_comment1',
+        postId: 1,
+        displayName: 'dummy_comment_displayName1',
+      },
     ],
   },
   {

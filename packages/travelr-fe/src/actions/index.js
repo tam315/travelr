@@ -264,6 +264,37 @@ actions.selectMyPostsReset = () => ({
   type: actionTypes.SELECT_MY_POSTS_RESET,
 });
 
+actions.createComment = (
+  user: UserStore,
+  postId: number,
+  comment: string,
+) => async (dispatch: Dispatch<any>) => {
+  try {
+    const response = await fetch(`${config.apiUrl}posts/${postId}/comments`, {
+      method: 'POST',
+      headers: { authorization: user.token },
+      body: JSON.stringify({ comment }),
+    });
+
+    if (!response.ok) {
+      dispatch({
+        type: actionTypes.CREATE_COMMENT_FAIL,
+      });
+      return;
+    }
+
+    dispatch({
+      type: actionTypes.CREATE_COMMENT_SUCCESS,
+    });
+
+    // await actions.fetchPost(this.postId);  // TODO: fetchPost here
+  } catch (err) {
+    dispatch({
+      type: actionTypes.CREATE_COMMENT_FAIL,
+    });
+  }
+};
+
 actions.reduceSnackbarQueue = () => ({
   type: actionTypes.REDUCE_SNACKBAR_QUEUE,
 });

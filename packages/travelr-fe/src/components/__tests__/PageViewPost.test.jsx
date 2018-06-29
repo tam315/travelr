@@ -1,26 +1,30 @@
 // @flow
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { shallow } from 'enzyme';
 import React from 'react';
 import ReactCompareImage from 'react-compare-image';
 import { DUMMY_POSTS, DUMMY_USER_STORE } from '../../config/dummies';
 import { PageViewPost } from '../PageViewPost';
+import PageViewPostComments from '../PageViewPostComments';
 import StatusBadge from '../StatusBadge';
 
 jest.mock('../StatusBadge');
 
-// url params
-const match = { params: { postId: 12345 } };
-
 // dummy data from the API
 const DUMMY_POST = DUMMY_POSTS[0];
 
+// url params
+const match = { params: { postId: DUMMY_POST.postId } };
+
 describe('PageViewPost component', () => {
   let wrapper;
+  let mock;
 
   beforeEach(() => {
     fetch.resetMocks();
+    mock = {
+      createComment: jest.fn(),
+    };
 
     wrapper = shallow(
       <PageViewPost
@@ -28,6 +32,7 @@ describe('PageViewPost component', () => {
         // $FlowIgnore
         match={match}
         user={DUMMY_USER_STORE}
+        createComment={mock.createComment}
       />,
     );
     wrapper.setState({
@@ -66,50 +71,17 @@ describe('PageViewPost component', () => {
         .at(2)
         .html(),
     ).toContain(DUMMY_POST.shootDate);
-    // comment writing form
-    expect(wrapper.find({ placeholder: 'コメントを書く' })).toHaveLength(1);
     // comments
-    expect(wrapper.find({ className: 'comment' }).html()).toContain(
-      DUMMY_POST.comments[0].comment,
-    );
+    expect(wrapper.find(PageViewPostComments)).toHaveLength(1);
   });
 
-  test('shows comment posting button when user writes the comment', () => {
-    // button is hidden
-    expect(wrapper.find(Button)).toHaveLength(0);
-
-    // if user write a comment
+  test('createPost() ', () => {
     wrapper
-      .find({ placeholder: 'コメントを書く' })
-      .simulate('change', { target: { value: 'cat' } });
-
-    // button is now visible
-    expect(wrapper.find(Button)).toHaveLength(1);
-  });
-
-  test('sends a comment and fetches post if success', done => {
-    fetch.mockResponse();
-
-    // user write a comment
-    wrapper
-      .find({ placeholder: 'コメントを書く' })
-      .simulate('change', { target: { value: 'cat' } });
-
-    // user pressed send button
-    wrapper.find(Button).simulate('click');
-
-    setImmediate(() => {
-      expect(fetch).toHaveBeenCalledTimes(3);
-
-      // 1st time => initial fetchPost
-      // 2nd time => post comment
-      expect(fetch.mock.calls[1][0]).toContain(
-        `/posts/${match.params.postId}/comments`,
-      );
-      expect(fetch.mock.calls[1][1].method).toBe('POST');
-      // 3rd time => fetchPost
-      expect(fetch.mock.calls[2][0]).toContain(`/posts/${match.params.postId}`);
-      done();
-    });
+      .find(PageViewPostComments)
+      .dive()
+      .simulate('createComment', 'dummy_comment');
+    expect(mock.createComment.mock.calls[0][0]).toBe(DUMMY_USER_STORE);
+    expect(mock.createComment.mock.calls[0][1]).toBe(DUMMY_POST.postId);
+    expect(mock.createComment.mock.calls[0][2]).toBe('dummy_comment');
   });
 });
