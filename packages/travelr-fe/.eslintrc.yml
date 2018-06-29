@@ -10,7 +10,7 @@ rules:
      specialLink:
       - to
   no-console: 1
-  react/forbid-prop-types: 0
+  # react/forbid-prop-types: 0
   # import/no-extraneous-dependencies: 0
   # import/no-unresolved: 0
   # jsx-a11y/click-events-have-key-events: 0
@@ -35,6 +35,11 @@ rules:
 
   # flowの'import type {}'構文を、VSCodeの'Organize Imports'がうまく並び変えられないため、暫定的に停止
   import/first: 0
+
+  # flowとairbnbが競合するため
+  # （stateの初期値設定や、this.hogehogeの型宣言などをクラス内の上部に記載したときにエラーが出るため）
+  react/sort-comp: 0
+
 env:
   mocha: true
   jest: true
