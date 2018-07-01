@@ -1,7 +1,7 @@
 const config = require('../../config');
 
 module.exports = {
-  DUMMY_TOKEN: 'dummy_token',
+  DUMMY_TOKEN: 'DUMMY_USER_TOKEN',
   DUMMY_USER_ID: 'dummy_user_id',
   DUMMY_USER_DISPLAY_NAME: 'dummy_user_display_name',
   DUMMY_POSTS: [

@@ -9,7 +9,7 @@ const config = require('../../config');
 
 const USER_COUNT = 2000;
 const POST_COUNT = 10000;
-const COMMENT_COUNT = 2000;
+const COMMENT_COUNT = 30000;
 const LIKE_COUNT = 30000;
 
 const db = dbHelper.db;
@@ -67,16 +67,16 @@ const setupDummyUsers = async () => {
 
 const setupDummyPosts = async () => {
   const DUMMY_IMAGES = [
-    'http://lorempixel.com/200/200',
-    'http://lorempixel.com/200/300',
-    'http://lorempixel.com/200/400',
-    'http://lorempixel.com/300/200',
-    'http://lorempixel.com/300/300',
-    'http://lorempixel.com/300/400',
-    'http://lorempixel.com/400/200',
-    'http://lorempixel.com/400/300',
-    'http://lorempixel.com/400/400',
-    'http://lorempixel.com/500/200',
+    'http://via.placeholder.com/200x200',
+    'http://via.placeholder.com/200x300',
+    'http://via.placeholder.com/200x400',
+    'http://via.placeholder.com/300x200',
+    'http://via.placeholder.com/300x300',
+    'http://via.placeholder.com/300x400',
+    'http://via.placeholder.com/400x200',
+    'http://via.placeholder.com/400x300',
+    'http://via.placeholder.com/400x400',
+    'http://via.placeholder.com/500x200',
   ];
 
   let posts = [];
