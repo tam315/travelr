@@ -15,6 +15,7 @@ import type {
 export const DUMMY_POSTS: Array<Post> = [
   {
     postId: 1,
+    userId: 'dummy_userId1',
     oldImageUrl: 'dummy_oldImageUrl1',
     newImageUrl: 'dummy_newImageUrl1',
     description: 'dummy_description1',
@@ -54,6 +55,7 @@ export const DUMMY_POSTS: Array<Post> = [
   },
   {
     postId: 2,
+    userId: 'dummy_userId2',
     oldImageUrl: 'dummy_oldImageUrl2',
     newImageUrl: 'dummy_newImageUrl2',
     description: 'dummy_description2',
@@ -77,6 +79,7 @@ export const DUMMY_POSTS: Array<Post> = [
   },
   {
     postId: 3,
+    userId: 'dummy_userId3',
     oldImageUrl: 'dummy_oldImageUrl3',
     newImageUrl: 'dummy_newImageUrl3',
     description: 'dummy_description3',
@@ -100,6 +103,7 @@ export const DUMMY_POSTS: Array<Post> = [
   },
   {
     postId: 4,
+    userId: 'dummy_userId4',
     oldImageUrl: 'dummy_oldImageUrl4',
     newImageUrl: 'dummy_newImageUrl4',
     description: 'dummy_description4',
@@ -123,6 +127,7 @@ export const DUMMY_POSTS: Array<Post> = [
   },
   {
     postId: 5,
+    userId: 'dummy_userId5',
     oldImageUrl: 'dummy_oldImageUrl5',
     newImageUrl: 'dummy_newImageUrl5',
     description: 'dummy_description5',

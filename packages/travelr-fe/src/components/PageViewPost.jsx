@@ -1,12 +1,14 @@
 // @flow
+import { Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import IconEdit from '@material-ui/icons/Edit';
 import * as React from 'react';
 import ReactCompareImage from 'react-compare-image';
+import { Link } from 'react-router-dom';
+import PageViewPostComments from './PageViewPostComments';
 import StatusBadge from './StatusBadge';
 import type { PostsStore, UserStore } from '../config/types';
 import type { Match } from 'react-router-dom';
-import PageViewPostComments from './PageViewPostComments';
 
 const styles = theme => ({
   root: {
@@ -20,6 +22,17 @@ const styles = theme => ({
     paddingRight: theme.spacing.unit * 2,
     paddingLeft: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 4,
+  },
+  editButton: {
+    background: 'white',
+    borderRadius: 5,
+    color: 'black',
+    opacity: 0.7,
+    padding: theme.spacing.unit * 1,
+    position: 'absolute',
+    right: 16,
+    top: 72,
+    zIndex: 10,
   },
   badges: {
     display: 'grid',
@@ -68,6 +81,8 @@ export class PageViewPost extends React.Component<Props> {
 
     if (!currentPost) return <div />;
     const {
+      postId,
+      userId,
       oldImageUrl,
       newImageUrl,
       description,
@@ -84,6 +99,12 @@ export class PageViewPost extends React.Component<Props> {
     return (
       <div className={classes.root}>
         <ReactCompareImage leftImage={oldImageUrl} rightImage={newImageUrl} />
+
+        {userId === this.props.user.userId && (
+          <Link to={`/post/${postId}/edit`} className={classes.editButton}>
+            <IconEdit />
+          </Link>
+        )}
 
         <div className={classes.container}>
           <div className={classes.badges}>

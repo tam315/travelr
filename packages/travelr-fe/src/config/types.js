@@ -16,6 +16,7 @@ export type Comment = {
 
 export type Post = {
   postId: number,
+  userId: string,
   oldImageUrl: string,
   newImageUrl: string,
   description?: string,
