@@ -36,7 +36,7 @@ const postsReducer = (
         myPosts: action.payload,
       };
 
-    case actionTypes.DELETE_MY_POSTS_SUCCESS: {
+    case actionTypes.DELETE_POSTS_SUCCESS: {
       return {
         ...state,
         myPostsSelected: [],

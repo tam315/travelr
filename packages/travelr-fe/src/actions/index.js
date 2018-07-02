@@ -269,20 +269,20 @@ actions.deletePosts = (user: UserStore, postIds: Array<number>) => async (
     if (!response.ok) {
       // TODO: toast
       dispatch({
-        type: actionTypes.DELETE_MY_POSTS_FAIL, // TODO: toast
+        type: actionTypes.DELETE_POSTS_FAIL, // TODO: toast
       });
       return;
     }
 
     dispatch({
-      type: actionTypes.DELETE_MY_POSTS_SUCCESS, // TODO: toast
+      type: actionTypes.DELETE_POSTS_SUCCESS, // TODO: toast
       payload: postIds,
     });
     actions.fetchMyPosts(user)(dispatch);
   } catch (err) {
     // TODO: toast
     dispatch({
-      type: actionTypes.DELETE_MY_POSTS_FAIL, // TODO: toast
+      type: actionTypes.DELETE_POSTS_FAIL, // TODO: toast
     });
   }
 };

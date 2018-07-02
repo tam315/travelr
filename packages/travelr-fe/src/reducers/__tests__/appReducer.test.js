@@ -37,8 +37,8 @@ describe('appReducer', () => {
       ['EDIT_POST_SUCCESS', '投稿を編集しました'],
       ['EDIT_POST_FAIL', '投稿の編集に失敗しました'],
       ['FETCH_MY_POSTS_FAIL', '投稿の取得に失敗しました'],
-      ['DELETE_MY_POSTS_SUCCESS', '投稿を削除しました'],
-      ['DELETE_MY_POSTS_FAIL', '投稿の削除に失敗しました'],
+      ['DELETE_POSTS_SUCCESS', '投稿を削除しました'],
+      ['DELETE_POSTS_FAIL', '投稿の削除に失敗しました'],
       ['CREATE_COMMENT_SUCCESS', 'コメントを投稿しました'],
       ['CREATE_COMMENT_FAIL', 'コメントの投稿に失敗しました'],
     ];

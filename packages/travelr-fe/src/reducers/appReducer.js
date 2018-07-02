@@ -82,12 +82,12 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
         snackbarQueue: [...state.snackbarQueue, '投稿の取得に失敗しました'],
       };
     }
-    case actionTypes.DELETE_MY_POSTS_SUCCESS: {
+    case actionTypes.DELETE_POSTS_SUCCESS: {
       return {
         snackbarQueue: [...state.snackbarQueue, '投稿を削除しました'],
       };
     }
-    case actionTypes.DELETE_MY_POSTS_FAIL: {
+    case actionTypes.DELETE_POSTS_FAIL: {
       return {
         snackbarQueue: [...state.snackbarQueue, '投稿の削除に失敗しました'],
       };

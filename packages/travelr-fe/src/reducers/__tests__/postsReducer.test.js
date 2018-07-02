@@ -73,9 +73,9 @@ describe('posts reducer', () => {
     expect(postsReducer(undefined, action)).toEqual(expected);
   });
 
-  test('DELETE_MY_POSTS_SUCCESS', () => {
+  test('DELETE_POSTS_SUCCESS', () => {
     const action = {
-      type: types.DELETE_MY_POSTS_SUCCESS,
+      type: types.DELETE_POSTS_SUCCESS,
     };
 
     const expected = {

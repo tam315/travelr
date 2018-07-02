@@ -390,7 +390,7 @@ describe('actions', () => {
 
       // make a correct action
       expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_MY_POSTS_SUCCESS,
+        type: types.DELETE_POSTS_SUCCESS,
         payload: DUMMY_POSTS_IDS,
       });
     });
@@ -404,7 +404,7 @@ describe('actions', () => {
 
       // make a correct action
       expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_MY_POSTS_FAIL,
+        type: types.DELETE_POSTS_FAIL,
       });
     });
   });
