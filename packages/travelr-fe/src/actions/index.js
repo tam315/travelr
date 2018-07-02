@@ -254,6 +254,39 @@ actions.editPost = (
   }
 };
 
+actions.deletePost = (
+  user: UserStore,
+  postId: number,
+  successCallback: void => void,
+) => async (dispatch: Dispatch<any>) => {
+  const { token } = user;
+
+  try {
+    const response = await fetch(`${config.apiUrl}posts/${postId}`, {
+      method: 'DELETE',
+      headers: { authorization: token },
+    });
+
+    if (!response.ok) {
+      // TODO: toast
+      dispatch({
+        type: actionTypes.DELETE_POST_FAIL, // TODO: toast
+      });
+      return;
+    }
+
+    dispatch({
+      type: actionTypes.DELETE_POST_SUCCESS, // TODO: toast
+    });
+    successCallback();
+  } catch (err) {
+    // TODO: toast
+    dispatch({
+      type: actionTypes.DELETE_POST_FAIL, // TODO: toast
+    });
+  }
+};
+
 actions.deletePosts = (user: UserStore, postIds: Array<number>) => async (
   dispatch: Dispatch<any>,
 ) => {

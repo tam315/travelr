@@ -40,6 +40,11 @@ type Props = {
     successCallback: (any) => any,
   ) => void,
   fetchPost: (postId: number) => void,
+  deletePost: (
+    user: UserStore,
+    postId: number,
+    successCallback: (void) => void,
+  ) => void,
 };
 
 type State = {
@@ -110,7 +115,18 @@ export class PageEditPost extends React.Component<Props, State> {
     editPost(user, postToEdit, successCallback);
   };
 
-  handleDeletePost = () => {};
+  handleDeletePost = () => {
+    const { deletePost, user, history } = this.props;
+
+    const successCallback = () => {
+      history.push('/all-grid');
+    };
+
+    if (confirm('本当に削除してよろしいですか？')) {
+      // TODO: dialog
+      deletePost(user, this.state.postId, successCallback);
+    }
+  };
 
   render() {
     const { classes } = this.props;

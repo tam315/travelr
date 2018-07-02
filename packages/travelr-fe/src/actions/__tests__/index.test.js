@@ -363,6 +363,62 @@ describe('actions', () => {
     });
   });
 
+  describe('deletePost', () => {
+    test('generate a correct url', async () => {
+      fetch.mockResponse();
+      const mockCallback = jest.fn();
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.deletePost(
+        DUMMY_USER_STORE,
+        DUMMY_POSTS_IDS[0],
+        mockCallback,
+      );
+      await thunk(mockDispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOptions = fetch.mock.calls[0][1];
+
+      // make a correct fetch
+      expect(fetchUrl).toContain(`/posts/${DUMMY_POSTS_IDS[0]}`);
+      expect(fetchOptions.method).toBe('DELETE');
+    });
+
+    test('make a correct action if test succeed', async () => {
+      fetch.mockResponse();
+      const mockCallback = jest.fn();
+      const mockDispatch = jest.fn();
+      const thunk = actions.deletePost(
+        DUMMY_USER_STORE,
+        DUMMY_POSTS_IDS[0],
+        mockCallback,
+      );
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.DELETE_POST_SUCCESS,
+      });
+    });
+
+    test('make a correct action if test failed', async () => {
+      fetch.mockReject();
+      const mockCallback = jest.fn();
+      const mockDispatch = jest.fn();
+      const thunk = actions.deletePost(
+        DUMMY_USER_STORE,
+        DUMMY_POSTS_IDS[0],
+        mockCallback,
+      );
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.DELETE_POST_FAIL,
+      });
+    });
+  });
+
   describe('deletePosts', () => {
     test('generate a correct url', async () => {
       fetch.mockResponse();
