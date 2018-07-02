@@ -99,7 +99,7 @@ function StatusBadge(props: Props) {
   return (
     <div style={isNormalSize ? stylesNormalSize.root : stylesSmallSize.root}>
       {iconElement}
-      <Typography variant={isNormalSize ? 'body1' : 'caption'} color="inherit">
+      <Typography variant={isNormalSize ? 'body1' : 'caption'}>
         {count}
       </Typography>
     </div>
