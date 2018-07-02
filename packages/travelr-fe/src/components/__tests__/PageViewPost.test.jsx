@@ -78,14 +78,4 @@ describe('PageViewPost component', () => {
     // comments
     expect(wrapper.find(PageViewPostComments)).toHaveLength(1);
   });
-
-  test('createPost() is called by PageViewPostComments', () => {
-    wrapper
-      .find(PageViewPostComments)
-      .dive()
-      .simulate('createComment', 'dummy_comment');
-    expect(mock.createComment.mock.calls[0][0]).toBe(DUMMY_USER_STORE);
-    expect(mock.createComment.mock.calls[0][1]).toBe(DUMMY_POST.postId);
-    expect(mock.createComment.mock.calls[0][2]).toBe('dummy_comment');
-  });
 });

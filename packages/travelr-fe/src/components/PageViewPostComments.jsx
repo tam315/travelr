@@ -4,13 +4,19 @@ import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
-import type { Comment } from '../config/types';
+import type { Comment, UserStore, PostsStore } from '../config/types';
 
 const styles = () => ({});
 
 type Props = {
-  comments: Array<Comment>,
-  onCreateComment(comment: string): void,
+  user: UserStore,
+  posts: PostsStore,
+  createComment: (
+    user: UserStore,
+    postId: number,
+    comment: string,
+    successCallback: (void) => void,
+  ) => void,
 };
 
 type State = {
@@ -26,6 +32,21 @@ export class PageViewPostComments extends React.Component<Props, State> {
     this.setState({ [stateKeyName]: e.target.value });
   }
 
+  handleCreateComment = () => {
+    if (!this.props.posts.currentPost) return;
+
+    const successCallback = () => {
+      this.setState({ comment: '' });
+    };
+
+    this.props.createComment(
+      this.props.user,
+      this.props.posts.currentPost.postId,
+      this.state.comment,
+      successCallback,
+    );
+  };
+
   renderComments = (comments: Array<Comment>): Array<React.Element<any>> =>
     comments.map(item => (
       <div key={item.commentId} className="comment">
@@ -39,7 +60,9 @@ export class PageViewPostComments extends React.Component<Props, State> {
     ));
 
   render() {
-    const { comments } = this.props;
+    if (!this.props.posts.currentPost) return <div />;
+
+    const { comments } = this.props.posts.currentPost;
 
     return (
       <React.Fragment>
@@ -50,7 +73,7 @@ export class PageViewPostComments extends React.Component<Props, State> {
         />
         {this.state.comment && (
           <Button
-            onClick={() => this.props.onCreateComment(this.state.comment)}
+            onClick={this.handleCreateComment}
             color="primary"
             size="large"
             variant="contained"

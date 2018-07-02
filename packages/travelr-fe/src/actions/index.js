@@ -363,6 +363,7 @@ actions.createComment = (
   user: UserStore,
   postId: number,
   comment: string,
+  successCallback: void => void,
 ) => async (dispatch: Dispatch<any>) => {
   try {
     const response = await fetch(`${config.apiUrl}posts/${postId}/comments`, {
@@ -382,6 +383,7 @@ actions.createComment = (
       type: actionTypes.CREATE_COMMENT_SUCCESS,
     });
 
+    successCallback();
     await actions.fetchPost(postId)(dispatch);
   } catch (err) {
     dispatch({

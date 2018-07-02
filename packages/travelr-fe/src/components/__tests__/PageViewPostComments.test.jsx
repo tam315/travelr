@@ -2,7 +2,11 @@
 import Button from '@material-ui/core/Button';
 import { shallow } from 'enzyme';
 import React from 'react';
-import { DUMMY_POSTS } from '../../config/dummies';
+import {
+  DUMMY_POSTS,
+  DUMMY_USER_STORE,
+  DUMMY_POSTS_STORE,
+} from '../../config/dummies';
 import { PageViewPostComments } from '../PageViewPostComments';
 
 jest.mock('../StatusBadge');
@@ -17,13 +21,18 @@ describe('PageViewPostComments component', () => {
   beforeEach(() => {
     fetch.resetMocks();
     mock = {
-      onCreateComment: jest.fn(),
+      actions: {
+        createComment: jest.fn((user, postId, comment, successCallback) =>
+          successCallback(),
+        ),
+      },
     };
 
     wrapper = shallow(
       <PageViewPostComments
-        comments={DUMMY_POST.comments}
-        onCreateComment={mock.onCreateComment}
+        user={DUMMY_USER_STORE}
+        posts={DUMMY_POSTS_STORE}
+        createComment={mock.actions.createComment}
       />,
     );
   });
@@ -50,7 +59,7 @@ describe('PageViewPostComments component', () => {
     expect(wrapper.find(Button)).toHaveLength(1);
   });
 
-  test('sends a comment and fetches post if success', () => {
+  test('createComment() is called when click a button', () => {
     fetch.mockResponse();
 
     // user write a comment
@@ -61,6 +70,11 @@ describe('PageViewPostComments component', () => {
     // user pressed send button
     wrapper.find(Button).simulate('click');
 
-    expect(mock.onCreateComment).toBeCalledWith('cat');
+    expect(mock.actions.createComment.mock.calls[0][0]).toBe(DUMMY_USER_STORE);
+    expect(mock.actions.createComment.mock.calls[0][1]).toBe(DUMMY_POST.postId);
+    expect(mock.actions.createComment.mock.calls[0][2]).toBe('cat');
+
+    // reset comment input
+    expect(wrapper.state('comment')).toBe('');
   });
 });

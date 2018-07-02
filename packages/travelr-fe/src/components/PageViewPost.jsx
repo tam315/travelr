@@ -46,8 +46,8 @@ type Props = {
   match: Match,
   user: UserStore,
   posts: PostsStore,
-  createComment: (user: UserStore, postId: number, comment: string) => void,
   fetchPost: (postId: number) => void,
+  createComment: any => any,
 };
 
 export class PageViewPost extends React.Component<Props> {
@@ -71,10 +71,6 @@ export class PageViewPost extends React.Component<Props> {
     this.setState({ [stateKeyName]: e.target.value });
   }
 
-  handleCreateComment = (comment: string) => {
-    this.props.createComment(this.props.user, this.postId, comment);
-  };
-
   render() {
     const { classes } = this.props;
     const { currentPost } = this.props.posts;
@@ -93,7 +89,6 @@ export class PageViewPost extends React.Component<Props> {
       displayName,
       likedCount,
       commentsCount,
-      comments,
     } = currentPost;
 
     return (
@@ -126,8 +121,9 @@ export class PageViewPost extends React.Component<Props> {
           </div>
 
           <PageViewPostComments
-            comments={comments}
-            onCreateComment={this.handleCreateComment}
+            user={this.props.user}
+            posts={this.props.posts}
+            createComment={this.props.createComment}
           />
         </div>
       </div>

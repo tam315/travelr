@@ -545,11 +545,13 @@ describe('actions', () => {
     beforeEach(() => {
       mock = {
         dispatch: jest.fn(),
+        successCallback: jest.fn(),
       };
       thunk = actions.createComment(
         DUMMY_USER_STORE,
         DUMMY_POST_ID,
         DUMMY_COMMENT,
+        mock.successCallback,
       );
     });
 
@@ -572,6 +574,13 @@ describe('actions', () => {
       expect(mock.dispatch.mock.calls[0][0]).toEqual({
         type: types.CREATE_COMMENT_SUCCESS,
       });
+    });
+
+    test('callback function is called when success', async () => {
+      fetch.mockResponse();
+      await thunk(mock.dispatch);
+
+      expect(mock.successCallback).toBeCalled();
     });
 
     test('makes correct action when fail', async () => {
