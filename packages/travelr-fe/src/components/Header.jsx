@@ -1,10 +1,13 @@
 // @flow
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  AppBar,
+  Button,
+  IconButton,
+  Hidden,
+  Toolbar,
+  Typography,
+} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
@@ -18,6 +21,11 @@ const styles = {
   },
   spacer: {
     flexGrow: 1,
+  },
+  accountButton: {
+    paddingRight: 0,
+    paddingLeft: 0,
+    minWidth: 0,
   },
   accountCircle: {
     marginRight: 10,
@@ -67,15 +75,22 @@ class Header extends React.Component<Props, State> {
 
             {/* TODO: hide these when window is narrow */}
             {isUserAuthorized ? (
-              <Button component={Link} to="/account" color="inherit">
+              <Button
+                component={Link}
+                to="/account"
+                color="inherit"
+                className={classes.accountButton}
+              >
                 <AccountCircle className={classes.accountCircle} />
-                <Typography
-                  variant="body2"
-                  color="inherit"
-                  className={classes.userName}
-                >
-                  {user.displayName}
-                </Typography>
+                <Hidden xsDown>
+                  <Typography
+                    variant="body2"
+                    color="inherit"
+                    className={classes.userName}
+                  >
+                    {user.displayName}
+                  </Typography>
+                </Hidden>
               </Button>
             ) : (
               <Button component={Link} to="/auth" color="inherit">
