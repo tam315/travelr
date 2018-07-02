@@ -4,9 +4,8 @@
   "scripts": {
     "build": "rimraf ./dist && cpx \"./public/**/*\" ./dist && webpack --config webpack.config.js",
     "serve": "webpack-serve ./webpack.config.js",
-    "test": "jest --watch",
-    "lint": "eslint --ext .js,.jsx ./src",
-    "resetflow": "flow stop && flow"
+    "test": "jest",
+    "lint": "eslint --ext .js,.jsx ./src"
   },
   "author": "",
   "license": "ISC",
@@ -14,55 +13,34 @@
     "@material-ui/core": "^1.2.2",
     "@material-ui/icons": "^1.1.0",
     "babel-polyfill": "^6.26.0",
-    "babel-preset-flow": "^6.23.0",
-    "connect-history-api-fallback": "^1.5.0",
-    "enzyme": "^3.3.0",
-    "enzyme-adapter-react-16": "^1.1.1",
-    "koa-connect": "^2.0.1",
-    "prop-types": "^15.6.1",
     "react": "^16.4.1",
     "react-compare-image": "^0.3.0",
     "react-dom": "^16.4.1",
     "react-input-range": "^1.3.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
-    "react-svg-loader": "^2.1.0",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
-    "babel-eslint": "^8.2.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
+    "connect-history-api-fallback": "^1.5.0",
     "cpx": "^1.5.0",
     "css-loader": "^0.28.11",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-flowtype": "^2.49.3",
-    "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.9.1",
-    "flow-bin": "^0.75.0",
-    "jest": "^23.1.0",
-    "jest-fetch-mock": "^1.6.5",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "koa-connect": "^2.0.1",
+    "react-svg-loader": "^2.1.0",
     "rimraf": "^2.6.2",
     "style-loader": "^0.21.0",
     "webpack": "^4.12.0",
     "webpack-cli": "^3.0.8",
     "webpack-serve": "^1.0.4"
-  },
-  "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>src/setupTests.js",
-    "moduleNameMapper": {
-      "^.*\\.(css|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/config/svgStub.js"
-    },
-    "globals": {
-      "google": true,
-      "MarkerClusterer": true
-    }
   }
 }

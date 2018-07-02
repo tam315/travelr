@@ -4,10 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconDone from '@material-ui/icons/Done';
 import IconEdit from '@material-ui/icons/Edit';
-import PropTypes from 'prop-types';
 import React from 'react';
 import StatusBadge from './StatusBadge';
-import type { UserStore } from '../config/types';
+import type { UserStore, NewUserInfo } from '../config/types';
 import type { RouterHistory } from 'react-router-dom';
 
 const styles = theme => ({
@@ -42,8 +41,8 @@ type Props = {
   classes: any,
   user: UserStore,
   history: RouterHistory,
-  updateUserInfo: PropTypes.func.isRequired,
-  deleteUser: PropTypes.func.isRequired,
+  updateUserInfo: (user: UserStore, newUserInfo: NewUserInfo) => void,
+  deleteUser: (user: UserStore, callback: (any) => any) => void,
 };
 
 type State = {

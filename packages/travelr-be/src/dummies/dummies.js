@@ -2,11 +2,11 @@ const config = require('../../config');
 
 module.exports = {
   DUMMY_TOKEN: 'DUMMY_USER_TOKEN',
-  DUMMY_USER_ID: 'dummy_user_id',
+  DUMMY_USER_ID: 'DUMMY_USER_ID',
   DUMMY_USER_DISPLAY_NAME: 'dummy_user_display_name',
   DUMMY_POSTS: [
     {
-      user_id: 'dummy_user_id',
+      user_id: 'DUMMY_USER_ID',
       old_image_url: 'dummy1_old_image_url',
       new_image_url: 'dummy1_new_image_url',
       description: 'dummy1_description',
@@ -15,7 +15,7 @@ module.exports = {
       view_count: 50000,
     },
     {
-      user_id: 'dummy_user_id',
+      user_id: 'DUMMY_USER_ID',
       old_image_url: 'dummy2_old_image_url',
       new_image_url: 'dummy2_new_image_url',
       description: 'dummy2_description',

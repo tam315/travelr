@@ -9,7 +9,7 @@ exports.checkToken = async (req, res, next) => {
 
   // if the test request is test purpose, set the dummy user ID
   if ('test' === process.env.NODE_ENV || token === DUMMY_TOKEN) {
-    req.userId = 'hIsWXYqLQ1Fvh0k1EVIp58Ii2SKS';
+    req.userId = 'DUMMY_USER_ID';
   } else {
     return res.status(401).send('authorization failed');
   }

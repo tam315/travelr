@@ -27,10 +27,13 @@ const createDummyUser = async () => {
   );
 };
 
-// disconnect all db sessions each time the test is finished.
-// If not, the session will infinitely
-// increase and eventually the test will fail.
-afterAll(() => {
+afterAll(async () => {
+  // leave a user to use frontend testing
+  await createDummyUser();
+
+  // disconnect all db sessions each time the test is finished.
+  // If not, the session will infinitely
+  // increase and eventually the test will fail.
   pgPromise.end();
 });
 

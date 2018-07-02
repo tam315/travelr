@@ -15,11 +15,11 @@ const LIKE_COUNT = 30000;
 const db = dbHelper.db;
 
 const actions = {
-  '1': () => setupDummyUsers(),
-  '2': () => setupDummyPosts(),
-  '3': () => setupDummyLikes(),
-  '4': () => setupDummyComments(),
-  '9': () => process.exit(0),
+  1: () => setupDummyUsers(),
+  2: () => setupDummyPosts(),
+  3: () => setupDummyLikes(),
+  4: () => setupDummyComments(),
+  9: () => process.exit(0),
 };
 
 // prompt
@@ -32,7 +32,7 @@ console.log('4: Setup dummy comments');
 console.log('9: Exit');
 
 prompt.get(['choice'], (err, result) => {
-  actions[result.choice]();
+  actions[Number(result.choice)]();
 });
 
 const getUsersFromDB = () => {

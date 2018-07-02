@@ -39,6 +39,10 @@ type Props = {
   text?: string,
 };
 
+const defaultProps = {
+  text: null,
+};
+
 const Hr = ({ text, classes }: Props) => {
   if (text) {
     return (
@@ -58,5 +62,7 @@ const Hr = ({ text, classes }: Props) => {
     </div>
   );
 };
+
+Hr.defaultProps = defaultProps;
 
 export default withStyles(styles)(Hr);

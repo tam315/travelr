@@ -57,6 +57,5 @@ globals:
   alert:
   confirm:
 
-
 plugins:
   - flowtype

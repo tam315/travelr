@@ -1,14 +1,15 @@
 {
-  "name": "05server-side-authentication",
+  "name": "travelr-be",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/index.js",
-    "test": "jest --watch -i",
+    "serve": "nodemon ./src/index.js",
+    "test": "jest -i",
     "dev-initdb": "nodemon src/dev/setupDummyData.js",
     "up": "docker-compose up -d",
-    "down": "docker-compose down"
+    "down": "docker-compose down",
+    "lint": "eslint --ext .js,.jsx ./src"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +22,6 @@
     "pg-promise": "^8.4.4"
   },
   "devDependencies": {
-    "jest": "^23.1.0",
     "lorem-ipsum": "^1.0.4",
     "prompt": "^1.0.0",
     "random-string": "^0.2.0",

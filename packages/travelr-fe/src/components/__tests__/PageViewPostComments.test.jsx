@@ -22,7 +22,7 @@ describe('PageViewPostComments component', () => {
 
     wrapper = shallow(
       <PageViewPostComments
-        comments={DUMMY_POSTS[0].comments}
+        comments={DUMMY_POST.comments}
         onCreateComment={mock.onCreateComment}
       />,
     );
@@ -33,7 +33,7 @@ describe('PageViewPostComments component', () => {
     expect(wrapper.find({ placeholder: 'コメントを書く' })).toHaveLength(1);
     // comments
     expect(wrapper.find({ className: 'comment' })).toHaveLength(
-      DUMMY_POSTS[0].comments.length,
+      DUMMY_POST.comments.length,
     );
   });
 

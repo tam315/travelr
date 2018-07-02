@@ -66,7 +66,6 @@ const setupDummyDatabase = async () => {
 };
 
 afterAll(async () => {
-  await cleanUpDummyDatabase();
   pgPromise.end();
 });
 
