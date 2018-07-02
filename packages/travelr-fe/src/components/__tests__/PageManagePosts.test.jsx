@@ -1,5 +1,5 @@
 // @flow
-import { ListItem } from '@material-ui/core';
+import { ListItem, ListItemText } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -17,8 +17,6 @@ describe('PageManagePosts component', () => {
   let wrapper;
 
   beforeEach(() => {
-    fetch.mockResponse();
-
     mock = {
       actions: {
         fetchMyPosts: jest.fn(),
@@ -55,20 +53,23 @@ describe('PageManagePosts component', () => {
       wrapper
         .find(MenuItem)
         .at(0)
-        .html(),
-    ).toContain('すべて選択');
+        .find(ListItemText)
+        .prop('primary'),
+    ).toBe('すべて選択');
     expect(
       wrapper
         .find(MenuItem)
         .at(1)
-        .html(),
-    ).toContain('選択を解除');
+        .find(ListItemText)
+        .prop('primary'),
+    ).toBe('選択を解除');
     expect(
       wrapper
         .find(MenuItem)
         .at(2)
-        .html(),
-    ).toContain('選択した投稿を削除');
+        .find(ListItemText)
+        .prop('primary'),
+    ).toBe('選択した投稿を削除');
   });
 
   test('fetchMyPosts() called on componentDidMount', () => {
