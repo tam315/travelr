@@ -163,6 +163,7 @@ actions.fetchAllPosts = (criterion: FilterCriterion = {}) => async (
 actions.fetchPost = (postId: number) => async (dispatch: Dispatch<any>) => {
   dispatch({
     type: actionTypes.FETCH_POST_START,
+    payload: postId,
   });
 
   try {
@@ -381,7 +382,7 @@ actions.createComment = (
       type: actionTypes.CREATE_COMMENT_SUCCESS,
     });
 
-    // await actions.fetchPost(this.postId);  // TODO: fetchPost here
+    await actions.fetchPost(postId)(dispatch);
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_COMMENT_FAIL,

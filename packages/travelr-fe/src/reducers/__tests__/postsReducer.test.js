@@ -33,8 +33,19 @@ describe('posts reducer', () => {
       currentPost: DUMMY_POSTS[0],
     };
 
-    const action = {
+    let action = {
       type: types.FETCH_POST_START,
+      payload: DUMMY_POSTS[0].postId,
+    };
+
+    // do nothing if the post to fetch is the same with the current post
+    expect(postsReducer(stateHavingCurrentPost, action)).toEqual(
+      stateHavingCurrentPost,
+    );
+
+    action = {
+      type: types.FETCH_POST_START,
+      postId: 99,
     };
 
     const expected = {
@@ -42,6 +53,7 @@ describe('posts reducer', () => {
       currentPost: null,
     };
 
+    // reset current post if the post to fetch is the different with the current post
     expect(postsReducer(stateHavingCurrentPost, action)).toEqual(expected);
   });
 

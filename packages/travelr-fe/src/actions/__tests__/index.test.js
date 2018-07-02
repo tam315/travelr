@@ -230,6 +230,7 @@ describe('actions', () => {
 
       expect(mockDispatch.mock.calls[0][0]).toEqual({
         type: types.FETCH_POST_START,
+        payload: DUMMY_POST_ID,
       });
       expect(mockDispatch.mock.calls[1][0]).toEqual({
         type: types.FETCH_POST_SUCCESS,
@@ -245,6 +246,7 @@ describe('actions', () => {
 
       expect(mockDispatch.mock.calls[0][0]).toEqual({
         type: types.FETCH_POST_START,
+        payload: DUMMY_POST_ID,
       });
       expect(mockDispatch.mock.calls[1][0]).toEqual({
         type: types.FETCH_POST_FAIL,

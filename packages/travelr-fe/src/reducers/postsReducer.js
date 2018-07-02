@@ -20,11 +20,16 @@ const postsReducer = (
         ...state,
         all: action.payload,
       };
-    case actionTypes.FETCH_POST_START:
-      return {
-        ...state,
-        currentPost: null,
-      };
+    case actionTypes.FETCH_POST_START: {
+      // reset currentPost if the post to fetch is not the same as currentPost
+      if (!!state.currentPost && state.currentPost.postId !== action.payload) {
+        return {
+          ...state,
+          currentPost: null,
+        };
+      }
+      return state;
+    }
     case actionTypes.FETCH_POST_SUCCESS:
       return {
         ...state,
