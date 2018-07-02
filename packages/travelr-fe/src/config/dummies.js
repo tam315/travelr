@@ -3,6 +3,7 @@ import type {
   AppStore,
   FilterCriterion,
   NewPost,
+  PostToEdit,
   Post,
   PostsStore,
   UserStore,
@@ -150,6 +151,16 @@ export const DUMMY_POSTS_IDS: Array<number> = DUMMY_POSTS.map(
 );
 
 export const DUMMY_NEW_POST: NewPost = {
+  oldImageUrl: 'dummy',
+  newImageUrl: 'dummy',
+  description: 'dummy_description',
+  shootDate: '1985-3-31',
+  lng: 135.0,
+  lat: 35.0,
+};
+
+export const DUMMY_POST_TO_EDIT: PostToEdit = {
+  postId: 123,
   oldImageUrl: 'dummy',
   newImageUrl: 'dummy',
   description: 'dummy_description',

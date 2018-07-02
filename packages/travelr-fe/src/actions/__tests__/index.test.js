@@ -2,6 +2,7 @@
 import {
   DUMMY_FILTER_CRITERION,
   DUMMY_NEW_POST,
+  DUMMY_POST_TO_EDIT,
   DUMMY_POSTS_IDS,
   DUMMY_POSTS,
   DUMMY_USER_STORE,
@@ -304,6 +305,60 @@ describe('actions', () => {
 
       expect(mock.dispatch.mock.calls[0][0]).toEqual({
         type: types.CREATE_POST_FAIL,
+      });
+    });
+  });
+
+  describe('editPost', () => {
+    let mock;
+    let thunk;
+
+    beforeEach(() => {
+      mock = {
+        callback: jest.fn(),
+        dispatch: jest.fn(),
+      };
+      thunk = actions.editPost(
+        DUMMY_USER_STORE,
+        DUMMY_POST_TO_EDIT,
+        mock.callback,
+      );
+    });
+
+    test('generates correct url and body', async () => {
+      await thunk(mock.dispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOption = fetch.mock.calls[0][1];
+      const fetchBody = JSON.parse(fetchOption.body);
+
+      expect(fetchUrl).toContain(`/posts/${DUMMY_POST_TO_EDIT.postId}`);
+      expect(fetchOption.method).toContain('PUT');
+      expect(fetchBody).toEqual(DUMMY_POST_TO_EDIT);
+    });
+
+    test('makes correct action when success', async () => {
+      fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_TO_EDIT.postId }));
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.EDIT_POST_SUCCESS,
+      });
+    });
+
+    test('callback is invoked when success', async () => {
+      fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_TO_EDIT.postId }));
+      await thunk(mock.dispatch);
+
+      expect(mock.callback).toBeCalledWith(DUMMY_POST_TO_EDIT.postId);
+    });
+
+    test('makes correct action when fail', async () => {
+      fetch.mockReject();
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.EDIT_POST_FAIL,
       });
     });
   });

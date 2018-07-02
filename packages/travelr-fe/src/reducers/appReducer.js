@@ -67,6 +67,16 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
         snackbarQueue: [...state.snackbarQueue, '投稿の作成に失敗しました'],
       };
     }
+    case actionTypes.EDIT_POST_SUCCESS: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, '投稿を編集しました'],
+      };
+    }
+    case actionTypes.EDIT_POST_FAIL: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, '投稿の編集に失敗しました'],
+      };
+    }
     case actionTypes.FETCH_MY_POSTS_FAIL: {
       return {
         snackbarQueue: [...state.snackbarQueue, '投稿の取得に失敗しました'],

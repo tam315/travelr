@@ -1,5 +1,6 @@
 // @flow
 import type {
+  PostToEdit,
   FilterCriterion,
   NewPost,
   NewUserInfo,
@@ -217,6 +218,38 @@ actions.createPost = (
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_POST_FAIL,
+    });
+  }
+};
+
+actions.editPost = (
+  user: UserStore,
+  postToEdit: PostToEdit,
+  successCallback: any => any,
+) => async (dispatch: Dispatch<any>) => {
+  try {
+    const response = await fetch(`${config.apiUrl}posts/${postToEdit.postId}`, {
+      method: 'PUT',
+      headers: {
+        authorization: user.token,
+      },
+      body: JSON.stringify(postToEdit),
+    });
+
+    if (!response.ok) {
+      dispatch({
+        type: actionTypes.EDIT_POST_FAIL,
+      });
+      return;
+    }
+
+    dispatch({
+      type: actionTypes.EDIT_POST_SUCCESS,
+    });
+    successCallback(postToEdit.postId);
+  } catch (err) {
+    dispatch({
+      type: actionTypes.EDIT_POST_FAIL,
     });
   }
 };

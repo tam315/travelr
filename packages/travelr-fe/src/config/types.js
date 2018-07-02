@@ -38,6 +38,16 @@ export type NewPost = {
   lat: number,
 };
 
+export type PostToEdit = {
+  postId: number,
+  oldImageUrl?: string,
+  newImageUrl?: string,
+  description?: string,
+  shootDate?: string,
+  lng?: number,
+  lat?: number,
+};
+
 export type NewUserInfo = {
   displayName: string,
 };
