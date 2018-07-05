@@ -7,7 +7,7 @@ import ReactCompareImage from 'react-compare-image';
 import { Link } from 'react-router-dom';
 import PageViewPostComments from './PageViewPostComments';
 import StatusBadge from './StatusBadge';
-import type { PostsStore, UserStore } from '../config/types';
+import type { PostsStore, UserStore, Post } from '../config/types';
 import type { Match } from 'react-router-dom';
 
 const styles = theme => ({
@@ -46,7 +46,8 @@ type Props = {
   match: Match,
   user: UserStore,
   posts: PostsStore,
-  fetchPost: (postId: number) => void,
+  fetchPost: (postId: number, user: UserStore) => void,
+  toggleLike: (user: UserStore, post: Post) => void,
   createComment: any => any,
   deleteComment: any => any,
 };
@@ -65,12 +66,26 @@ export class PageViewPost extends React.Component<Props> {
   }
 
   componentDidMount = () => {
-    this.props.fetchPost(this.postId); // TODO: pass userId as 2nd arg
+    this.props.fetchPost(this.postId, this.props.user);
+  };
+
+  componentDidUpdate = (prevProps: Props) => {
+    if (prevProps.user.userId !== this.props.user.userId) {
+      this.props.fetchPost(this.postId, this.props.user);
+    }
   };
 
   handleChange(e: SyntheticInputEvent<HTMLElement>, stateKeyName: string) {
     this.setState({ [stateKeyName]: e.target.value });
   }
+
+  handleLikeButtonClick = () => {
+    const { currentPost } = this.props.posts;
+
+    if (currentPost) {
+      this.props.toggleLike(this.props.user, currentPost);
+    }
+  };
 
   render() {
     const { classes } = this.props;
@@ -90,6 +105,7 @@ export class PageViewPost extends React.Component<Props> {
       displayName,
       likedCount,
       commentsCount,
+      likeStatus,
     } = currentPost;
 
     return (
@@ -104,7 +120,12 @@ export class PageViewPost extends React.Component<Props> {
 
         <div className={classes.container}>
           <div className={classes.badges}>
-            <StatusBadge icon="like" count={likedCount} />
+            <StatusBadge
+              icon="like"
+              count={likedCount}
+              active={likeStatus}
+              onClick={this.handleLikeButtonClick}
+            />
             <StatusBadge icon="comment" count={commentsCount} />
             <StatusBadge icon="view" count={viewCount} />
           </div>

@@ -5,6 +5,7 @@ import type {
   FilterCriterion,
   NewPost,
   NewUserInfo,
+  Post,
   UserStore,
 } from '../config/types';
 import config from '../config';
@@ -161,14 +162,23 @@ actions.fetchAllPosts = (criterion: FilterCriterion = {}) => async (
   }
 };
 
-actions.fetchPost = (postId: number) => async (dispatch: Dispatch<any>) => {
+actions.fetchPost = (postId: number, user: UserStore) => async (
+  dispatch: Dispatch<any>,
+) => {
   dispatch({
     type: actionTypes.FETCH_POST_START,
     payload: postId,
   });
 
   try {
-    const response = await fetch(`${config.apiUrl}posts/${postId}`);
+    let url;
+    if (user && user.userId) {
+      url = `${config.apiUrl}posts/${postId}?user_id=${user.userId}`;
+    } else {
+      url = `${config.apiUrl}posts/${postId}`;
+    }
+
+    const response = await fetch(url);
 
     if (!response.ok) {
       dispatch({
@@ -385,7 +395,7 @@ actions.createComment = (
     });
 
     successCallback();
-    await actions.fetchPost(postId)(dispatch);
+    await actions.fetchPost(postId, user)(dispatch);
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_COMMENT_FAIL,
@@ -417,10 +427,44 @@ actions.deleteComment = (user: UserStore, comment: Comment) => async (
       type: actionTypes.DELETE_COMMENT_SUCCESS,
     });
 
-    await actions.fetchPost(postId)(dispatch);
+    await actions.fetchPost(postId, user)(dispatch);
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_COMMENT_FAIL,
+    });
+  }
+};
+
+actions.toggleLike = (user: UserStore, post: Post) => async (
+  dispatch: Dispatch<any>,
+) => {
+  const { token } = user;
+  const { postId } = post;
+
+  try {
+    const response = await fetch(
+      `${config.apiUrl}posts/${postId}/like/toggle`,
+      {
+        method: 'POST',
+        headers: { authorization: token },
+      },
+    );
+
+    if (!response.ok) {
+      dispatch({
+        type: actionTypes.TOGGLE_LIKE_FAIL,
+      });
+      return;
+    }
+
+    dispatch({
+      type: actionTypes.TOGGLE_LIKE_SUCCESS,
+    });
+
+    await actions.fetchPost(postId, user)(dispatch);
+  } catch (err) {
+    dispatch({
+      type: actionTypes.TOGGLE_LIKE_FAIL,
     });
   }
 };

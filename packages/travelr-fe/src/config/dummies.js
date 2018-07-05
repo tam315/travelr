@@ -216,3 +216,13 @@ export const DUMMY_USER_STORE: UserStore = {
   earnedComments: 456,
   earnedViews: 789,
 };
+
+export const DUMMY_USER_STORE_UNAUTHORIZED: UserStore = {
+  userId: '',
+  token: '',
+  displayName: '',
+  isAdmin: false,
+  earnedLikes: 0,
+  earnedComments: 0,
+  earnedViews: 0,
+};

@@ -6,6 +6,7 @@ import ReactCompareImage from 'react-compare-image';
 import {
   DUMMY_POSTS,
   DUMMY_USER_STORE,
+  DUMMY_USER_STORE_UNAUTHORIZED,
   DUMMY_POSTS_STORE,
 } from '../../config/dummies';
 import { PageViewPost } from '../PageViewPost';
@@ -30,6 +31,7 @@ describe('PageViewPost component', () => {
       createComment: jest.fn(),
       deleteComment: jest.fn(),
       fetchPost: jest.fn(),
+      toggleLike: jest.fn(),
     };
 
     wrapper = shallow(
@@ -42,13 +44,30 @@ describe('PageViewPost component', () => {
         createComment={mock.createComment}
         deleteComment={mock.deleteComment}
         fetchPost={mock.fetchPost}
+        toggleLike={mock.toggleLike}
       />,
     );
   });
 
   test('fetchPost() is called when componentDidMount', () => {
-    expect(mock.fetchPost).toBeCalled();
-    expect(mock.fetchPost).toBeCalledWith(match.params.postId);
+    expect(mock.fetchPost).toHaveBeenCalledTimes(1);
+    expect(mock.fetchPost.mock.calls[0][0]).toBe(match.params.postId);
+    expect(mock.fetchPost.mock.calls[0][1]).toBe(DUMMY_USER_STORE);
+  });
+
+  test('fetchPost() is called when user store is changed', () => {
+    wrapper.setProps({ user: DUMMY_USER_STORE_UNAUTHORIZED });
+    expect(mock.fetchPost).toHaveBeenCalledTimes(2);
+    expect(mock.fetchPost.mock.calls[1][0]).toBe(match.params.postId);
+    expect(mock.fetchPost.mock.calls[1][1]).toBe(DUMMY_USER_STORE_UNAUTHORIZED);
+  });
+
+  test('toggleLike() is called when StatusBadge is clicked', () => {
+    wrapper
+      .find(StatusBadge)
+      .at(0)
+      .simulate('click');
+    expect(mock.toggleLike).toBeCalled();
   });
 
   test('render necessary parts', () => {

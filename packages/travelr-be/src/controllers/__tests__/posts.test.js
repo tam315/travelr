@@ -296,11 +296,17 @@ describe('GET /posts/:postId', async () => {
   });
 
   test('returns likeStatus if user_id query param is provided', async () => {
-    const res = await request(app).get(
+    const responseIfUserFound = await request(app).get(
       `/posts/${DUMMY_POSTS_IDS[0]}?user_id=${DUMMY_USER_ID}`,
     );
+    expect(responseIfUserFound.body).toHaveProperty('likeStatus');
+    expect(responseIfUserFound.body.likeStatus).toBe(true);
 
-    expect(res.body.likeStatus).toBe(true);
+    const responseIfUserNotFound = await request(app).get(
+      `/posts/${DUMMY_POSTS_IDS[0]}?user_id=INVALID_USERID`,
+    );
+    expect(responseIfUserNotFound.body).toHaveProperty('likeStatus');
+    expect(responseIfUserNotFound.body.likeStatus).toBe(false);
   });
 
   test('returns view_count incremented by one', async () => {

@@ -122,6 +122,11 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
         snackbarQueue: [...state.snackbarQueue, 'コメントの削除に失敗しました'],
       };
     }
+    case actionTypes.TOGGLE_LIKE_FAIL: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, 'いいねの変更に失敗しました'],
+      };
+    }
     default:
       return state;
   }

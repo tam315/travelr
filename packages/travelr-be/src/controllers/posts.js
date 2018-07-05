@@ -230,10 +230,11 @@ exports.getPost = async (req, res, next) => {
     // get like status if user_id is provided as a query param
     let likeStatus;
     if (user_id) {
-      likeStatus = await db.oneOrNone(
+      const likes = await db.oneOrNone(
         'SELECT * FROM likes WHERE user_id = $1 AND post_id = $2',
         [user_id, postId],
       );
+      likeStatus = !!likes;
     }
 
     const commentsFormatted = comments.map(comment => ({
@@ -261,7 +262,9 @@ exports.getPost = async (req, res, next) => {
       comments: commentsFormatted,
     };
 
-    if (likeStatus) response.likeStatus = !!likeStatus;
+    if (typeof likeStatus === 'boolean') {
+      response.likeStatus = likeStatus;
+    }
 
     res.status(200).json(response);
   } catch (err) {

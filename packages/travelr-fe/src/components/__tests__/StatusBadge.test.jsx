@@ -9,12 +9,22 @@ import StatusBadge from '../StatusBadge';
 describe('StatusBadge component', () => {
   test('shows count', () => {
     const wrapper = shallow(<StatusBadge icon="like" count={999} />);
-    expect(wrapper.html()).toContain('999');
+    expect(
+      wrapper
+        .children()
+        .children()
+        .text(),
+    ).toContain('999');
   });
 
-  test('shows like icon', () => {
+  test('shows like icon (inactive)', () => {
     const wrapper = shallow(<StatusBadge icon="like" count={999} />);
     expect(wrapper.find(IconLike)).toHaveLength(2); // TODO: why 2?
+  });
+
+  test('shows like icon (active)', () => {
+    const wrapper = shallow(<StatusBadge icon="like" count={999} active />);
+    expect(wrapper.find({ fill: '#3F51B5' })).toHaveLength(1);
   });
 
   test('shows comment icon', () => {
@@ -25,5 +35,16 @@ describe('StatusBadge component', () => {
   test('shows view icon', () => {
     const wrapper = shallow(<StatusBadge icon="view" count={999} />);
     expect(wrapper.find(IconView)).toHaveLength(1);
+  });
+
+  test('onClick() prop is called when badge is clicked', () => {
+    const mockOnClick = jest.fn();
+
+    const wrapper = shallow(
+      <StatusBadge icon="like" count={999} onClick={mockOnClick} />,
+    );
+    expect(mockOnClick).not.toBeCalled();
+    wrapper.simulate('click');
+    expect(mockOnClick).toBeCalled();
   });
 });

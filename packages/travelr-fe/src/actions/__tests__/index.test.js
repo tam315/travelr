@@ -7,6 +7,7 @@ import {
   DUMMY_POSTS_IDS,
   DUMMY_POSTS,
   DUMMY_USER_STORE,
+  DUMMY_USER_STORE_UNAUTHORIZED,
 } from '../../config/dummies';
 import actions from '../index';
 import types from '../types';
@@ -214,8 +215,11 @@ describe('actions', () => {
   describe('fetchPost', () => {
     const DUMMY_POST_ID = 123;
 
-    test('generates correct url', async () => {
-      const thunk = actions.fetchPost(DUMMY_POST_ID);
+    test('generates correct url (if user is NOT authenticated)', async () => {
+      const thunk = actions.fetchPost(
+        DUMMY_POST_ID,
+        DUMMY_USER_STORE_UNAUTHORIZED,
+      );
       const mockDispatch = jest.fn();
       await thunk(mockDispatch);
 
@@ -223,9 +227,20 @@ describe('actions', () => {
       expect(fetch.mock.calls[0][0]).toContain(`/posts/${DUMMY_POST_ID}`);
     });
 
+    test('generates correct url (if user IS authenticated)', async () => {
+      const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
+      const mockDispatch = jest.fn();
+      await thunk(mockDispatch);
+
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(fetch.mock.calls[0][0]).toContain(
+        `/posts/${DUMMY_POST_ID}?user_id=${DUMMY_USER_STORE.userId}`,
+      );
+    });
+
     test('makes correct action when success', async () => {
       fetch.mockResponseOnce(JSON.stringify(DUMMY_POSTS[0]));
-      const thunk = actions.fetchPost(DUMMY_POST_ID);
+      const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
       const mockDispatch = jest.fn();
       await thunk(mockDispatch);
 
@@ -241,7 +256,7 @@ describe('actions', () => {
 
     test('makes correct action when fail', async () => {
       fetch.mockReject();
-      const thunk = actions.fetchPost(DUMMY_POST_ID);
+      const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
       const mockDispatch = jest.fn();
       await thunk(mockDispatch);
 
@@ -631,6 +646,46 @@ describe('actions', () => {
 
       expect(mock.dispatch.mock.calls[0][0]).toEqual({
         type: types.DELETE_COMMENT_FAIL,
+      });
+    });
+  });
+
+  describe('toggleLike', () => {
+    let mock;
+    let thunk;
+
+    beforeEach(() => {
+      mock = {
+        dispatch: jest.fn(),
+      };
+      thunk = actions.toggleLike(DUMMY_USER_STORE, DUMMY_POSTS[0]);
+    });
+
+    test('generates correct url', async () => {
+      await thunk(mock.dispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOption = fetch.mock.calls[0][1];
+
+      expect(fetchUrl).toContain(`/posts/${DUMMY_POSTS[0].postId}/like/toggle`);
+      expect(fetchOption.method).toContain('POST');
+    });
+
+    test('makes correct action when success', async () => {
+      fetch.mockResponse();
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.TOGGLE_LIKE_SUCCESS,
+      });
+    });
+
+    test('makes correct action when fail', async () => {
+      fetch.mockReject();
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.TOGGLE_LIKE_FAIL,
       });
     });
   });

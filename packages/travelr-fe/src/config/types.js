@@ -28,6 +28,7 @@ export type Post = {
   likedCount: number,
   commentsCount: number,
   comments: Array<Comment>,
+  likeStatus?: boolean,
 };
 
 export type NewPost = {
