@@ -5,6 +5,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import { shallow } from 'enzyme';
 import React from 'react';
 import Header from '../Header';
+import { DUMMY_USER_STORE } from '../../config/dummies';
 
 describe('Header component', () => {
   describe('if user is signed out', () => {
@@ -46,8 +47,7 @@ describe('Header component', () => {
     let wrapper;
 
     beforeAll(() => {
-      const store = { user: { userId: 'dummyId', displayName: 'dummyName' } };
-      wrapper = shallow(<Header {...store} />);
+      wrapper = shallow(<Header user={DUMMY_USER_STORE} />);
     });
 
     test('shows userStatusButton', () => {
@@ -61,8 +61,9 @@ describe('Header component', () => {
         userStatus
           .children()
           .children()
+          .children()
           .text(),
-      ).toBe('dummyName');
+      ).toBe(DUMMY_USER_STORE.displayName);
     });
   });
 });
