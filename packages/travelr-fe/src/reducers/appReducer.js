@@ -112,6 +112,16 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
         snackbarQueue: [...state.snackbarQueue, 'コメントの投稿に失敗しました'],
       };
     }
+    case actionTypes.DELETE_COMMENT_SUCCESS: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, 'コメントを削除しました'],
+      };
+    }
+    case actionTypes.DELETE_COMMENT_FAIL: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, 'コメントの削除に失敗しました'],
+      };
+    }
     default:
       return state;
   }

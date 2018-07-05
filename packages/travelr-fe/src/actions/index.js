@@ -1,5 +1,6 @@
 // @flow
 import type {
+  Comment,
   PostToEdit,
   FilterCriterion,
   NewPost,
@@ -388,6 +389,38 @@ actions.createComment = (
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_COMMENT_FAIL,
+    });
+  }
+};
+
+actions.deleteComment = (user: UserStore, comment: Comment) => async (
+  dispatch: Dispatch<any>,
+) => {
+  const { postId, commentId } = comment;
+  try {
+    const response = await fetch(
+      `${config.apiUrl}posts/comments/${commentId}`,
+      {
+        method: 'DELETE',
+        headers: { authorization: user.token },
+      },
+    );
+
+    if (!response.ok) {
+      dispatch({
+        type: actionTypes.DELETE_COMMENT_FAIL,
+      });
+      return;
+    }
+
+    dispatch({
+      type: actionTypes.DELETE_COMMENT_SUCCESS,
+    });
+
+    await actions.fetchPost(postId)(dispatch);
+  } catch (err) {
+    dispatch({
+      type: actionTypes.DELETE_COMMENT_FAIL,
     });
   }
 };

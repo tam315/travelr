@@ -1,17 +1,12 @@
 // @flow
-import Button from '@material-ui/core/Button';
+import { Button, MenuItem } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import React from 'react';
-import {
-  DUMMY_POSTS,
-  DUMMY_USER_STORE,
-  DUMMY_POSTS_STORE,
-} from '../../config/dummies';
+import { DUMMY_USER_STORE, DUMMY_POSTS } from '../../config/dummies';
 import { PageViewPostComments } from '../PageViewPostComments';
 
 jest.mock('../StatusBadge');
 
-// dummy data from the API
 const DUMMY_POST = DUMMY_POSTS[0];
 
 describe('PageViewPostComments component', () => {
@@ -25,14 +20,16 @@ describe('PageViewPostComments component', () => {
         createComment: jest.fn((user, postId, comment, successCallback) =>
           successCallback(),
         ),
+        deleteComment: jest.fn(),
       },
     };
 
     wrapper = shallow(
       <PageViewPostComments
         user={DUMMY_USER_STORE}
-        posts={DUMMY_POSTS_STORE}
+        post={DUMMY_POST}
         createComment={mock.actions.createComment}
+        deleteComment={mock.actions.deleteComment}
       />,
     );
   });
@@ -60,8 +57,6 @@ describe('PageViewPostComments component', () => {
   });
 
   test('createComment() is called when click a button', () => {
-    fetch.mockResponse();
-
     // user write a comment
     wrapper
       .find({ placeholder: 'コメントを書く' })
@@ -76,5 +71,17 @@ describe('PageViewPostComments component', () => {
 
     // reset comment input
     expect(wrapper.state('comment')).toBe('');
+  });
+
+  test('deleteComment() is called when click a menu item', () => {
+    wrapper
+      .find(MenuItem)
+      .at(0)
+      .simulate('click');
+    expect(mock.actions.deleteComment).toBeCalled();
+    expect(mock.actions.deleteComment.mock.calls[0][0]).toBe(DUMMY_USER_STORE);
+    expect(mock.actions.deleteComment.mock.calls[0][1]).toBe(
+      DUMMY_POST.comments[0],
+    );
   });
 });

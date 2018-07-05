@@ -48,6 +48,7 @@ type Props = {
   posts: PostsStore,
   fetchPost: (postId: number) => void,
   createComment: any => any,
+  deleteComment: any => any,
 };
 
 export class PageViewPost extends React.Component<Props> {
@@ -122,8 +123,9 @@ export class PageViewPost extends React.Component<Props> {
 
           <PageViewPostComments
             user={this.props.user}
-            posts={this.props.posts}
+            post={this.props.posts.currentPost}
             createComment={this.props.createComment}
+            deleteComment={this.props.deleteComment}
           />
         </div>
       </div>

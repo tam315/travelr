@@ -1,6 +1,7 @@
 // @flow
 import {
   DUMMY_FILTER_CRITERION,
+  DUMMY_COMMENTS,
   DUMMY_NEW_POST,
   DUMMY_POST_TO_EDIT,
   DUMMY_POSTS_IDS,
@@ -589,6 +590,47 @@ describe('actions', () => {
 
       expect(mock.dispatch.mock.calls[0][0]).toEqual({
         type: types.CREATE_COMMENT_FAIL,
+      });
+    });
+  });
+
+  describe('createComment', () => {
+    let mock;
+    let thunk;
+    const DUMMY_COMMENT = DUMMY_COMMENTS[0];
+
+    beforeEach(() => {
+      mock = {
+        dispatch: jest.fn(),
+      };
+      thunk = actions.deleteComment(DUMMY_USER_STORE, DUMMY_COMMENT);
+    });
+
+    test('generates correct url and body', async () => {
+      await thunk(mock.dispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOption = fetch.mock.calls[0][1];
+
+      expect(fetchUrl).toContain(`/posts/comments/${DUMMY_COMMENT.commentId}`);
+      expect(fetchOption.method).toContain('DELETE');
+    });
+
+    test('makes correct action when success', async () => {
+      fetch.mockResponse();
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.DELETE_COMMENT_SUCCESS,
+      });
+    });
+
+    test('makes correct action when fail', async () => {
+      fetch.mockReject();
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.DELETE_COMMENT_FAIL,
       });
     });
   });

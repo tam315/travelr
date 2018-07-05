@@ -43,6 +43,8 @@ describe('appReducer', () => {
       ['DELETE_POSTS_FAIL', '投稿の削除に失敗しました'],
       ['CREATE_COMMENT_SUCCESS', 'コメントを投稿しました'],
       ['CREATE_COMMENT_FAIL', 'コメントの投稿に失敗しました'],
+      ['DELETE_COMMENT_SUCCESS', 'コメントを削除しました'],
+      ['DELETE_COMMENT_FAIL', 'コメントの削除に失敗しました'],
     ];
 
     actionNamesAndExpectedMessages.forEach(([actionName, expectedMessage]) => {

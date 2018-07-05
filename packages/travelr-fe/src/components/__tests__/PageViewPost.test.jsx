@@ -28,6 +28,7 @@ describe('PageViewPost component', () => {
     fetch.resetMocks();
     mock = {
       createComment: jest.fn(),
+      deleteComment: jest.fn(),
       fetchPost: jest.fn(),
     };
 
@@ -39,6 +40,7 @@ describe('PageViewPost component', () => {
         user={DUMMY_USER_STORE}
         posts={DUMMY_POSTS_STORE}
         createComment={mock.createComment}
+        deleteComment={mock.deleteComment}
         fetchPost={mock.fetchPost}
       />,
     );

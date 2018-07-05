@@ -1,6 +1,7 @@
 // @flow
 import type {
   AppStore,
+  Comment,
   FilterCriterion,
   NewPost,
   PostToEdit,
@@ -8,6 +9,33 @@ import type {
   PostsStore,
   UserStore,
 } from './types';
+
+export const DUMMY_COMMENTS: Array<Comment> = [
+  {
+    commentId: 701,
+    userId: 'dummy_userId1',
+    datetime: '1985-03-01',
+    comment: 'dummy_comment1',
+    postId: 1,
+    displayName: 'dummy_comment_displayName1',
+  },
+  {
+    commentId: 791,
+    userId: 'dummy_userId1',
+    datetime: '1985-03-01',
+    comment: 'dummy_comment1',
+    postId: 1,
+    displayName: 'dummy_comment_displayName1',
+  },
+  {
+    commentId: 781,
+    userId: 'dummy_userId1',
+    datetime: '1985-03-01',
+    comment: 'dummy_comment1',
+    postId: 1,
+    displayName: 'dummy_comment_displayName1',
+  },
+];
 
 // the same format as:
 //   - the data that 'store' has
@@ -26,32 +54,7 @@ export const DUMMY_POSTS: Array<Post> = [
     displayName: 'dummy_displayName1',
     likedCount: 501,
     commentsCount: 601,
-    comments: [
-      {
-        commentId: 701,
-        userId: 'dummy_userId1',
-        datetime: '1985-03-01',
-        comment: 'dummy_comment1',
-        postId: 1,
-        displayName: 'dummy_comment_displayName1',
-      },
-      {
-        commentId: 791,
-        userId: 'dummy_userId1',
-        datetime: '1985-03-01',
-        comment: 'dummy_comment1',
-        postId: 1,
-        displayName: 'dummy_comment_displayName1',
-      },
-      {
-        commentId: 781,
-        userId: 'dummy_userId1',
-        datetime: '1985-03-01',
-        comment: 'dummy_comment1',
-        postId: 1,
-        displayName: 'dummy_comment_displayName1',
-      },
-    ],
+    comments: DUMMY_COMMENTS,
   },
   {
     postId: 2,

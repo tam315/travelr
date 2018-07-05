@@ -1,31 +1,35 @@
 // @flow
-import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
+import { Button, Input, Menu, MenuItem } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
-import type { Comment, UserStore, PostsStore } from '../config/types';
+import type { Comment, UserStore, Post } from '../config/types';
 
 const styles = () => ({});
 
 type Props = {
   user: UserStore,
-  posts: PostsStore,
+  post: Post,
   createComment: (
     user: UserStore,
     postId: number,
     comment: string,
     successCallback: (void) => void,
   ) => void,
+  deleteComment: (user: UserStore, comment: Comment) => void,
 };
 
 type State = {
   comment: string,
+  deleteCommentMenuAnchor: ?HTMLElement,
+  deleteCommentMenuCommentId: ?number,
 };
 
 export class PageViewPostComments extends React.Component<Props, State> {
   state = {
     comment: '',
+    deleteCommentMenuAnchor: null,
+    deleteCommentMenuCommentId: null,
   };
 
   handleChange(e: SyntheticInputEvent<HTMLElement>, stateKeyName: string) {
@@ -33,7 +37,7 @@ export class PageViewPostComments extends React.Component<Props, State> {
   }
 
   handleCreateComment = () => {
-    if (!this.props.posts.currentPost) return;
+    if (!this.props.post) return;
 
     const successCallback = () => {
       this.setState({ comment: '' });
@@ -41,28 +45,75 @@ export class PageViewPostComments extends React.Component<Props, State> {
 
     this.props.createComment(
       this.props.user,
-      this.props.posts.currentPost.postId,
+      this.props.post.postId,
       this.state.comment,
       successCallback,
     );
   };
 
+  handleCommentClick = (
+    event: SyntheticEvent<HTMLElement>,
+    comment: Comment,
+  ) => {
+    if (comment.userId === this.props.user.userId) {
+      this.setState({
+        deleteCommentMenuAnchor: event.currentTarget,
+        deleteCommentMenuCommentId: comment.commentId,
+      });
+    }
+  };
+
+  handleDeleteCommentMenuClose = () => {
+    this.setState({
+      deleteCommentMenuAnchor: null,
+      deleteCommentMenuCommentId: null,
+    });
+  };
+
+  handleDeleteComment = (comment: Comment) => {
+    const { user, post } = this.props;
+
+    if (!post) return;
+
+    this.props.deleteComment(user, comment);
+    this.handleDeleteCommentMenuClose();
+  };
+
   renderComments = (comments: Array<Comment>): Array<React.Element<any>> =>
-    comments.map(item => (
-      <div key={item.commentId} className="comment">
-        <Typography variant="body2">{item.displayName}</Typography>
-        <Typography>{item.comment}</Typography>
-        <Typography variant="caption">
-          {new Date(item.datetime).toISOString().substr(0, 10)}
-        </Typography>
-        {/* TODO: add comment edit & delete button */}
-      </div>
+    comments.map(comment => (
+      <React.Fragment key={comment.commentId}>
+        <div
+          className="comment"
+          onClick={e => this.handleCommentClick(e, comment)}
+          onKeyDown={e =>
+            e.keyCode === 46 && this.handleCommentClick(e, comment)
+          }
+          role="button"
+          tabIndex={0}
+        >
+          <Typography variant="body2">{comment.displayName}</Typography>
+          <Typography>{comment.comment}</Typography>
+          <Typography variant="caption">
+            {new Date(comment.datetime).toISOString().substr(0, 10)}
+          </Typography>
+        </div>
+        <Menu
+          anchorEl={this.state.deleteCommentMenuAnchor}
+          open={this.state.deleteCommentMenuCommentId === comment.commentId}
+          onClose={this.handleDeleteCommentMenuClose}
+        >
+          {/* TODO: add comment edit button */}
+          <MenuItem onClick={() => this.handleDeleteComment(comment)}>
+            コメントを削除する
+          </MenuItem>
+        </Menu>
+      </React.Fragment>
     ));
 
   render() {
-    if (!this.props.posts.currentPost) return <div />;
+    if (!this.props.post) return <div />;
 
-    const { comments } = this.props.posts.currentPost;
+    const { comments } = this.props.post;
 
     return (
       <React.Fragment>
