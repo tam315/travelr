@@ -3,7 +3,8 @@
     "serve": "lerna exec yarn serve",
     "test": "lerna exec yarn test",
     "lint": "lerna exec yarn lint",
-    "resetflow": "flow stop && flow"
+    "resetflow": "flow stop && flow",
+    "flow-mono": "flow-mono install-types"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
