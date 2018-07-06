@@ -57,21 +57,32 @@ describe('POST /users', () => {
     expect(res.text).toBe('display name missing');
   });
 
-  test("returns 400 if it's duplicate registration", async () => {
+  test('returns 200 and userinfo if user is already exists', async () => {
     await createDummyUser();
-    const res = await baseRequest()
-      .set('authorization', DUMMY_TOKEN)
-      .send({ displayName: DUMMY_USER_DISPLAY_NAME });
 
-    expect(res.status).toBe(400);
+    const res = await baseRequest().set('authorization', DUMMY_TOKEN);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('userId');
+    expect(res.body).toHaveProperty('displayName');
+    expect(res.body).toHaveProperty('isAdmin');
+    expect(res.body).toHaveProperty('earnedLikes');
+    expect(res.body).toHaveProperty('earnedComments');
+    expect(res.body).toHaveProperty('earnedViews');
   });
 
-  test('returns 200 if user created', async () => {
+  test('returns 200 and userinfo and create user if user not exists', async () => {
     const res = await baseRequest()
       .set('authorization', DUMMY_TOKEN)
       .send({ displayName: DUMMY_USER_DISPLAY_NAME });
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('userId');
+    expect(res.body).toHaveProperty('displayName');
+    expect(res.body).toHaveProperty('isAdmin');
+    expect(res.body).toHaveProperty('earnedLikes');
+    expect(res.body).toHaveProperty('earnedComments');
+    expect(res.body).toHaveProperty('earnedViews');
   });
 });
 

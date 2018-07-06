@@ -13,6 +13,14 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
       newState.snackbarQueue.shift();
       return newState;
     }
+    case actionTypes.GET_OR_CREATE_USER_INFO_FAIL: {
+      return {
+        snackbarQueue: [
+          ...state.snackbarQueue,
+          'ユーザ情報の取得または作成に失敗しました',
+        ],
+      };
+    }
     case actionTypes.FETCH_USER_INFO_FAIL: {
       return {
         snackbarQueue: [

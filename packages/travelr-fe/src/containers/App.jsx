@@ -1,10 +1,11 @@
 // @flow
 import CssBaseline from '@material-ui/core/CssBaseline'; // normalize styles
+import 'babel-polyfill';
 import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { compose } from 'redux';
-import 'babel-polyfill';
+import store from 'store';
 import actions from '../actions';
 import Header from '../components/Header';
 import PageAuth from '../components/PageAuth';
@@ -16,38 +17,46 @@ import PageManagePosts from '../components/PageManagePosts';
 import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
 import SnackbarService from '../components/SnackbarService';
+import '../utils/firebaseUtils';
 import type { UserStore } from '../config/types';
-import { DUMMY_USER_STORE } from '../config/dummies';
 
 type Props = {
-  fetchUserInfo(user: UserStore): void,
+  fetchUserInfo: (user: UserStore) => void,
+  getOrCreateUserInfo: (token: string) => void,
+  user: UserStore,
 };
 
-class App extends React.Component<Props> {
-  componentDidMount = () => {
-    this.props.fetchUserInfo(DUMMY_USER_STORE); // TODO: get from local storage
+export class App extends React.Component<Props> {
+  componentDidMount = async () => {
+    const token = store.get('token');
+    if (token) {
+      this.props.getOrCreateUserInfo(token);
+    }
   };
 
   // these lines are inevitable.
   // inline functions shouldn't be used as Route's 'component' params.
   // this causes unexpected component unmount everytime props changes.
   // see: https://material-ui.com/guides/composition/#caveat-with-inlining
-  renderPageViewPosts = itemProps => (
+  renderPageAuth = (itemProps: any) => (
+    <PageAuth {...itemProps} {...this.props} />
+  );
+  renderPageViewPosts = (itemProps: any) => (
     <PageViewPosts {...itemProps} {...this.props} />
   );
-  renderPageCreatePost = itemProps => (
+  renderPageCreatePost = (itemProps: any) => (
     <PageCreatePost {...itemProps} {...this.props} />
   );
-  renderPageEditPost = itemProps => (
+  renderPageEditPost = (itemProps: any) => (
     <PageEditPost {...itemProps} {...this.props} />
   );
-  renderPageViewPost = itemProps => (
+  renderPageViewPost = (itemProps: any) => (
     <PageViewPost {...itemProps} {...this.props} />
   );
-  renderPageManagePosts = itemProps => (
+  renderPageManagePosts = (itemProps: any) => (
     <PageManagePosts {...itemProps} {...this.props} />
   );
-  renderPageManageAccount = itemProps => (
+  renderPageManageAccount = (itemProps: any) => (
     <PageManageAccount {...itemProps} {...this.props} />
   );
 
@@ -62,7 +71,7 @@ class App extends React.Component<Props> {
             <Header {...this.props} />
             <Switch>
               <Route path="/" exact component={PageLanding} />
-              <Route path="/auth" component={PageAuth} />
+              <Route path="/auth" component={this.renderPageAuth} />
               <Route path="/all-grid" component={this.renderPageViewPosts} />
               <Route path="/all-map" component={this.renderPageViewPosts} />
               <Route

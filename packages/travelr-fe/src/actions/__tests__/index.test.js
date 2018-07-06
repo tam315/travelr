@@ -17,6 +17,51 @@ beforeEach(() => {
 });
 
 describe('actions', () => {
+  describe('getOrCreateUserInfo', () => {
+    let mock;
+    let thunk;
+    const DUMMY_TOKEN = DUMMY_USER_STORE.token;
+    const DUMMY_DISPLAY_NAME = 'DUMMY_DISPLAY_NAME';
+
+    beforeEach(() => {
+      mock = {
+        dispatch: jest.fn(),
+      };
+      thunk = actions.getOrCreateUserInfo(DUMMY_TOKEN, DUMMY_DISPLAY_NAME);
+    });
+
+    test('generates correct url', async () => {
+      await thunk(mock.dispatch);
+
+      const fetchUrl = fetch.mock.calls[0][0];
+      const fetchOption = fetch.mock.calls[0][1];
+      const body = JSON.parse(fetchOption.body);
+
+      expect(fetchUrl).toContain('/users');
+      expect(fetchOption.method).toContain('POST');
+      expect(body).toEqual({ displayName: DUMMY_DISPLAY_NAME });
+    });
+
+    test('makes correct action when success', async () => {
+      fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
+        payload: DUMMY_USER_STORE,
+      });
+    });
+
+    test('makes correct action when fail', async () => {
+      fetch.mockReject();
+      await thunk(mock.dispatch);
+
+      expect(mock.dispatch.mock.calls[0][0]).toEqual({
+        type: types.GET_OR_CREATE_USER_INFO_FAIL,
+      });
+    });
+  });
+
   describe('fetchUserInfo', () => {
     test('generates correct url', async () => {
       fetch.mockResponse();

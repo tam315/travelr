@@ -2,7 +2,7 @@
 import type { Action, UserStore } from '../config/types';
 import actionTypes from '../actions/types';
 
-const INITIAL_STATE: UserStore = {
+export const INITIAL_STATE: UserStore = {
   userId: '',
   token: '',
   displayName: '',
@@ -12,11 +12,11 @@ const INITIAL_STATE: UserStore = {
   earnedViews: 0,
 };
 
-export default (
-  state: UserStore = INITIAL_STATE,
-  action: Action<UserStore>,
-): UserStore => {
+export default (state: UserStore = INITIAL_STATE, action: any): UserStore => {
   switch (action.type) {
+    case actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS: {
+      return action.payload;
+    }
     case actionTypes.FETCH_USER_INFO_SUCCESS: {
       return action.payload;
     }

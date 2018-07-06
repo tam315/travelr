@@ -14,6 +14,38 @@ import type { Dispatch } from 'redux';
 
 const actions = {};
 
+actions.getOrCreateUserInfo = (token: string, displayName?: string) => async (
+  dispatch: Dispatch<any>,
+) => {
+  try {
+    const fetchOptions = {
+      method: 'POST',
+      headers: {
+        authorization: token,
+      },
+      body: displayName ? JSON.stringify({ displayName }) : '',
+    };
+    const response = await fetch(`${config.apiUrl}users`, fetchOptions);
+
+    if (!response.ok) {
+      dispatch({
+        type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
+      });
+      return;
+    }
+
+    const userInfo = await response.json();
+    dispatch({
+      type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS,
+      payload: { ...userInfo, token },
+    });
+  } catch (err) {
+    dispatch({
+      type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
+    });
+  }
+};
+
 actions.fetchUserInfo = (user: UserStore) => async (
   dispatch: Dispatch<any>,
 ) => {

@@ -8,6 +8,7 @@ import React from 'react';
 import StatusBadge from './StatusBadge';
 import type { UserStore, NewUserInfo } from '../config/types';
 import type { RouterHistory } from 'react-router-dom';
+import store from 'store';
 
 const styles = theme => ({
   root: {
@@ -87,7 +88,7 @@ export class PageManageAccount extends React.Component<Props, State> {
 
   handleDeleteUser = () => {
     const callback = () => {
-      alert('アカウントを削除しました'); // TODO: toast
+      store.remove('token');
       this.props.history.push('/');
     };
 

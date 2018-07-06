@@ -6,7 +6,7 @@ const { checkToken } = AuthenticationController;
 
 module.exports = app => {
   // users
-  app.post('/users', checkToken, UsersController.createUser);
+  app.post('/users', checkToken, UsersController.getOrCreateUser);
   app.get('/users/token', checkToken, UsersController.getUserByToken);
   app.get('/users/:userId', UsersController.getUser);
   app.put('/users/:userId', checkToken, UsersController.updateUser);

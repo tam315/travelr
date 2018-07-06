@@ -2,19 +2,38 @@ const dbHelper = require('../helper/db');
 
 const db = dbHelper.db;
 
-exports.createUser = async (req, res, next) => {
+exports.getOrCreateUser = async (req, res, next) => {
   const { userId } = req;
   const { displayName } = req.body;
 
-  if (!displayName) return res.status(400).send('display name missing');
-
   try {
-    await db.one(
-      'INSERT INTO users (id, display_name) values ($1, $2) RETURNING *',
-      [userId, displayName],
+    const userExists = await db.oneOrNone(
+      'SELECT * FROM users WHERE id = $1',
+      userId,
     );
 
-    res.sendStatus(200);
+    if (!userExists) {
+      if (!displayName) return res.status(400).send('display name missing');
+
+      await db.one(
+        'INSERT INTO users (id, display_name) values ($1, $2) RETURNING *',
+        [userId, displayName],
+      );
+    }
+
+    const user = await db.one(
+      'SELECT * FROM get_users WHERE id = $1 LIMIT 1',
+      userId,
+    );
+
+    res.status(200).send({
+      userId: user.id,
+      displayName: user.display_name,
+      isAdmin: user.is_admin,
+      earnedViews: +user.earned_views,
+      earnedLikes: +user.earned_likes,
+      earnedComments: +user.earned_comments,
+    });
   } catch (err) {
     res.status(400).send(err.message);
   }

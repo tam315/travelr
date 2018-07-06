@@ -5,10 +5,14 @@ import IconDone from '@material-ui/icons/Done';
 import IconEdit from '@material-ui/icons/Edit';
 import { shallow } from 'enzyme';
 import React from 'react';
+import store from 'store';
 import { DUMMY_USER_STORE } from '../../config/dummies';
 import { PageManageAccount } from '../PageManageAccount';
 
 describe('PageManageAccount component', () => {
+  jest.mock('store');
+  store.remove = jest.fn();
+
   const mock = {
     actions: {
       updateUserInfo: jest.fn(),
@@ -65,6 +69,8 @@ describe('PageManageAccount component', () => {
     wrapper.find({ color: 'secondary' }).simulate('click');
 
     expect(mock.actions.deleteUser).toBeCalled();
+    // remove localstorage
+    expect(store.remove).toBeCalledWith('token');
     // navigate to top page
     expect(mock.history.push).toBeCalled();
   });
