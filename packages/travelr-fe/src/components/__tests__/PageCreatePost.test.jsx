@@ -4,6 +4,9 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import { PageCreatePost } from '../PageCreatePost';
 import { DUMMY_USER_STORE } from '../../config/dummies';
+import firebaseUtils from '../../utils/firebaseUtils';
+
+jest.mock('../../utils/firebaseUtils');
 
 const DUMMY_POST_ID_CREATED = 12345;
 
@@ -54,14 +57,24 @@ describe('PageCreatePost component', () => {
     expect(fetch).not.toBeCalled();
   });
 
-  test('submit data if the content is OK', async () => {
+  test('submit data if the content is OK', async done => {
     wrapper.setState(DUMMY_STATE);
+    wrapper.instance().oldImage.current = {};
+    wrapper.instance().oldImage.current.files = ['file1'];
+    wrapper.instance().newImage.current = {};
+    wrapper.instance().newImage.current.files = ['file2'];
+
     wrapper
       .find(Button)
       .last()
       .simulate('click');
 
-    expect(mock.createPost).toBeCalled();
+    setImmediate(() => {
+      expect(firebaseUtils.uploadImageFile).toBeCalledTimes(2);
+      expect(mock.createPost).toBeCalled();
+      expect(mock.history.push).toBeCalled();
+      done();
+    });
   });
 
   test('navigete to post page if success', async () => {

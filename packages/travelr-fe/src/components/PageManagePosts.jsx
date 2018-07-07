@@ -16,6 +16,7 @@ import IconDelete from '@material-ui/icons/Delete';
 import IconSelectAll from '@material-ui/icons/SelectAll';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import firebaseUtils from '../utils/firebaseUtils';
 import StatusBadge from './StatusBadge';
 import type { UserStore, PostsStore } from '../config/types';
 
@@ -177,7 +178,7 @@ export class PageManagePosts extends React.Component<Props, State> {
             to={`/post/${post.postId}`}
           >
             <img
-              src={post.oldImageUrl}
+              src={firebaseUtils.getImageUrl(post.oldImageUrl)}
               alt={post.description}
               className={classes.image}
             />

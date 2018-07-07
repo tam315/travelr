@@ -1,6 +1,8 @@
 // @flow
 import firebase from 'firebase/app';
+// $FlowIgnore
 import 'firebase/auth';
+// $FlowIgnore
 import 'firebase/storage';
 import config from '../config';
 
@@ -59,9 +61,29 @@ const signInWithFacebook = async () => {
   await firebase.auth().signInWithRedirect(provider);
 };
 
+const uploadImageFile = async (file: File, filename: string) => {
+  const storageRef = firebase.storage().ref();
+  const storageFileRef = storageRef.child(filename);
+  const result = await storageFileRef.put(file);
+
+  return result;
+};
+
+const getImageUrl = (filename: string, option?: 'thumb') => {
+  // TODO: delete this (showing absolute pass as is)
+  if (filename.indexOf('http') !== -1) return filename;
+
+  // TODO: generate thumb
+  if (option === 'thumb') return '';
+
+  return `https://firebasestorage.googleapis.com/v0/b/travelr-a75c4.appspot.com/o/${filename}?alt=media`;
+};
+
 export default {
   onAuthStateChanged,
   deleteUser,
   signInWithGoogle,
   signInWithFacebook,
+  uploadImageFile,
+  getImageUrl,
 };

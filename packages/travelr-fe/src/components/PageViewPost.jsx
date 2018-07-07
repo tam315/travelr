@@ -5,6 +5,7 @@ import IconEdit from '@material-ui/icons/Edit';
 import * as React from 'react';
 import ReactCompareImage from 'react-compare-image';
 import { Link } from 'react-router-dom';
+import firebaseUtils from '../utils/firebaseUtils';
 import PageViewPostComments from './PageViewPostComments';
 import StatusBadge from './StatusBadge';
 import type { PostsStore, UserStore, Post } from '../config/types';
@@ -110,7 +111,10 @@ export class PageViewPost extends React.Component<Props> {
 
     return (
       <div className={classes.root}>
-        <ReactCompareImage leftImage={oldImageUrl} rightImage={newImageUrl} />
+        <ReactCompareImage
+          leftImage={firebaseUtils.getImageUrl(oldImageUrl)}
+          rightImage={firebaseUtils.getImageUrl(newImageUrl)}
+        />
 
         {userId === this.props.user.userId && (
           <Link to={`/post/${postId}/edit`} className={classes.editButton}>
