@@ -21,13 +21,15 @@ import firebaseUtils from '../utils/firebaseUtils';
 
 type Props = {
   fetchUserInfo: (user: UserStore) => void,
-  getOrCreateUserInfo: (token: string, displayName?: 'string') => void,
+  getOrCreateUserInfo: (token: string, displayName?: string) => void,
   user: UserStore,
 };
 
 export class App extends React.Component<Props> {
   componentDidMount = () => {
-    firebaseUtils.setupInitialAuth();
+    firebaseUtils.onAuthStateChanged((token, displayName) => {
+      this.props.getOrCreateUserInfo(token, displayName);
+    });
   };
 
   // these lines are inevitable.

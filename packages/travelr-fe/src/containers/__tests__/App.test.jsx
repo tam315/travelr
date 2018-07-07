@@ -27,6 +27,6 @@ describe('App component', () => {
         user={DUMMY_USER_STORE}
       />,
     );
-    expect(firebaseUtils.setupInitialAuth).toBeCalled();
+    expect(firebaseUtils.onAuthStateChanged).toBeCalled();
   });
 });

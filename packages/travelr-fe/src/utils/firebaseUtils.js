@@ -1,3 +1,4 @@
+// @flow
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/storage';
@@ -5,9 +6,11 @@ import config from '../config';
 
 firebase.initializeApp(config.firebase);
 
-const setupInitialAuth = async () => {
+const onAuthStateChanged = async (
+  callback: (token: string, displayName: string) => void,
+) => {
   try {
-    // this function is called in the following cases:
+    // callback is called in the following cases:
     //   - case1: when unauthorized user successfully redirected from OAuth provider
     //   - case2: when authorized user reload / re-visit the page
     firebase.auth().onAuthStateChanged(async user => {
@@ -19,7 +22,7 @@ const setupInitialAuth = async () => {
         const displayName =
           redirectResult.additionalUserInfo.profile.given_name;
 
-        this.props.getOrCreateUserInfo(token, displayName);
+        callback(token, displayName);
         return;
       }
 
@@ -27,7 +30,7 @@ const setupInitialAuth = async () => {
       if (user && !redirectResult.user) {
         const token = await user.getIdToken();
 
-        this.props.getOrCreateUserInfo(token);
+        callback(token, '');
       }
     });
   } catch (err) {
@@ -57,7 +60,7 @@ const signInWithFacebook = async () => {
 };
 
 export default {
-  setupInitialAuth,
+  onAuthStateChanged,
   deleteUser,
   signInWithGoogle,
   signInWithFacebook,
