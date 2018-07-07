@@ -2,10 +2,10 @@
 import { PageAuth } from '../PageAuth';
 import { shallow } from 'enzyme';
 import React from 'react';
-import firebase from 'firebase/app';
 import { Button, TextField } from '@material-ui/core';
+import firebaseUtils from '../../utils/firebaseUtils';
 
-jest.mock('firebase/app');
+jest.mock('../../utils/firebaseUtils');
 
 describe('', () => {
   let mock;
@@ -17,15 +17,6 @@ describe('', () => {
       },
       signInWithRedirect: jest.fn(),
     };
-
-    // note that firebase.auth can NOT be changed except this place
-    firebase.auth = jest.fn(() => ({
-      signInWithRedirect: mock.signInWithRedirect,
-    }));
-    firebase.auth.GoogleAuthProvider = jest.fn(() => ({ addScope: jest.fn() }));
-    firebase.auth.FacebookAuthProvider = jest.fn(() => ({
-      addScope: jest.fn(),
-    }));
   });
 
   test('displays 3 buttons(google, facebok, mail-address-auth)', () => {
@@ -61,7 +52,7 @@ describe('', () => {
       .at(0)
       .simulate('click');
 
-    expect(mock.signInWithRedirect).toBeCalled();
+    expect(firebaseUtils.signInWithGoogle).toBeCalled();
   });
 
   test('signInWithRedirect is called when a facebook button is clicked', () => {
@@ -77,6 +68,6 @@ describe('', () => {
       .at(1)
       .simulate('click');
 
-    expect(mock.signInWithRedirect).toBeCalled();
+    expect(firebaseUtils.signInWithFacebook).toBeCalled();
   });
 });

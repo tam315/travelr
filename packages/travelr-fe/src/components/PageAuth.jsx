@@ -1,5 +1,4 @@
 // @flow
-import firebase from 'firebase/app';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import {
@@ -10,6 +9,7 @@ import {
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import firebaseUtils from '../utils/firebaseUtils';
 import Hr from './Hr';
 
 const googleTheme = createMuiTheme({
@@ -39,16 +39,12 @@ type Props = {
 };
 
 export class PageAuth extends React.Component<Props> {
-  signInWithGoogle = async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('email');
-    await firebase.auth().signInWithRedirect(provider);
+  signInWithGoogle = () => {
+    firebaseUtils.signInWithGoogle();
   };
 
   signInWithFacebook = async () => {
-    const provider = new firebase.auth.FacebookAuthProvider();
-    provider.addScope('email');
-    await firebase.auth().signInWithRedirect(provider);
+    firebaseUtils.signInWithFacebook();
   };
 
   render = () => {

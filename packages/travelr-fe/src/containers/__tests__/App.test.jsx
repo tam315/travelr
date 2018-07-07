@@ -3,6 +3,9 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import { App } from '../App';
 import { DUMMY_USER_STORE } from '../../config/dummies';
+import firebaseUtils from '../../utils/firebaseUtils';
+
+jest.mock('../../utils/firebaseUtils');
 
 describe('App component', () => {
   let mock;
@@ -16,7 +19,7 @@ describe('App component', () => {
     };
   });
 
-  test('read token from local storage and fetch user info on component mount', () => {
+  test('initial auth setup executed on component mount', () => {
     shallow(
       <App
         fetchUserInfo={mock.actions.fetchUserInfo}
@@ -24,5 +27,6 @@ describe('App component', () => {
         user={DUMMY_USER_STORE}
       />,
     );
+    expect(firebaseUtils.setupInitialAuth).toBeCalled();
   });
 });
