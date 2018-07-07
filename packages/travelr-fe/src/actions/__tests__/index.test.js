@@ -542,6 +542,16 @@ describe('actions', () => {
       expect(fetchUrl).toContain(`/posts?user_id=${DUMMY_USER_STORE.userId}`);
     });
 
+    test('do nothing if userId is not provided', async () => {
+      fetch.mockResponse();
+
+      const mockDispatch = jest.fn();
+      const thunk = actions.fetchMyPosts({ ...DUMMY_USER_STORE, userId: '' });
+      await thunk(mockDispatch);
+
+      expect(fetch).not.toBeCalled();
+    });
+
     test('make a correct action if test succeed', async () => {
       fetch.mockResponse(JSON.stringify(DUMMY_POSTS));
 

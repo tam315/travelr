@@ -366,6 +366,7 @@ actions.deletePosts = (user: UserStore, postIds: Array<number>) => async (
 
 actions.fetchMyPosts = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   const { userId } = user;
+  if (!userId) return;
   try {
     const response = await fetch(`${config.apiUrl}posts?user_id=${userId}`);
     if (!response.ok) {
