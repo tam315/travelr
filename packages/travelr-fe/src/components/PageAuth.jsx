@@ -11,7 +11,6 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import Hr from './Hr';
-import store from 'store';
 
 const googleTheme = createMuiTheme({
   palette: {
@@ -37,43 +36,16 @@ const styles = theme => ({
 
 type Props = {
   classes: any,
-  getOrCreateUserInfo: (token: string, displayName?: string) => void,
 };
 
 export class PageAuth extends React.Component<Props> {
-  componentDidMount = async () => {
-    await this.handleRedirectResults();
-  };
-
-  handleRedirectResults = async () => {
-    try {
-      const result = await firebase.auth().getRedirectResult();
-      if (!result.user) return;
-
-      const token = await firebase.auth().currentUser.getIdToken();
-      store.set('token', token);
-
-      const displayName = result.additionalUserInfo.profile.given_name;
-      await this.props.getOrCreateUserInfo(token, displayName);
-    } catch (err) {
-      if (err.code === 'auth/account-exists-with-different-credential') {
-        throw new Error(
-          'このメールアドレスは別のログイン方法に紐づけされています',
-        ); // TODO: link account, snackbar
-      }
-      throw new Error(err);
-    }
-  };
-
   signInWithGoogle = async () => {
-    store.remove('token');
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('email');
     await firebase.auth().signInWithRedirect(provider);
   };
 
   signInWithFacebook = async () => {
-    store.remove('token');
     const provider = new firebase.auth.FacebookAuthProvider();
     provider.addScope('email');
     await firebase.auth().signInWithRedirect(provider);

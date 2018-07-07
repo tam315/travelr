@@ -5,14 +5,13 @@ import IconDone from '@material-ui/icons/Done';
 import IconEdit from '@material-ui/icons/Edit';
 import { shallow } from 'enzyme';
 import React from 'react';
-import store from 'store';
 import { DUMMY_USER_STORE } from '../../config/dummies';
 import { PageManageAccount } from '../PageManageAccount';
+import firebaseUtils from '../../utils/firebaseUtils';
+
+jest.mock('../../utils/firebaseUtils');
 
 describe('PageManageAccount component', () => {
-  jest.mock('store');
-  store.remove = jest.fn();
-
   const mock = {
     actions: {
       updateUserInfo: jest.fn(),
@@ -60,7 +59,7 @@ describe('PageManageAccount component', () => {
     expect(mock.actions.updateUserInfo).toBeCalled();
   });
 
-  test('invoke deleteUser() when delete account button is clicked, and navigate to the top page', () => {
+  test('invoke deleteUser() when delete account button is clicked, and navigate to the top page', done => {
     window.confirm = jest.fn().mockImplementation(() => true);
     window.alert = jest.fn();
 
@@ -68,10 +67,11 @@ describe('PageManageAccount component', () => {
 
     wrapper.find({ color: 'secondary' }).simulate('click');
 
-    expect(mock.actions.deleteUser).toBeCalled();
-    // remove localstorage
-    expect(store.remove).toBeCalledWith('token');
-    // navigate to top page
-    expect(mock.history.push).toBeCalled();
+    expect(firebaseUtils.deleteUser).toBeCalled();
+
+    setImmediate(() => {
+      expect(mock.history.push).toBeCalled();
+      done();
+    });
   });
 });

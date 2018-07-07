@@ -5,10 +5,10 @@ import Typography from '@material-ui/core/Typography';
 import IconDone from '@material-ui/icons/Done';
 import IconEdit from '@material-ui/icons/Edit';
 import React from 'react';
+import firebaseUtils from '../utils/firebaseUtils';
 import StatusBadge from './StatusBadge';
 import type { UserStore, NewUserInfo } from '../config/types';
 import type { RouterHistory } from 'react-router-dom';
-import store from 'store';
 
 const styles = theme => ({
   root: {
@@ -87,8 +87,8 @@ export class PageManageAccount extends React.Component<Props, State> {
   };
 
   handleDeleteUser = () => {
-    const callback = () => {
-      store.remove('token');
+    const callback = async () => {
+      await firebaseUtils.deleteUser(); // TODO: reauthentication
       this.props.history.push('/');
     };
 
