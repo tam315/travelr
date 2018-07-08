@@ -1,21 +1,18 @@
 // @flow
 import config from '../config';
 import loadJS from './loadJS';
+import type { LatLng } from '../config/types';
 
 declare var google: any;
 declare var MarkerClusterer: any;
 type Marker = { setMap: any => any, setPosition: any => any };
-type Position = {
-  lng: number,
-  lat: number,
-};
 
 class MapsPickPosition {
   map: any; // reference to map instance
   marker: Marker; // reference marker instances
-  callback: (position: Position) => any; // called when the pin position is changed
+  callback: (position: LatLng) => any; // called when the pin position is changed
 
-  constructor(mapRef: HTMLElement, callback: (position: Position) => any) {
+  constructor(mapRef: HTMLElement, callback: (position: LatLng) => any) {
     this.callback = callback;
     const mapInitializer = this.mapInitializerGenerator(mapRef);
 
@@ -54,21 +51,21 @@ class MapsPickPosition {
 
     // on drag
     this.marker.addListener('dragend', e => {
-      const position: Position = { lng: e.latLng.lng(), lat: e.latLng.lat() };
+      const position: LatLng = { lng: e.latLng.lng(), lat: e.latLng.lat() };
       this.map.panTo(position);
       this.callback(position);
     });
 
     // on click
     this.map.addListener('click', e => {
-      const position: Position = { lng: e.latLng.lng(), lat: e.latLng.lat() };
+      const position: LatLng = { lng: e.latLng.lng(), lat: e.latLng.lat() };
       this.marker.setPosition(position);
       this.map.panTo(position);
       this.callback(position);
     });
   };
 
-  setPosition = (position: Position) => {
+  setPosition = (position: LatLng) => {
     this.marker.setPosition(position);
     this.map.panTo(position);
     this.map.setZoom(15);

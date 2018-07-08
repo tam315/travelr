@@ -11,7 +11,7 @@ import uuid from 'uuid/v4';
 import firebaseUtils from '../utils/firebaseUtils';
 import MapsPickPosition from '../utils/MapsPickPosition';
 import type { RouterHistory } from 'react-router-dom';
-import type { UserStore, NewPost } from '../config/types';
+import type { UserStore, NewPost, LatLng } from '../config/types';
 
 const styles = theme => ({
   root: {
@@ -104,7 +104,7 @@ export class PageCreatePost extends React.Component<Props, State> {
     this.setState({ [stateKayName]: e.target.value });
   }
 
-  handlePinPositionChange = (position: Position) => {
+  handlePinPositionChange = (position: LatLng) => {
     this.setState({
       lng: position.lng,
       lat: position.lat,

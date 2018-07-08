@@ -93,3 +93,8 @@ export type UserStore = {
   earnedComments: number,
   earnedViews: number,
 };
+
+export type LatLng = {
+  lat: number,
+  lng: number,
+};
