@@ -8,7 +8,7 @@ declare var MarkerClusterer: any;
 type Marker = { setMap(any): any };
 
 class MapsHelper {
-  isApiReady: boolean = false; // whether maps api is loaded and ready
+  isApiAndMapReady: boolean = false; // whether API and a map instance is ready
   map: HTMLElement; // reference to the maps div element
   markers: Array<Marker> = []; // reference marker instances
   markerCluster: any; // reference to the marker cluster
@@ -34,7 +34,6 @@ class MapsHelper {
     }
 
     // instantiate the map if API is ready.
-    this.isApiReady = true;
     mapInitializer();
   }
 
@@ -51,9 +50,10 @@ class MapsHelper {
       this.closePreviousInfowindow();
     });
 
-    // this line should be here otherwise placeMarkers() fails
-    // because placeMarkers() will be called before 'this.map' is set.
-    this.isApiReady = true;
+    // this line should be here (not top of this func)
+    // otherwise placeMarkers() fails
+    // as placeMarkers() will be called before 'this.map' is set.
+    this.isApiAndMapReady = true;
 
     // if there are pengind tasks, execute them.
     if (this.queuedPosts) {
@@ -68,7 +68,7 @@ class MapsHelper {
 
   placePosts = (posts: Array<Post>) => {
     // if api is not ready, queue posts and exit funtion
-    if (!this.isApiReady) {
+    if (!this.isApiAndMapReady) {
       this.queuedPosts = posts;
       return;
     }
