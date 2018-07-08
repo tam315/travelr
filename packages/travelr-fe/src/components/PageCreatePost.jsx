@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import uuid from 'uuid/v4';
 import firebaseUtils from '../utils/firebaseUtils';
+import MapsPickPosition from '../utils/MapsPickPosition';
 import type { RouterHistory } from 'react-router-dom';
 import type { UserStore, NewPost } from '../config/types';
 
@@ -61,17 +62,33 @@ export class PageCreatePost extends React.Component<Props, State> {
   };
   oldImage: ReactObjRef<'input'>;
   newImage: ReactObjRef<'input'>;
+  mapRef: ReactObjRef<'div'>;
+  mapsPickPosition: MapsPickPosition;
 
   constructor(props: Props) {
     super(props);
 
     this.oldImage = React.createRef();
     this.newImage = React.createRef();
+    this.mapRef = React.createRef();
   }
+
+  componentDidMount = () => {
+    if (this.mapRef.current) {
+      this.mapsPickPosition = new MapsPickPosition(
+        this.mapRef.current,
+        this.handlePinPositionChange,
+      );
+    }
+  };
 
   getCurrentPosition = () => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(geom => {
+        this.mapsPickPosition.setPosition({
+          lng: geom.coords.longitude,
+          lat: geom.coords.latitude,
+        });
         this.setState({
           lng: geom.coords.longitude,
           lat: geom.coords.latitude,
@@ -86,6 +103,13 @@ export class PageCreatePost extends React.Component<Props, State> {
     e.preventDefault();
     this.setState({ [stateKayName]: e.target.value });
   }
+
+  handlePinPositionChange = (position: Position) => {
+    this.setState({
+      lng: position.lng,
+      lat: position.lat,
+    });
+  };
 
   handleSubmit = async () => {
     const { user } = this.props;
@@ -201,13 +225,16 @@ export class PageCreatePost extends React.Component<Props, State> {
           />
         </FormControl>
         <FormControl component="fieldset" required>
-          {/* TODO: create map */}
-          <Typography placeholder="緯度経度">
-            {this.state.lng &&
-              this.state.lat &&
-              `${this.state.lng} ${this.state.lat}`}
-          </Typography>
           <FormLabel component="legend">撮影場所</FormLabel>
+          <div
+            ref={this.mapRef}
+            style={{
+              width: '100%',
+              height: '200px',
+              background: 'gray',
+              marginBottom: '1rem',
+            }}
+          />
           <Button
             variant="contained"
             fullWidth

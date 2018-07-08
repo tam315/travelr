@@ -2,11 +2,13 @@
 import Button from '@material-ui/core/Button';
 import { shallow } from 'enzyme';
 import React from 'react';
-import { PageCreatePost } from '../PageCreatePost';
 import { DUMMY_USER_STORE } from '../../config/dummies';
 import firebaseUtils from '../../utils/firebaseUtils';
+import MapsPickPosition from '../../utils/MapsPickPosition';
+import { PageCreatePost } from '../PageCreatePost';
 
 jest.mock('../../utils/firebaseUtils');
+jest.mock('../../utils/MapsPickPosition');
 
 const DUMMY_POST_ID_CREATED = 12345;
 
@@ -92,5 +94,59 @@ describe('PageCreatePost component', () => {
         ),
       1,
     );
+  });
+
+  test('MapsPickPosition is instantiated', async () => {
+    wrapper.instance().mapRef = { current: {} };
+    wrapper.instance().componentDidMount();
+    expect(MapsPickPosition).toBeCalled();
+  });
+
+  test('set the state and the map position if getting position succeed', async () => {
+    const DUMMY_GEOM = {
+      coords: {
+        longitude: 135.0,
+        latitude: 35.0,
+      },
+    };
+    global.navigator.geolocation = {
+      getCurrentPosition: jest.fn(callback => callback(DUMMY_GEOM)),
+    };
+
+    const instance = wrapper.instance();
+
+    // mock MapsPickPosition class instance
+    instance.mapsPickPosition = {
+      setPosition: jest.fn(),
+    };
+
+    // simulate the success of getting position
+    instance.getCurrentPosition();
+
+    // should set the state
+    expect(wrapper.state('lng')).toEqual(DUMMY_GEOM.coords.longitude);
+    expect(wrapper.state('lat')).toEqual(DUMMY_GEOM.coords.latitude);
+
+    // should set the position of the map
+    expect(instance.mapsPickPosition.setPosition).toBeCalledWith({
+      lng: DUMMY_GEOM.coords.longitude,
+      lat: DUMMY_GEOM.coords.latitude,
+    });
+  });
+
+  test('set the state if the pin position is changed', async () => {
+    const DUMMY_POSITION = {
+      lng: 135.0,
+      lat: 35.0,
+    };
+
+    const instance = wrapper.instance();
+
+    // simulate the success of getting position
+    instance.handlePinPositionChange(DUMMY_POSITION);
+
+    // should set the state
+    expect(wrapper.state('lng')).toEqual(DUMMY_POSITION.lng);
+    expect(wrapper.state('lat')).toEqual(DUMMY_POSITION.lat);
   });
 });
