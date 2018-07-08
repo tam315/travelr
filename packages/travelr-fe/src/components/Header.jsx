@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 import Menu from './Menu';
 import type { UserStore } from '../config/types';
 
-const styles = {
+const styles = theme => ({
   title: {
     color: 'white',
   },
@@ -23,21 +23,16 @@ const styles = {
     flexGrow: 1,
   },
   accountButton: {
-    paddingRight: 0,
-    paddingLeft: 0,
     minWidth: 0,
   },
-  accountCircle: {
-    marginRight: 10,
-  },
   userName: {
-    marginRight: 10,
+    marginLeft: theme.spacing.unit * 1,
   },
   menuButton: {
     marginLeft: 0,
     marginRight: 0,
   },
-};
+});
 
 type Props = {
   user: UserStore,
@@ -81,7 +76,7 @@ class Header extends React.Component<Props, State> {
                 color="inherit"
                 className={classes.accountButton}
               >
-                <AccountCircle className={classes.accountCircle} />
+                <AccountCircle />
                 <Hidden xsDown>
                   <Typography
                     variant="body2"
