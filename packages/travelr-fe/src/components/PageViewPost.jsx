@@ -10,6 +10,11 @@ import PageViewPostComments from './PageViewPostComments';
 import StatusBadge from './StatusBadge';
 import type { PostsStore, UserStore, Post } from '../config/types';
 import type { Match } from 'react-router-dom';
+import MapsShowPosition from '../utils/MapsShowPosition';
+
+type ReactObjRef<ElementType: React.ElementType> = {
+  current: null | React.ElementRef<ElementType>,
+};
 
 const styles = theme => ({
   root: {
@@ -54,6 +59,8 @@ type Props = {
 };
 
 export class PageViewPost extends React.Component<Props> {
+  mapRef: ReactObjRef<'div'>;
+  mapsShowPosition: MapsShowPosition;
   postId: number;
 
   constructor(props: Props) {
@@ -64,6 +71,9 @@ export class PageViewPost extends React.Component<Props> {
     if (postId) {
       this.postId = Number(postId);
     }
+
+    // div element refs for google maps
+    this.mapRef = React.createRef();
   }
 
   componentDidMount = () => {
@@ -73,6 +83,28 @@ export class PageViewPost extends React.Component<Props> {
   componentDidUpdate = (prevProps: Props) => {
     if (prevProps.user.userId !== this.props.user.userId) {
       this.props.fetchPost(this.postId, this.props.user);
+    }
+
+    // do nothing if post is not fetched yet
+    const { currentPost } = this.props.posts;
+    if (!currentPost) return;
+
+    const { lng, lat } = currentPost;
+
+    // do nothing if position is the same
+    if (
+      prevProps.posts.currentPost &&
+      lng === prevProps.posts.currentPost.lng &&
+      lat === prevProps.posts.currentPost.lat
+    ) {
+      return;
+    }
+
+    if (lng && lat && this.mapRef.current) {
+      this.mapsShowPosition = new MapsShowPosition(this.mapRef.current, {
+        lng,
+        lat,
+      });
     }
   };
 
@@ -100,8 +132,6 @@ export class PageViewPost extends React.Component<Props> {
       newImageUrl,
       description,
       shootDate,
-      lng,
-      lat,
       viewCount,
       displayName,
       likedCount,
@@ -142,9 +172,10 @@ export class PageViewPost extends React.Component<Props> {
             撮影日：{new Date(shootDate).toISOString().substr(0, 10)}
           </Typography>
 
-          <div style={{ width: '100%', height: '150px', background: 'gray' }}>
-            google maps goes here {lng} {lat}
-          </div>
+          <div
+            ref={this.mapRef}
+            style={{ width: '100%', height: '200px', background: 'gray' }}
+          />
 
           <PageViewPostComments
             user={this.props.user}

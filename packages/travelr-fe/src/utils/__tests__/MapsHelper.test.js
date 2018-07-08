@@ -7,7 +7,7 @@ jest.mock('../loadJS');
 const DUMMY_POSTS_ORIGINAL = DUMMY_POSTS.slice(0, -2);
 const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
 
-const setGoogleMapsApiMock = () => {
+export const setGoogleMapsApiMock = () => {
   google = {
     maps: {
       LatLng: jest.fn(),
@@ -26,7 +26,7 @@ const setGoogleMapsApiMock = () => {
   }));
 };
 
-const deleteGoogleMapsApiMock = () => {
+export const deleteGoogleMapsApiMock = () => {
   google = undefined;
 };
 
