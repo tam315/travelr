@@ -1,10 +1,11 @@
 // @flow
-import appReducer from '../appReducer';
+import appReducer, { INITIAL_STATE } from '../appReducer';
 import types from '../../actions/types';
 
 describe('appReducer', () => {
   test('REDUCE_SNACKBAR_QUEUE', () => {
     const state = {
+      ...INITIAL_STATE,
       snackbarQueue: ['message1', 'message2', 'message3'],
     };
 
@@ -13,6 +14,7 @@ describe('appReducer', () => {
     };
 
     const expected = {
+      ...INITIAL_STATE,
       snackbarQueue: ['message2', 'message3'],
     };
 
@@ -21,6 +23,7 @@ describe('appReducer', () => {
 
   test('ADD_SNACKBAR_QUEUE', () => {
     const state = {
+      ...INITIAL_STATE,
       snackbarQueue: ['message1', 'message2', 'message3'],
     };
 
@@ -30,6 +33,7 @@ describe('appReducer', () => {
     };
 
     const expected = {
+      ...INITIAL_STATE,
       snackbarQueue: ['message1', 'message2', 'message3', 'message4'],
     };
 
@@ -38,6 +42,7 @@ describe('appReducer', () => {
 
   test('show messages', () => {
     const state = {
+      ...INITIAL_STATE,
       snackbarQueue: ['message1', 'message2', 'message3'],
     };
 
@@ -77,10 +82,42 @@ describe('appReducer', () => {
       };
 
       const expected = {
+        ...INITIAL_STATE,
         snackbarQueue: [...state.snackbarQueue, expectedMessage],
       };
 
       expect(appReducer(state, action)).toEqual(expected);
     });
+  });
+
+  test('SHOW_PROGRESS', () => {
+    const action = {
+      type: types.SHOW_PROGRESS,
+    };
+
+    const expected = {
+      ...INITIAL_STATE,
+      inProgress: true,
+    };
+
+    expect(appReducer(INITIAL_STATE, action)).toEqual(expected);
+  });
+
+  test('HIDE_PROGRESS', () => {
+    const state = {
+      ...INITIAL_STATE,
+      inProgress: true,
+    };
+
+    const action = {
+      type: types.HIDE_PROGRESS,
+    };
+
+    const expected = {
+      ...INITIAL_STATE,
+      inProgress: false,
+    };
+
+    expect(appReducer(state, action)).toEqual(expected);
   });
 });

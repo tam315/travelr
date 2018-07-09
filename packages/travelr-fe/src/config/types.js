@@ -74,6 +74,7 @@ export type FilterCriterion = {
 
 export type AppStore = {
   snackbarQueue: Array<string>,
+  inProgress: boolean,
 };
 
 export type PostsStore = {

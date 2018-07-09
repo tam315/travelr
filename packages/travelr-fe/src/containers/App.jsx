@@ -15,9 +15,10 @@ import PageManageAccount from '../components/PageManageAccount';
 import PageManagePosts from '../components/PageManagePosts';
 import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
+import ProgressService from '../components/ProgressService';
 import SnackbarService from '../components/SnackbarService';
-import type { UserStore } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';
+import type { UserStore } from '../config/types';
 
 type Props = {
   fetchUserInfo: (user: UserStore) => void,
@@ -64,6 +65,7 @@ export class App extends React.Component<Props> {
         <CssBaseline />
         {/* $FlowIgnore */}
         <SnackbarService {...this.props} />
+        <ProgressService {...this.props} />
         <BrowserRouter>
           <React.Fragment>
             <Header {...this.props} />
