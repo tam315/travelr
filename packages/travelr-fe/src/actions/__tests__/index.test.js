@@ -798,4 +798,14 @@ describe('actions', () => {
       });
     });
   });
+
+  describe('addSnackbarQueue', () => {
+    test('make a correct action', () => {
+      const action = actions.addSnackbarQueue('message1');
+      expect(action).toEqual({
+        type: types.ADD_SNACKBAR_QUEUE,
+        payload: 'message1',
+      });
+    });
+  });
 });

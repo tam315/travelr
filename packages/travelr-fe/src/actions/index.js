@@ -524,4 +524,9 @@ actions.reduceSnackbarQueue = () => ({
   type: actionTypes.REDUCE_SNACKBAR_QUEUE,
 });
 
+actions.addSnackbarQueue = (message: string) => ({
+  type: actionTypes.ADD_SNACKBAR_QUEUE,
+  payload: message,
+});
+
 export default actions;

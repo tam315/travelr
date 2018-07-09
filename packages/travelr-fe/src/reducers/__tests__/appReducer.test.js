@@ -19,6 +19,23 @@ describe('appReducer', () => {
     expect(appReducer(state, action)).toEqual(expected);
   });
 
+  test('ADD_SNACKBAR_QUEUE', () => {
+    const state = {
+      snackbarQueue: ['message1', 'message2', 'message3'],
+    };
+
+    const action = {
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload: 'message4',
+    };
+
+    const expected = {
+      snackbarQueue: ['message1', 'message2', 'message3', 'message4'],
+    };
+
+    expect(appReducer(state, action)).toEqual(expected);
+  });
+
   test('show messages', () => {
     const state = {
       snackbarQueue: ['message1', 'message2', 'message3'],

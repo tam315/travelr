@@ -13,6 +13,12 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
       newState.snackbarQueue.shift();
       return newState;
     }
+    case actionTypes.ADD_SNACKBAR_QUEUE: {
+      const newState = {
+        snackbarQueue: [...state.snackbarQueue, action.payload],
+      };
+      return newState;
+    }
     case actionTypes.GET_OR_CREATE_USER_INFO_FAIL: {
       return {
         snackbarQueue: [
