@@ -61,6 +61,7 @@ function StatusBadge(props: Props) {
       borderRadius: 8,
       display: 'flex',
       justifyContent: dense ? 'flex-start' : 'space-between',
+      outline: 'unset', // TODO: improve a11y
       paddingBottom: 4,
       paddingLeft: 8,
       paddingRight: 8,
