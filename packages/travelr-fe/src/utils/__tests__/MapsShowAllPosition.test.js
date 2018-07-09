@@ -1,4 +1,4 @@
-import MapsHelper from '../MapsHelper';
+import MapsShowAllPosition from '../MapsShowAllPosition';
 import loadJS from '../loadJS';
 import { DUMMY_POSTS } from '../../config/dummies';
 import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
@@ -8,7 +8,7 @@ jest.mock('../loadJS');
 const DUMMY_POSTS_ORIGINAL = DUMMY_POSTS.slice(0, -2);
 const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
 
-describe('MapsHelper', () => {
+describe('MapsShowAllPosition', () => {
   let mapRef;
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('MapsHelper', () => {
   });
 
   test("loads API file if it's not ready", () => {
-    const mapsHelper = new MapsHelper(mapRef); /* eslint-disable-line */
+    const mapsShowAllPosition = new MapsShowAllPosition(mapRef); /* eslint-disable-line */
 
     expect(loadJS).toHaveBeenCalledTimes(1);
     expect(loadJS.mock.calls[0][0]).toContain('maps.googleapis.com/maps/api/');
@@ -38,39 +38,39 @@ describe('MapsHelper', () => {
 
   test('initialize the maps if the API is already available', () => {
     setGoogleMapsApiMock();
-    const mapsHelper = new MapsHelper(mapRef); /* eslint-disable-line */
+    const mapsShowAllPosition = new MapsShowAllPosition(mapRef); /* eslint-disable-line */
 
     expect(google.maps.Map).toHaveBeenCalledTimes(1);
   });
 
   test('markers are created immediately if the API is already available', () => {
     setGoogleMapsApiMock();
-    const mapsHelper = new MapsHelper(mapRef);
+    const mapsShowAllPosition = new MapsShowAllPosition(mapRef);
 
-    mapsHelper.placePosts(DUMMY_POSTS_ORIGINAL);
-    mapsHelper.placePosts(DUMMY_POSTS_ORIGINAL);
-    mapsHelper.placePosts(DUMMY_POSTS_UPDATED);
+    mapsShowAllPosition.placePosts(DUMMY_POSTS_ORIGINAL);
+    mapsShowAllPosition.placePosts(DUMMY_POSTS_ORIGINAL);
+    mapsShowAllPosition.placePosts(DUMMY_POSTS_UPDATED);
 
     // markers created immediately each time
     expect(google.maps.Marker).toHaveBeenCalledTimes(
       DUMMY_POSTS_ORIGINAL.length * 2 /* eslint-disable-line */ +
         DUMMY_POSTS_UPDATED.length * 1 /* eslint-disable-line */,
     );
-    expect(mapsHelper.queuedPosts).toBe(null);
+    expect(mapsShowAllPosition.queuedPosts).toBe(null);
   });
 
   test('marker creation is queued until the API is ready', () => {
-    const mapsHelper = new MapsHelper(mapRef);
+    const mapsShowAllPosition = new MapsShowAllPosition(mapRef);
 
     // only last posts should be queued
-    mapsHelper.placePosts(DUMMY_POSTS_ORIGINAL);
-    mapsHelper.placePosts(DUMMY_POSTS_ORIGINAL);
-    mapsHelper.placePosts(DUMMY_POSTS_UPDATED);
-    expect(mapsHelper.queuedPosts).toEqual(DUMMY_POSTS_UPDATED);
+    mapsShowAllPosition.placePosts(DUMMY_POSTS_ORIGINAL);
+    mapsShowAllPosition.placePosts(DUMMY_POSTS_ORIGINAL);
+    mapsShowAllPosition.placePosts(DUMMY_POSTS_UPDATED);
+    expect(mapsShowAllPosition.queuedPosts).toEqual(DUMMY_POSTS_UPDATED);
 
     // simulates the state where the API is ready
     setGoogleMapsApiMock();
-    mapsHelper.mapInitializerGenerator(mapRef)();
+    mapsShowAllPosition.mapInitializerGenerator(mapRef)();
 
     // map should be created
     expect(google.maps.Map).toHaveBeenCalledTimes(1);
@@ -81,6 +81,6 @@ describe('MapsHelper', () => {
     );
 
     // queue should be reset
-    expect(mapsHelper.queuedPosts).toBe(null);
+    expect(mapsShowAllPosition.queuedPosts).toBe(null);
   });
 });

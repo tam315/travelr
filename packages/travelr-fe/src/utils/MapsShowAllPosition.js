@@ -7,7 +7,7 @@ declare var google: any;
 declare var MarkerClusterer: any;
 type Marker = { setMap(any): any };
 
-class MapsHelper {
+class MapsShowAllPosition {
   isApiAndMapReady: boolean = false; // whether API and a map instance is ready
   map: HTMLElement; // reference to the maps div element
   markers: Array<Marker> = []; // reference marker instances
@@ -121,4 +121,4 @@ class MapsHelper {
   };
 }
 
-export default MapsHelper;
+export default MapsShowAllPosition;

@@ -1,7 +1,7 @@
 // @flow
 import { withStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import MapsHelper from '../utils/MapsHelper';
+import MapsShowAllPosition from '../utils/MapsShowAllPosition';
 import type { Post } from '../config/types';
 
 type ReactObjRef<ElementType: React.ElementType> = {
@@ -27,7 +27,7 @@ type Props = {
 
 class PageViewPostsMap extends React.Component<Props> {
   mapRef: ReactObjRef<'div'>;
-  mapsHelper: MapsHelper;
+  mapsShowAllPosition: MapsShowAllPosition;
 
   constructor(props: Props) {
     super(props);
@@ -37,13 +37,13 @@ class PageViewPostsMap extends React.Component<Props> {
 
   componentDidMount = () => {
     if (this.mapRef.current) {
-      this.mapsHelper = new MapsHelper(this.mapRef.current);
-      this.mapsHelper.placePosts(this.props.posts);
+      this.mapsShowAllPosition = new MapsShowAllPosition(this.mapRef.current);
+      this.mapsShowAllPosition.placePosts(this.props.posts);
     }
   };
 
   componentDidUpdate = () => {
-    this.mapsHelper.placePosts(this.props.posts);
+    this.mapsShowAllPosition.placePosts(this.props.posts);
   };
 
   render = () => {
