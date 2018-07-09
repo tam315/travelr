@@ -58,6 +58,9 @@ class MapsPickPosition {
     this.map = new google.maps.Map(mapRef, {
       center: latLng,
       zoom: 5,
+      streetViewControl: false,
+      mapTypeControl: false,
+      zoomControl: true,
     });
 
     // create marker
