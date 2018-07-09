@@ -45,6 +45,12 @@ const styles = theme => ({
     gridGap: `${theme.spacing.unit * 2}px`,
     gridTemplateColumns: '1fr 1fr 1fr',
   },
+  skeleton: {
+    height: 200,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 type Props = {
@@ -144,8 +150,8 @@ export class PageViewPost extends React.Component<Props> {
         <ReactCompareImage
           leftImage={firebaseUtils.getImageUrl(oldImageUrl)}
           rightImage={firebaseUtils.getImageUrl(newImageUrl)}
+          skeleton={<div className={classes.skeleton}>loading...</div>}
         />
-
         {userId === this.props.user.userId && (
           <Link to={`/post/${postId}/edit`} className={classes.editButton}>
             <IconEdit />

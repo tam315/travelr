@@ -7761,9 +7761,9 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-compare-image@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/react-compare-image/-/react-compare-image-0.3.0.tgz#60b0e036f7ab2c6507ccdb14b711967269be856b"
+react-compare-image@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/react-compare-image/-/react-compare-image-0.4.0.tgz#63991ee263094143f2a194dc1e51e4c5f6d1a49e"
   dependencies:
     css-element-queries "^1.0.2"
 
