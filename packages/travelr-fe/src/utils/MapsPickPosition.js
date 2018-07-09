@@ -8,12 +8,29 @@ declare var MarkerClusterer: any;
 type Marker = { setMap: any => any, setPosition: any => any };
 
 class MapsPickPosition {
+  callback: (position: LatLng) => any; // called when the pin position is changed
+  defaultPosition: LatLng;
+  handleMapClick: any => any;
+  handleMarkerDragend: any => any;
   map: any; // reference to map instance
   marker: Marker; // reference marker instances
-  callback: (position: LatLng) => any; // called when the pin position is changed
 
-  constructor(mapRef: HTMLElement, callback: (position: LatLng) => any) {
+  constructor(
+    mapRef: HTMLElement,
+    callback: (position: LatLng) => any,
+    options?: {
+      defaultPosition?: LatLng,
+    },
+  ) {
     this.callback = callback;
+
+    const defaultPosition = options && options.defaultPosition;
+
+    this.defaultPosition = {
+      lat: (defaultPosition && defaultPosition.lat) || 35.681235,
+      lng: (defaultPosition && defaultPosition.lng) || 139.763995,
+    };
+
     const mapInitializer = this.mapInitializerGenerator(mapRef);
 
     // load the API if it is not loaded.
@@ -34,7 +51,8 @@ class MapsPickPosition {
   }
 
   mapInitializerGenerator = (mapRef: HTMLElement) => () => {
-    const latLng = new google.maps.LatLng(35.681235, 139.763995);
+    const { lat, lng } = this.defaultPosition;
+    const latLng = new google.maps.LatLng(lat, lng);
 
     // create map
     this.map = new google.maps.Map(mapRef, {
@@ -50,19 +68,21 @@ class MapsPickPosition {
     });
 
     // on drag
-    this.marker.addListener('dragend', e => {
+    this.handleMarkerDragend = e => {
       const position: LatLng = { lng: e.latLng.lng(), lat: e.latLng.lat() };
       this.map.panTo(position);
       this.callback(position);
-    });
+    };
+    this.marker.addListener('dragend', this.handleMarkerDragend);
 
     // on click
-    this.map.addListener('click', e => {
+    this.handleMapClick = e => {
       const position: LatLng = { lng: e.latLng.lng(), lat: e.latLng.lat() };
       this.marker.setPosition(position);
       this.map.panTo(position);
       this.callback(position);
-    });
+    };
+    this.map.addListener('click', this.handleMapClick);
   };
 
   setPosition = (position: LatLng) => {
