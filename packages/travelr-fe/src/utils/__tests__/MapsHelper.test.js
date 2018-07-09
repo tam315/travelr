@@ -1,34 +1,12 @@
 import MapsHelper from '../MapsHelper';
 import loadJS from '../loadJS';
 import { DUMMY_POSTS } from '../../config/dummies';
+import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
 
 jest.mock('../loadJS');
 
 const DUMMY_POSTS_ORIGINAL = DUMMY_POSTS.slice(0, -2);
 const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
-
-export const setGoogleMapsApiMock = () => {
-  google = {
-    maps: {
-      LatLng: jest.fn(),
-      Map: jest.fn().mockImplementation(() => ({
-        addListener: jest.fn(),
-      })),
-      Marker: jest.fn().mockImplementation(() => ({
-        addListener: jest.fn(),
-        setMap: jest.fn(),
-      })),
-      InfoWindow: jest.fn(),
-    },
-  };
-  MarkerClusterer = jest.fn().mockImplementation(() => ({
-    clearMarkers: jest.fn(),
-  }));
-};
-
-export const deleteGoogleMapsApiMock = () => {
-  google = undefined;
-};
 
 describe('MapsHelper', () => {
   let mapRef;
