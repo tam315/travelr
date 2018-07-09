@@ -8,6 +8,9 @@ import {
   DUMMY_POST_TO_EDIT,
   DUMMY_POSTS_STORE,
 } from '../../config/dummies';
+import MapsPickPosition from '../../utils/MapsPickPosition';
+
+jest.mock('../../utils/MapsPickPosition');
 
 describe('PageEditPost component', () => {
   let wrapper;
@@ -92,5 +95,21 @@ describe('PageEditPost component', () => {
       .simulate('click');
 
     expect(mock.history.push).toBeCalledWith('/all-grid');
+  });
+
+  test('instantiate map', async () => {
+    wrapper.setState(DUMMY_POST_TO_EDIT);
+    wrapper.instance().mapRef = { current: {} };
+    wrapper.instance().refreshMap();
+
+    expect(MapsPickPosition).toBeCalled();
+  });
+
+  test('handle pin position change correctly', async () => {
+    wrapper.setState(DUMMY_POST_TO_EDIT);
+    wrapper.instance().handlePinPositionChange({ lat: 35, lng: 135 });
+
+    expect(wrapper.state('lat')).toBe(35);
+    expect(wrapper.state('lng')).toBe(135);
   });
 });

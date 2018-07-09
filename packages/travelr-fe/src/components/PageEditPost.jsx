@@ -3,12 +3,18 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Input from '@material-ui/core/Input';
 import * as React from 'react';
-import type { PostsStore, UserStore, PostToEdit } from '../config/types';
+import type {
+  LatLng,
+  PostsStore,
+  PostToEdit,
+  UserStore,
+} from '../config/types';
 import type { Match, RouterHistory } from 'react-router-dom';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import MapsPickPosition from '../utils/MapsPickPosition';
 
 const styles = theme => ({
   root: {
@@ -27,6 +33,10 @@ const styles = theme => ({
     paddingBottom: theme.spacing.unit * 4,
   },
 });
+
+type ReactObjRef<ElementType: React.ElementType> = {
+  current: null | React.ElementRef<ElementType>,
+};
 
 type Props = {
   classes: any,
@@ -58,10 +68,14 @@ type State = {
 };
 
 export class PageEditPost extends React.Component<Props, State> {
+  mapRef: ReactObjRef<'div'>;
+  mapsPickPosition: MapsPickPosition;
   postId: number;
 
   constructor(props: Props) {
     super(props);
+
+    this.mapRef = React.createRef();
 
     const { postId } = this.props.match.params;
 
@@ -72,6 +86,7 @@ export class PageEditPost extends React.Component<Props, State> {
 
   componentDidMount = () => {
     this.props.fetchPost(this.postId);
+    this.refreshMap();
   };
 
   componentDidUpdate = (prevProps: any) => {
@@ -90,11 +105,34 @@ export class PageEditPost extends React.Component<Props, State> {
         lat: currentPost.lat,
       });
     }
+    this.refreshMap();
+  };
+
+  refreshMap = () => {
+    // render the map if the DOM is ready and the map is not instantiated yet
+    if (this.mapRef.current && !this.mapsPickPosition && this.state) {
+      const options = {
+        defaultPosition: { lat: this.state.lat, lng: this.state.lng },
+      };
+
+      this.mapsPickPosition = new MapsPickPosition(
+        this.mapRef.current,
+        this.handlePinPositionChange,
+        options,
+      );
+    }
   };
 
   handleChange(e: SyntheticInputEvent<HTMLElement>, stateKeyName: string) {
     this.setState({ [stateKeyName]: e.target.value });
   }
+
+  handlePinPositionChange = (position: LatLng) => {
+    this.setState({
+      lng: position.lng,
+      lat: position.lat,
+    });
+  };
 
   handleSubmit = () => {
     const { editPost, user, history } = this.props;
@@ -122,6 +160,7 @@ export class PageEditPost extends React.Component<Props, State> {
       history.push('/all-grid');
     };
 
+    // eslint-disable-next-line
     if (confirm('本当に削除してよろしいですか？')) {
       // TODO: dialog
       deletePost(user, this.state.postId, successCallback);
@@ -160,6 +199,7 @@ export class PageEditPost extends React.Component<Props, State> {
           <FormControl component="fieldset" required>
             <FormLabel component="legend">撮影場所</FormLabel>
             <div
+              ref={this.mapRef}
               style={{ width: '100%', height: '150px', background: 'gray' }}
               className="googlemap"
             >
