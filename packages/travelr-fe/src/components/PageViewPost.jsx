@@ -89,6 +89,7 @@ export class PageViewPost extends React.Component<Props> {
 
   componentDidMount = () => {
     this.props.fetchPost(this.postId, this.props.user);
+    this.refreshMap();
   };
 
   componentDidUpdate = (prevProps: Props) => {
@@ -100,16 +101,24 @@ export class PageViewPost extends React.Component<Props> {
     const { currentPost } = this.props.posts;
     if (!currentPost) return;
 
-    const { lng, lat } = currentPost;
-
-    // do nothing if position is the same
+    // do nothing if position is not changed
     if (
       prevProps.posts.currentPost &&
-      lng === prevProps.posts.currentPost.lng &&
-      lat === prevProps.posts.currentPost.lat
+      currentPost.lng === prevProps.posts.currentPost.lng &&
+      currentPost.lat === prevProps.posts.currentPost.lat
     ) {
       return;
     }
+
+    this.refreshMap();
+  };
+
+  refreshMap = () => {
+    // do nothing if post is not fetched yet
+    const { currentPost } = this.props.posts;
+    if (!currentPost) return;
+
+    const { lng, lat } = currentPost;
 
     if (lng && lat && this.mapRef.current) {
       this.mapsShowPosition = new MapsShowPosition(this.mapRef.current, {
