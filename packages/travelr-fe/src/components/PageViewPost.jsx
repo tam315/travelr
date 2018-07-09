@@ -21,6 +21,11 @@ const styles = theme => ({
     maxWidth: 500,
     margin: 'auto',
   },
+  imageContainer: {
+    maxWidth: 468,
+    margin: 'auto',
+    position: 'relative',
+  },
   container: {
     display: 'grid',
     gridGap: `${theme.spacing.unit * 3}px`,
@@ -37,7 +42,7 @@ const styles = theme => ({
     padding: theme.spacing.unit * 1,
     position: 'absolute',
     right: 16,
-    top: 72,
+    top: 16,
     zIndex: 10,
   },
   badges: {
@@ -147,16 +152,18 @@ export class PageViewPost extends React.Component<Props> {
 
     return (
       <div className={classes.root}>
-        <ReactCompareImage
-          leftImage={firebaseUtils.getImageUrl(oldImageUrl)}
-          rightImage={firebaseUtils.getImageUrl(newImageUrl)}
-          skeleton={<div className={classes.skeleton}>loading...</div>}
-        />
-        {userId === this.props.user.userId && (
-          <Link to={`/post/${postId}/edit`} className={classes.editButton}>
-            <IconEdit />
-          </Link>
-        )}
+        <div className={classes.imageContainer}>
+          <ReactCompareImage
+            leftImage={firebaseUtils.getImageUrl(oldImageUrl)}
+            rightImage={firebaseUtils.getImageUrl(newImageUrl)}
+            skeleton={<div className={classes.skeleton}>loading...</div>}
+          />
+          {userId === this.props.user.userId && (
+            <Link to={`/post/${postId}/edit`} className={classes.editButton}>
+              <IconEdit />
+            </Link>
+          )}
+        </div>
 
         <div className={classes.container}>
           <div className={classes.badges}>
