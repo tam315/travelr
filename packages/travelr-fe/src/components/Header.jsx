@@ -68,7 +68,6 @@ class Header extends React.Component<Props, State> {
 
             <div className={classes.spacer} />
 
-            {/* TODO: hide these when window is narrow */}
             {isUserAuthorized ? (
               <Button
                 component={Link}

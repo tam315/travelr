@@ -60,7 +60,7 @@ actions.fetchUserInfo = (user: UserStore) => async (
 
     if (!response.ok) {
       dispatch({
-        type: actionTypes.FETCH_USER_INFO_FAIL, // TODO: toast
+        type: actionTypes.FETCH_USER_INFO_FAIL,
       });
       return;
     }
@@ -72,7 +72,7 @@ actions.fetchUserInfo = (user: UserStore) => async (
     });
   } catch (err) {
     dispatch({
-      type: actionTypes.FETCH_USER_INFO_FAIL, // TODO: toast
+      type: actionTypes.FETCH_USER_INFO_FAIL,
     });
   }
 };
@@ -93,18 +93,18 @@ actions.updateUserInfo = (user: UserStore, newUserInfo: NewUserInfo) => async (
 
     if (!response.ok) {
       dispatch({
-        type: actionTypes.UPDATE_USER_INFO_FAIL, // TODO: toast
+        type: actionTypes.UPDATE_USER_INFO_FAIL,
       });
       return;
     }
 
     dispatch({
-      type: actionTypes.UPDATE_USER_INFO_SUCCESS, // TODO: toast
+      type: actionTypes.UPDATE_USER_INFO_SUCCESS,
       payload: { displayName },
     });
   } catch (err) {
     dispatch({
-      type: actionTypes.UPDATE_USER_INFO_FAIL, // TODO: toast
+      type: actionTypes.UPDATE_USER_INFO_FAIL,
     });
   }
 };
@@ -123,18 +123,18 @@ actions.deleteUser = (user: UserStore, callback: any => any) => async (
 
     if (!response.ok) {
       dispatch({
-        type: actionTypes.DELETE_USER_FAIL, // TODO: toast
+        type: actionTypes.DELETE_USER_FAIL,
       });
       return;
     }
 
     dispatch({
-      type: actionTypes.DELETE_USER_SUCCESS, // TODO: toast
+      type: actionTypes.DELETE_USER_SUCCESS,
     });
     callback();
   } catch (err) {
     dispatch({
-      type: actionTypes.DELETE_USER_FAIL, // TODO: toast
+      type: actionTypes.DELETE_USER_FAIL,
     });
   }
 };
@@ -330,21 +330,19 @@ actions.deletePost = (
     });
 
     if (!response.ok) {
-      // TODO: toast
       dispatch({
-        type: actionTypes.DELETE_POST_FAIL, // TODO: toast
+        type: actionTypes.DELETE_POST_FAIL,
       });
       return;
     }
 
     dispatch({
-      type: actionTypes.DELETE_POST_SUCCESS, // TODO: toast
+      type: actionTypes.DELETE_POST_SUCCESS,
     });
     successCallback();
   } catch (err) {
-    // TODO: toast
     dispatch({
-      type: actionTypes.DELETE_POST_FAIL, // TODO: toast
+      type: actionTypes.DELETE_POST_FAIL,
     });
   }
 };
@@ -362,22 +360,20 @@ actions.deletePosts = (user: UserStore, postIds: Array<number>) => async (
     });
 
     if (!response.ok) {
-      // TODO: toast
       dispatch({
-        type: actionTypes.DELETE_POSTS_FAIL, // TODO: toast
+        type: actionTypes.DELETE_POSTS_FAIL,
       });
       return;
     }
 
     dispatch({
-      type: actionTypes.DELETE_POSTS_SUCCESS, // TODO: toast
+      type: actionTypes.DELETE_POSTS_SUCCESS,
       payload: postIds,
     });
     actions.fetchMyPosts(user)(dispatch);
   } catch (err) {
-    // TODO: toast
     dispatch({
-      type: actionTypes.DELETE_POSTS_FAIL, // TODO: toast
+      type: actionTypes.DELETE_POSTS_FAIL,
     });
   }
 };
@@ -389,21 +385,19 @@ actions.fetchMyPosts = (user: UserStore) => async (dispatch: Dispatch<any>) => {
     const response = await fetch(`${config.apiUrl}posts?user_id=${userId}`);
     if (!response.ok) {
       dispatch({
-        type: actionTypes.FETCH_MY_POSTS_FAIL, // TODO: toast
+        type: actionTypes.FETCH_MY_POSTS_FAIL,
       });
-      // TODO: toast
       return;
     }
 
     const myPosts = await response.json();
     dispatch({
-      type: actionTypes.FETCH_MY_POSTS_SUCCESS, // TODO: toast
+      type: actionTypes.FETCH_MY_POSTS_SUCCESS,
       payload: myPosts,
     });
   } catch (err) {
-    // TODO: toast
     dispatch({
-      type: actionTypes.FETCH_MY_POSTS_FAIL, // TODO: toast
+      type: actionTypes.FETCH_MY_POSTS_FAIL,
     });
   }
 };

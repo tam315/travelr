@@ -28,7 +28,10 @@ describe('PageCreatePost component', () => {
   beforeEach(() => {
     mock = {
       history: { push: jest.fn() },
-      createPost: jest.fn((user, newPost, callback) => callback()),
+      createPost: jest.fn((user, newPost, callback) =>
+        callback(DUMMY_POST_ID_CREATED),
+      ),
+      addSnackbarQueue: jest.fn(),
     };
 
     wrapper = shallow(
@@ -38,6 +41,7 @@ describe('PageCreatePost component', () => {
         classes={{}}
         user={DUMMY_USER_STORE}
         createPost={mock.createPost}
+        addSnackbarQueue={mock.addSnackbarQueue}
       />,
     );
   });
@@ -79,21 +83,25 @@ describe('PageCreatePost component', () => {
     });
   });
 
-  test('navigete to post page if success', async () => {
-    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_ID_CREATED }));
+  test('navigete to post page if success', async done => {
     wrapper.setState(DUMMY_STATE);
+    wrapper.instance().oldImage.current = {
+      files: [{ dummyFile: { type: 'image/jpeg' } }],
+    };
+    wrapper.instance().newImage.current = {
+      files: [{ dummyFile: { type: 'image/jpeg' } }],
+    };
     wrapper
       .find(Button)
       .last()
       .simulate('click');
 
-    setTimeout(
-      () =>
-        expect(mock.history.push).toBeCalledWith(
-          `/post/${DUMMY_POST_ID_CREATED}`,
-        ),
-      1,
-    );
+    setImmediate(() => {
+      expect(mock.history.push).toBeCalledWith(
+        `/post/${DUMMY_POST_ID_CREATED}`,
+      );
+      done();
+    });
   });
 
   test('MapsPickPosition is instantiated', async () => {

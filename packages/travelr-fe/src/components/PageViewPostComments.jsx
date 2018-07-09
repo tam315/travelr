@@ -102,7 +102,6 @@ export class PageViewPostComments extends React.Component<Props, State> {
           open={this.state.deleteCommentMenuCommentId === comment.commentId}
           onClose={this.handleDeleteCommentMenuClose}
         >
-          {/* TODO: add comment edit button */}
           <MenuItem onClick={() => this.handleDeleteComment(comment)}>
             コメントを削除する
           </MenuItem>

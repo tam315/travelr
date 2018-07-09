@@ -40,6 +40,7 @@ type Props = {
     newPost: NewPost,
     successCallback: (any) => any,
   ) => void,
+  addSnackbarQueue: string => any,
 };
 
 type State = {
@@ -84,7 +85,7 @@ export class PageCreatePost extends React.Component<Props, State> {
 
   getCurrentPosition = () => {
     if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(geom => {
+      const onSuccess = geom => {
         this.mapsPickPosition.setPosition({
           lng: geom.coords.longitude,
           lat: geom.coords.latitude,
@@ -93,9 +94,15 @@ export class PageCreatePost extends React.Component<Props, State> {
           lng: geom.coords.longitude,
           lat: geom.coords.latitude,
         });
-      });
+      };
+      const onError = () => {
+        this.props.addSnackbarQueue(
+          '位置情報を取得できませんでした。GPSの許可設定を確認してください。',
+        );
+      };
+      navigator.geolocation.getCurrentPosition(onSuccess, onError);
     } else {
-      // TODO: toast 'gpsが利用できない環境です。'
+      this.props.addSnackbarQueue('gpsが利用できない環境です。');
     }
   };
 
@@ -130,16 +137,16 @@ export class PageCreatePost extends React.Component<Props, State> {
       !lng ||
       !lat
     ) {
-      return; // TODO: toast '入力項目が不足しています。'
+      return this.props.addSnackbarQueue('入力項目が不足しています。');
     }
 
     const extentionOf = {
       'image/jpeg': '.jpg',
       'image/png': '.png',
     };
-
-    // TODO: toast '画像ファイルを取得できませんでした'
-    if (!this.oldImage.current || !this.newImage.current) return;
+    if (!this.oldImage.current || !this.newImage.current) {
+      return this.props.addSnackbarQueue('画像ファイルを取得できませんでした');
+    }
 
     const oldFile = this.oldImage.current.files[0];
     const newFile = this.newImage.current.files[0];
@@ -163,7 +170,7 @@ export class PageCreatePost extends React.Component<Props, State> {
       this.props.history.push(`/post/${postId}`);
     };
 
-    this.props.createPost(user, newPost, successCallback);
+    return this.props.createPost(user, newPost, successCallback);
   };
 
   render() {
