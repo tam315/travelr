@@ -9,6 +9,7 @@ import type {
   UserStore,
 } from '../config/types';
 import config from '../config';
+import firebaseUtils from '../utils/firebaseUtils';
 import actionTypes from './types';
 import type { Dispatch } from 'redux';
 
@@ -134,6 +135,23 @@ actions.deleteUser = (user: UserStore, callback: any => any) => async (
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_USER_FAIL, // TODO: toast
+    });
+  }
+};
+
+actions.signOutUser = (callback: any => any) => async (
+  dispatch: Dispatch<any>,
+) => {
+  try {
+    await firebaseUtils.signOutUser();
+
+    dispatch({
+      type: actionTypes.SIGN_OUT_USER_SUCCESS,
+    });
+    callback();
+  } catch (err) {
+    dispatch({
+      type: actionTypes.SIGN_OUT_USER_FAIL,
     });
   }
 };

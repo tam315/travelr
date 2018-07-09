@@ -11,6 +11,9 @@ import {
 } from '../../config/dummies';
 import actions from '../index';
 import types from '../types';
+import firebaseUtils from '../../utils/firebaseUtils';
+
+jest.mock('../../utils/firebaseUtils');
 
 beforeEach(() => {
   fetch.resetMocks();
@@ -188,6 +191,48 @@ describe('actions', () => {
       // make a correct action
       expect(mockDispatch.mock.calls[0][0]).toEqual({
         type: types.DELETE_USER_FAIL,
+      });
+
+      // callback shouldn't called
+      expect(mockCallback).not.toBeCalled();
+    });
+  });
+
+  describe('signOutUser', () => {
+    test('invoke firebaseUtils', async () => {
+      const mockCallback = jest.fn();
+      const mockDispatch = jest.fn();
+      const thunk = actions.signOutUser(mockCallback);
+      await thunk(mockDispatch);
+
+      expect(firebaseUtils.signOutUser).toBeCalled();
+    });
+
+    test('make a correct action if success', async () => {
+      const mockCallback = jest.fn();
+      const mockDispatch = jest.fn();
+      const thunk = actions.signOutUser(mockCallback);
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.SIGN_OUT_USER_SUCCESS,
+      });
+
+      // callback shouldn't called
+      expect(mockCallback).toBeCalled();
+    });
+
+    test('make a correct action if fail', async () => {
+      firebaseUtils.signOutUser = jest.fn().mockRejectedValue();
+      const mockCallback = jest.fn();
+      const mockDispatch = jest.fn();
+      const thunk = actions.signOutUser(mockCallback);
+      await thunk(mockDispatch);
+
+      // make a correct action
+      expect(mockDispatch.mock.calls[0][0]).toEqual({
+        type: types.SIGN_OUT_USER_FAIL,
       });
 
       // callback shouldn't called

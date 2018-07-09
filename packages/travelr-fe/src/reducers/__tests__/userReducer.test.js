@@ -47,4 +47,13 @@ describe('user reducer', () => {
 
     expect(userReducer(INITIAL_STATE, action)).toEqual(expected);
   });
+
+  test('SIGN_OUT_USER_SUCCESS', () => {
+    const action = {
+      type: actionTypes.SIGN_OUT_USER_SUCCESS,
+    };
+    const expected = INITIAL_STATE;
+
+    expect(userReducer(INITIAL_STATE, action)).toEqual(expected);
+  });
 });

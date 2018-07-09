@@ -43,6 +43,7 @@ type Props = {
   user: UserStore,
   history: RouterHistory,
   updateUserInfo: (user: UserStore, newUserInfo: NewUserInfo) => void,
+  signOutUser: (callback: (any) => any) => any,
   deleteUser: (user: UserStore, callback: (any) => any) => void,
 };
 
@@ -84,6 +85,13 @@ export class PageManageAccount extends React.Component<Props, State> {
       displayName: this.state.displayName,
     };
     this.props.updateUserInfo(user, newUserInfo);
+  };
+
+  handeSignOutUser = () => {
+    const successCallback = async () => {
+      this.props.history.push('/');
+    };
+    this.props.signOutUser(successCallback);
   };
 
   handleDeleteUser = () => {
@@ -135,10 +143,21 @@ export class PageManageAccount extends React.Component<Props, State> {
           <StatusBadge icon="comment" count={2} />
           <StatusBadge icon="view" count={3} />
         </div>
+
+        <Typography
+          color="secondary"
+          variant="body2"
+          onClick={this.handeSignOutUser}
+          style={{ cursor: 'pointer' }}
+        >
+          サインアウトする
+        </Typography>
+
         <Typography
           color="secondary"
           variant="body2"
           onClick={this.handleDeleteUser}
+          style={{ cursor: 'pointer' }}
         >
           アカウントを削除する
         </Typography>

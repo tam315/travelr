@@ -55,6 +55,16 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
         ],
       };
     }
+    case actionTypes.SIGN_OUT_USER_SUCCESS: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, 'サインアウトしました'],
+      };
+    }
+    case actionTypes.SIGN_OUT_USER_FAIL: {
+      return {
+        snackbarQueue: [...state.snackbarQueue, 'サインアウトに失敗しました'],
+      };
+    }
     case actionTypes.FETCH_ALL_POSTS_FAIL: {
       return {
         snackbarQueue: [...state.snackbarQueue, '投稿の取得に失敗しました'],

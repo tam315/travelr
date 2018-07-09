@@ -31,6 +31,9 @@ export default (state: UserStore = INITIAL_STATE, action: any): UserStore => {
     case actionTypes.DELETE_USER_SUCCESS: {
       return INITIAL_STATE;
     }
+    case actionTypes.SIGN_OUT_USER_SUCCESS: {
+      return INITIAL_STATE;
+    }
     default:
       return state;
   }

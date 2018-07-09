@@ -49,6 +49,10 @@ const deleteUser = async () => {
   await firebase.auth().currentUser.delete();
 };
 
+const signOutUser = async () => {
+  await firebase.auth().signOut();
+};
+
 const signInWithGoogle = async () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.addScope('email');
@@ -84,6 +88,7 @@ export default {
   deleteUser,
   signInWithGoogle,
   signInWithFacebook,
+  signOutUser,
   uploadImageFile,
   getImageUrl,
 };

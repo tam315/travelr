@@ -12,20 +12,23 @@ import firebaseUtils from '../../utils/firebaseUtils';
 jest.mock('../../utils/firebaseUtils');
 
 describe('PageManageAccount component', () => {
-  const mock = {
-    actions: {
-      updateUserInfo: jest.fn(),
-      deleteUser: jest.fn((user, callback) => callback()),
-    },
-    history: { push: jest.fn() },
-  };
-
+  let mock;
   let wrapper;
 
   beforeEach(() => {
+    mock = {
+      actions: {
+        updateUserInfo: jest.fn(),
+        deleteUser: jest.fn((user, callback) => callback()),
+        signOutUser: jest.fn(callback => callback()),
+      },
+      history: { push: jest.fn() },
+    };
+
     wrapper = shallow(
       <PageManageAccount
         updateUserInfo={mock.actions.updateUserInfo}
+        signOutUser={mock.actions.signOutUser}
         deleteUser={mock.actions.deleteUser}
         // $FlowIgnore
         history={mock.history}
@@ -59,14 +62,30 @@ describe('PageManageAccount component', () => {
     expect(mock.actions.updateUserInfo).toBeCalled();
   });
 
+  test('invoke signOutUser() when signout button is clicked, and navigate to the top page', () => {
+    fetch.mockResponse();
+
+    wrapper
+      .find({ color: 'secondary' })
+      .at(0)
+      .simulate('click');
+
+    expect(mock.actions.signOutUser).toBeCalled();
+    expect(mock.history.push).toBeCalled();
+  });
+
   test('invoke deleteUser() when delete account button is clicked, and navigate to the top page', done => {
     window.confirm = jest.fn().mockImplementation(() => true);
     window.alert = jest.fn();
 
     fetch.mockResponse();
 
-    wrapper.find({ color: 'secondary' }).simulate('click');
+    wrapper
+      .find({ color: 'secondary' })
+      .at(1)
+      .simulate('click');
 
+    expect(mock.actions.deleteUser).toBeCalled();
     expect(firebaseUtils.deleteUser).toBeCalled();
 
     setImmediate(() => {
