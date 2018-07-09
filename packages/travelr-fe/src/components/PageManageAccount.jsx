@@ -92,6 +92,7 @@ export class PageManageAccount extends React.Component<Props, State> {
       this.props.history.push('/');
     };
 
+    // eslint-disable-next-line
     if (confirm('本当に削除してよろしいですか？')) {
       // TODO: dialog
       this.props.deleteUser(this.props.user, callback);

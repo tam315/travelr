@@ -1,5 +1,5 @@
 // @flow
-import type { Action, UserStore } from '../config/types';
+import type { UserStore } from '../config/types';
 import actionTypes from '../actions/types';
 
 export const INITIAL_STATE: UserStore = {

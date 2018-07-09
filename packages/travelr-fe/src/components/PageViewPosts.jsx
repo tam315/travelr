@@ -114,6 +114,7 @@ export class PageViewPosts extends React.Component<Props, State> {
           onClose={(criterion: FilterCriterion) => {
             this.setState({ isFilterOpen: false });
             // TODO: call fetchAllPosts
+            // eslint-disable-next-line
             console.log(criterion);
           }}
         />
