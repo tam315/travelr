@@ -20,17 +20,18 @@ type Props = {
 
 export const ProgressService = (props: Props) => {
   const { classes } = props;
-  const { inProgress } = props.app;
+  const { tasksInProgress } = props.app;
 
   return (
     <div className={classes.root}>
       <Fade
-        in={inProgress}
+        in={!!tasksInProgress.length}
         style={{
           transitionDelay: '0ms',
         }}
         unmountOnExit
       >
+        {/* $FlowIgnore */}
         <LinearProgress color="secondary" />
       </Fade>
     </div>

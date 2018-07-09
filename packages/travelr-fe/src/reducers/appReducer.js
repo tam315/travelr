@@ -4,7 +4,7 @@ import type { AppStore } from '../config/types';
 
 export const INITIAL_STATE = {
   snackbarQueue: [],
-  inProgress: false,
+  tasksInProgress: [],
 };
 
 export default (state: AppStore = INITIAL_STATE, action: any) => {
@@ -177,16 +177,26 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
         snackbarQueue: [...state.snackbarQueue, 'いいねの変更に失敗しました'],
       };
     }
-    case actionTypes.SHOW_PROGRESS: {
+    case actionTypes.START_PROGRESS: {
+      const tasksInProgress = [...state.tasksInProgress];
+      const index = tasksInProgress.indexOf(action.payload);
+      if (index === -1) {
+        tasksInProgress.push(action.payload);
+      }
       return {
         ...state,
-        inProgress: true,
+        tasksInProgress,
       };
     }
-    case actionTypes.HIDE_PROGRESS: {
+    case actionTypes.FINISH_PROGRESS: {
+      const tasksInProgress = [...state.tasksInProgress];
+      const index = tasksInProgress.indexOf(action.payload);
+      if (index !== -1) {
+        tasksInProgress.splice(index, 1);
+      }
       return {
         ...state,
-        inProgress: false,
+        tasksInProgress,
       };
     }
     default:

@@ -72,9 +72,11 @@ export type FilterCriterion = {
   limit?: number,
 };
 
+export type TaskName = 'fetch' | 'signin';
+
 export type AppStore = {
   snackbarQueue: Array<string>,
-  inProgress: boolean,
+  tasksInProgress: Array<TaskName>,
 };
 
 export type PostsStore = {

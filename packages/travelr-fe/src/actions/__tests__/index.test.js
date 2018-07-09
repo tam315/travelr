@@ -808,4 +808,24 @@ describe('actions', () => {
       });
     });
   });
+
+  describe('startProgress', () => {
+    test('make a correct action', () => {
+      const action = actions.startProgress('signin');
+      expect(action).toEqual({
+        type: types.START_PROGRESS,
+        payload: 'signin',
+      });
+    });
+  });
+
+  describe('finishProgress', () => {
+    test('make a correct action', () => {
+      const action = actions.finishProgress('signin');
+      expect(action).toEqual({
+        type: types.FINISH_PROGRESS,
+        payload: 'signin',
+      });
+    });
+  });
 });

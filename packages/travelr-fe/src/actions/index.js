@@ -6,6 +6,7 @@ import type {
   NewPost,
   NewUserInfo,
   Post,
+  TaskName,
   UserStore,
 } from '../config/types';
 import config from '../config';
@@ -521,6 +522,16 @@ actions.reduceSnackbarQueue = () => ({
 actions.addSnackbarQueue = (message: string) => ({
   type: actionTypes.ADD_SNACKBAR_QUEUE,
   payload: message,
+});
+
+actions.startProgress = (taskName: TaskName) => ({
+  type: actionTypes.START_PROGRESS,
+  payload: taskName,
+});
+
+actions.finishProgress = (taskName: TaskName) => ({
+  type: actionTypes.FINISH_PROGRESS,
+  payload: taskName,
 });
 
 export default actions;

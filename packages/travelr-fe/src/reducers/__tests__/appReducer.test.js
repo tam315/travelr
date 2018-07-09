@@ -90,32 +90,39 @@ describe('appReducer', () => {
     });
   });
 
-  test('SHOW_PROGRESS', () => {
-    const action = {
-      type: types.SHOW_PROGRESS,
-    };
-
-    const expected = {
-      ...INITIAL_STATE,
-      inProgress: true,
-    };
-
-    expect(appReducer(INITIAL_STATE, action)).toEqual(expected);
-  });
-
-  test('HIDE_PROGRESS', () => {
+  test('START_PROGRESS', () => {
     const state = {
       ...INITIAL_STATE,
-      inProgress: true,
+      tasksInProgress: ['fetch'],
     };
 
     const action = {
-      type: types.HIDE_PROGRESS,
+      type: types.START_PROGRESS,
+      payload: 'signin',
     };
 
     const expected = {
       ...INITIAL_STATE,
-      inProgress: false,
+      tasksInProgress: ['fetch', 'signin'],
+    };
+
+    expect(appReducer(state, action)).toEqual(expected);
+  });
+
+  test('FINISH_PROGRESS', () => {
+    const state = {
+      ...INITIAL_STATE,
+      tasksInProgress: ['fetch', 'signin'],
+    };
+
+    const action = {
+      type: types.FINISH_PROGRESS,
+      payload: 'fetch',
+    };
+
+    const expected = {
+      ...INITIAL_STATE,
+      tasksInProgress: ['signin'],
     };
 
     expect(appReducer(state, action)).toEqual(expected);

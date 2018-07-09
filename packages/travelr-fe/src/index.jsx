@@ -11,6 +11,7 @@ import reducer from './reducers';
 const enhancer = applyMiddleware(reduxThunk);
 
 // don't write initial state here. write it in each reducer.
+// $FlowIgnore
 const store = createStore(reducer, {}, enhancer);
 
 ReactDOM.render(
