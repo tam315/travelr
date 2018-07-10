@@ -39,7 +39,6 @@ describe('App component', () => {
       expect(firebaseUtils.getRedirectResult).toBeCalled();
       expect(mock.actions.getOrCreateUserInfo).not.toBeCalled();
       expect(firebaseUtils.getCurrentUser).toBeCalled();
-      expect(firebaseUtils.onAuthStateChanged).toBeCalled();
       expect(mock.actions.finishProgress).toBeCalled();
       done();
     });
@@ -63,7 +62,6 @@ describe('App component', () => {
       expect(firebaseUtils.getRedirectResult).toBeCalled();
       expect(firebaseUtils.getCurrentUser).toBeCalled();
       expect(mock.actions.getOrCreateUserInfo).toBeCalledTimes(1);
-      expect(firebaseUtils.onAuthStateChanged).toBeCalled();
       expect(mock.actions.finishProgress).toBeCalled();
       done();
     });
@@ -87,7 +85,6 @@ describe('App component', () => {
       expect(firebaseUtils.getRedirectResult).toBeCalled();
       expect(mock.actions.getOrCreateUserInfo).toBeCalledTimes(1);
       expect(firebaseUtils.getCurrentUser).not.toBeCalled();
-      expect(firebaseUtils.onAuthStateChanged).toBeCalled();
       expect(mock.actions.finishProgress).toBeCalled();
       done();
     });

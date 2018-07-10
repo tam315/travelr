@@ -44,7 +44,8 @@ actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
       type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS,
       payload: { ...userInfo, token },
     });
-    history.push('/');
+
+    if (history.location.pathname === '/auth') history.push('/all-map');
   } catch (err) {
     dispatch({
       type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,

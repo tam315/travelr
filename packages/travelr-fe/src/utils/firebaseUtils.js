@@ -30,16 +30,6 @@ const getCurrentUser = async (): Promise<AuthSeed | null> => {
   return null;
 };
 
-const onAuthStateChanged = async (callback: AuthSeed => void) => {
-  firebase.auth().onAuthStateChanged(async user => {
-    if (user) {
-      const token = await user.getIdToken();
-
-      callback({ token, displayName: '' });
-    }
-  });
-};
-
 const canUserDeletedNow = async () => {
   const user = firebase.auth().currentUser;
   const signInDurationMinutes =
@@ -90,7 +80,6 @@ const getImageUrl = (filename: string, option?: 'thumb') => {
 export default {
   getRedirectResult,
   getCurrentUser,
-  onAuthStateChanged,
   canUserDeletedNow,
   deleteUser,
   signInWithGoogle,

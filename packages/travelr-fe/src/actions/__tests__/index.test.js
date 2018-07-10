@@ -51,13 +51,16 @@ describe('getOrCreateUserInfo', () => {
 
   test('makes correct action when success', async () => {
     fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+    history.location.pathname = '/auth';
     await thunk(mock.dispatch);
 
     expect(mock.dispatch.mock.calls[0][0]).toEqual({
       type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
       payload: DUMMY_USER_STORE,
     });
-    expect(history.push).toBeCalledWith('/');
+
+    // redirect if user intended sign in/up
+    expect(history.push).toBeCalledWith('/all-map');
   });
 
   test('makes correct action when fail', async () => {

@@ -73,11 +73,6 @@ export class App extends React.Component<Props> {
         }
       }
 
-      // for later authentication status change
-      firebaseUtils.onAuthStateChanged(userInfo => {
-        this.props.getOrCreateUserInfo(userInfo);
-      });
-
       this.props.finishProgress('signin');
     } catch (err) {
       if (err.code === 'auth/account-exists-with-different-credential') {
