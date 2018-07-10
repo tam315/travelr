@@ -26,6 +26,7 @@ type Props = {
   getOrCreateUserInfo: (authSeed: AuthSeed) => void,
   startProgress: (taskName: TaskName) => void,
   finishProgress: (taskName: TaskName) => void,
+  addSnackbarQueue: (message: string) => void,
   user: UserStore,
 };
 
@@ -57,25 +58,36 @@ export class App extends React.Component<Props> {
   };
 
   handleAuthentication = async () => {
-    this.props.startProgress('signin');
+    try {
+      this.props.startProgress('signin');
 
-    const redirectedUserInfo = await firebaseUtils.getRedirectResult();
+      const redirectedUserInfo = await firebaseUtils.getRedirectResult();
 
-    if (redirectedUserInfo) {
-      this.props.getOrCreateUserInfo(redirectedUserInfo);
-    } else {
-      const currentUserInfo = await firebaseUtils.getCurrentUser();
-      if (currentUserInfo) {
-        this.props.getOrCreateUserInfo(currentUserInfo);
+      if (redirectedUserInfo) {
+        this.props.getOrCreateUserInfo(redirectedUserInfo);
+      } else {
+        const currentUserInfo = await firebaseUtils.getCurrentUser();
+        if (currentUserInfo) {
+          this.props.getOrCreateUserInfo(currentUserInfo);
+        }
       }
+
+      // for later authentication status change
+      firebaseUtils.onAuthStateChanged(userInfo => {
+        this.props.getOrCreateUserInfo(userInfo);
+      });
+
+      this.props.finishProgress('signin');
+    } catch (err) {
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        // TODO: link account, snackbar
+        this.props.addSnackbarQueue(
+          'このメールアドレスは別のログイン方法に紐づけされています',
+        );
+      }
+      this.props.finishProgress('signin');
+      throw new Error(err);
     }
-
-    // for later authentication status change
-    firebaseUtils.onAuthStateChanged(userInfo => {
-      this.props.getOrCreateUserInfo(userInfo);
-    });
-
-    this.props.finishProgress('signin');
   };
 
   // these lines are inevitable.
