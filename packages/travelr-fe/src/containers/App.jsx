@@ -1,6 +1,7 @@
 // @flow
 import CssBaseline from '@material-ui/core/CssBaseline'; // normalize styles
 import 'babel-polyfill';
+import fetchIntercept from 'fetch-intercept';
 import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -23,6 +24,8 @@ import type { UserStore } from '../config/types';
 type Props = {
   fetchUserInfo: (user: UserStore) => void,
   getOrCreateUserInfo: (token: string, displayName?: string) => void,
+  startProgress: (taskName: TaskName) => void,
+  finishProgress: (taskName: TaskName) => void,
   user: UserStore,
 };
 
@@ -30,6 +33,29 @@ export class App extends React.Component<Props> {
   componentDidMount = () => {
     firebaseUtils.onAuthStateChanged((token, displayName) => {
       this.props.getOrCreateUserInfo(token, displayName);
+    });
+
+    // display progress bar for every fetch request
+    fetchIntercept.register({
+      request: (url, config) => {
+        this.props.startProgress('fetch');
+        return [url, config];
+      },
+
+      requestError: error => {
+        this.props.finishProgress('fetch');
+        return Promise.reject(error);
+      },
+
+      response: response => {
+        this.props.finishProgress('fetch');
+        return response;
+      },
+
+      responseError: error => {
+        this.props.finishProgress('fetch');
+        return Promise.reject(error);
+      },
     });
   };
 
