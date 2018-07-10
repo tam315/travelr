@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "serve": "lerna exec yarn serve",
+    "serve": "lerna run up && lerna exec yarn serve",
     "test": "lerna exec yarn test",
     "lint": "lerna exec yarn lint",
     "resetflow": "flow stop && flow",
