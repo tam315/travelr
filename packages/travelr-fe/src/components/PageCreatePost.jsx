@@ -148,8 +148,12 @@ export class PageCreatePost extends React.Component<Props, State> {
     const oldFileName = uuid() + extentionOf[oldFile.type];
     const newFileName = uuid() + extentionOf[newFile.type];
 
-    await firebaseUtils.uploadImageFile(oldFile, oldFileName);
-    await firebaseUtils.uploadImageFile(newFile, newFileName);
+    try {
+      await firebaseUtils.uploadImageFile(oldFile, oldFileName, user);
+      await firebaseUtils.uploadImageFile(newFile, newFileName, user);
+    } catch (err) {
+      return this.props.addSnackbarQueue('画像のアップロードに失敗しました');
+    }
 
     const newPost: NewPost = {
       oldImageUrl: oldFileName,

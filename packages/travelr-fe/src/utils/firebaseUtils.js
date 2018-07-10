@@ -5,7 +5,7 @@ import 'firebase/auth';
 // $FlowIgnore
 import 'firebase/storage';
 import config from '../config';
-import type { AuthSeed } from '../config/types';
+import type { AuthSeed, UserStore } from '../config/types';
 
 firebase.initializeApp(config.firebase);
 
@@ -59,9 +59,15 @@ const signInWithFacebook = async () => {
   await firebase.auth().signInWithRedirect(provider);
 };
 
-const uploadImageFile = async (file: File, filename: string) => {
+const uploadImageFile = async (
+  file: File,
+  filename: string,
+  user: UserStore,
+) => {
   const storageRef = firebase.storage().ref();
-  const storageFileRef = storageRef.child(filename);
+  const storageFileRef = storageRef.child(
+    `/original/${user.userId}/${filename}`,
+  );
   const result = await storageFileRef.put(file);
 
   return result;
