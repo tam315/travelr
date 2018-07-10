@@ -6,6 +6,7 @@ import IconEdit from '@material-ui/icons/Edit';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { DUMMY_USER_STORE } from '../../config/dummies';
+import firebaseUtils from '../../utils/firebaseUtils';
 import { PageManageAccount } from '../PageManageAccount';
 
 jest.mock('../../utils/firebaseUtils');
@@ -21,6 +22,7 @@ describe('PageManageAccount component', () => {
         updateUserInfo: jest.fn(),
         signOutUser: jest.fn(),
         deleteUser: jest.fn(),
+        addSnackbarQueue: jest.fn(),
       },
     };
 
@@ -29,6 +31,7 @@ describe('PageManageAccount component', () => {
         updateUserInfo={mock.actions.updateUserInfo}
         signOutUser={mock.actions.signOutUser}
         deleteUser={mock.actions.deleteUser}
+        addSnackbarQueue={mock.actions.addSnackbarQueue}
         // $FlowIgnore
         user={DUMMY_USER_STORE}
         classes={{}}
@@ -71,9 +74,25 @@ describe('PageManageAccount component', () => {
     expect(mock.actions.signOutUser).toBeCalled();
   });
 
-  test('invoke deleteUser() when delete account button is clicked', () => {
+  test('invoke addSnackbarQueue() when re-authentication is needed to delete user', done => {
+    firebaseUtils.canUserDeletedNow = jest.fn().mockResolvedValue(false);
+
+    wrapper
+      .find({ color: 'secondary' })
+      .at(1)
+      .simulate('click');
+
+    setImmediate(() => {
+      expect(mock.actions.addSnackbarQueue).toBeCalled();
+      expect(mock.actions.deleteUser).not.toBeCalled();
+      done();
+    });
+  });
+
+  test('invoke deleteUser() when delete account button is clicked', done => {
     window.confirm = jest.fn().mockImplementation(() => true);
     window.alert = jest.fn();
+    firebaseUtils.canUserDeletedNow = jest.fn().mockResolvedValue(true);
 
     fetch.mockResponse();
 
@@ -82,6 +101,9 @@ describe('PageManageAccount component', () => {
       .at(1)
       .simulate('click');
 
-    expect(mock.actions.deleteUser).toBeCalled();
+    setImmediate(() => {
+      expect(mock.actions.deleteUser).toBeCalled();
+      done();
+    });
   });
 });

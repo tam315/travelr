@@ -40,6 +40,15 @@ const onAuthStateChanged = async (callback: AuthSeed => void) => {
   });
 };
 
+const canUserDeletedNow = async () => {
+  const user = firebase.auth().currentUser;
+  const signInDurationMinutes =
+    (new Date() - new Date(user.metadata.lastSignInTime)) / 1000 / 60;
+
+  if (signInDurationMinutes > 3) return false;
+  return true;
+};
+
 const deleteUser = async () => {
   await firebase.auth().currentUser.delete();
 };
@@ -82,6 +91,7 @@ export default {
   getRedirectResult,
   getCurrentUser,
   onAuthStateChanged,
+  canUserDeletedNow,
   deleteUser,
   signInWithGoogle,
   signInWithFacebook,
