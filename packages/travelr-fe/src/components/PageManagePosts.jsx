@@ -178,7 +178,7 @@ export class PageManagePosts extends React.Component<Props, State> {
             to={`/post/${post.postId}`}
           >
             <img
-              src={firebaseUtils.getImageUrl(post.oldImageUrl)}
+              src={firebaseUtils.getImageUrl(post.oldImageUrl, '96w')}
               alt={post.description}
               className={classes.image}
             />

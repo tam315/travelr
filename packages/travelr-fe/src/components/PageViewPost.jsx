@@ -163,8 +163,8 @@ export class PageViewPost extends React.Component<Props> {
       <div className={classes.root}>
         <div className={classes.imageContainer}>
           <ReactCompareImage
-            leftImage={firebaseUtils.getImageUrl(oldImageUrl)}
-            rightImage={firebaseUtils.getImageUrl(newImageUrl)}
+            leftImage={firebaseUtils.getImageUrl(oldImageUrl, '1024w')}
+            rightImage={firebaseUtils.getImageUrl(newImageUrl, '1024w')}
             skeleton={<div className={classes.skeleton}>loading...</div>}
           />
           {userId === this.props.user.userId && (
