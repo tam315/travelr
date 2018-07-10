@@ -74,6 +74,12 @@ export type FilterCriterion = {
 
 export type TaskName = 'fetch' | 'signin';
 
+// required info to authenticate with the main API
+export type AuthSeed = {
+  token: string,
+  displayName: string,
+};
+
 export type AppStore = {
   snackbarQueue: Array<string>,
   tasksInProgress: Array<TaskName>,

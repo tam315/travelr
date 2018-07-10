@@ -19,22 +19,18 @@ import PageViewPosts from '../components/PageViewPosts';
 import ProgressService from '../components/ProgressService';
 import SnackbarService from '../components/SnackbarService';
 import firebaseUtils from '../utils/firebaseUtils';
-import type { UserStore } from '../config/types';
+import type { UserStore, TaskName, AuthSeed } from '../config/types';
 
 type Props = {
   fetchUserInfo: (user: UserStore) => void,
-  getOrCreateUserInfo: (token: string, displayName?: string) => void,
+  getOrCreateUserInfo: (authSeed: AuthSeed) => void,
   startProgress: (taskName: TaskName) => void,
   finishProgress: (taskName: TaskName) => void,
   user: UserStore,
 };
 
 export class App extends React.Component<Props> {
-  componentDidMount = () => {
-    firebaseUtils.onAuthStateChanged((token, displayName) => {
-      this.props.getOrCreateUserInfo(token, displayName);
-    });
-
+  componentDidMount = async () => {
     // display progress bar for every fetch request
     fetchIntercept.register({
       request: (url, config) => {
@@ -57,6 +53,29 @@ export class App extends React.Component<Props> {
         return Promise.reject(error);
       },
     });
+    await this.handleAuthentication();
+  };
+
+  handleAuthentication = async () => {
+    this.props.startProgress('signin');
+
+    const redirectedUserInfo = await firebaseUtils.getRedirectResult();
+
+    if (redirectedUserInfo) {
+      this.props.getOrCreateUserInfo(redirectedUserInfo);
+    } else {
+      const currentUserInfo = await firebaseUtils.getCurrentUser();
+      if (currentUserInfo) {
+        this.props.getOrCreateUserInfo(currentUserInfo);
+      }
+    }
+
+    // for later authentication status change
+    firebaseUtils.onAuthStateChanged(userInfo => {
+      this.props.getOrCreateUserInfo(userInfo);
+    });
+
+    this.props.finishProgress('signin');
   };
 
   // these lines are inevitable.

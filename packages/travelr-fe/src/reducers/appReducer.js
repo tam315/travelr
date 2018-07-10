@@ -21,13 +21,16 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
       };
       return newState;
     }
+    case actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS: {
+      return {
+        ...state,
+        snackbarQueue: [...state.snackbarQueue, 'サインインしました'],
+      };
+    }
     case actionTypes.GET_OR_CREATE_USER_INFO_FAIL: {
       return {
         ...state,
-        snackbarQueue: [
-          ...state.snackbarQueue,
-          'ユーザ情報の取得または作成に失敗しました',
-        ],
+        snackbarQueue: [...state.snackbarQueue, 'サインインに失敗しました'],
       };
     }
     case actionTypes.FETCH_USER_INFO_FAIL: {

@@ -1,5 +1,6 @@
 // @flow
 import type {
+  AuthSeed,
   Comment,
   PostToEdit,
   FilterCriterion,
@@ -16,9 +17,10 @@ import type { Dispatch } from 'redux';
 
 const actions = {};
 
-actions.getOrCreateUserInfo = (token: string, displayName?: string) => async (
+actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
   dispatch: Dispatch<any>,
 ) => {
+  const { token, displayName } = authSeed;
   try {
     const fetchOptions = {
       method: 'POST',

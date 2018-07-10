@@ -5,44 +5,39 @@ import 'firebase/auth';
 // $FlowIgnore
 import 'firebase/storage';
 import config from '../config';
+import type { AuthSeed } from '../config/types';
 
 firebase.initializeApp(config.firebase);
 
-const onAuthStateChanged = async (
-  callback: (token: string, displayName: string) => void,
-) => {
-  try {
-    // callback is called in the following cases:
-    //   - case1: when unauthorized user successfully redirected from OAuth provider
-    //   - case2: when authorized user reload / re-visit the page
-    firebase.auth().onAuthStateChanged(async user => {
-      const redirectResult = await firebase.auth().getRedirectResult();
+const getRedirectResult = async (): Promise<AuthSeed | null> => {
+  const result = await firebase.auth().getRedirectResult();
+  if (result.user) {
+    const token = await result.user.getIdToken();
+    const displayName = result.additionalUserInfo.profile.given_name;
 
-      // case1
-      if (user && redirectResult.user) {
-        const token = await user.getIdToken();
-        const displayName =
-          redirectResult.additionalUserInfo.profile.given_name;
-
-        callback(token, displayName);
-        return;
-      }
-
-      // case2
-      if (user && !redirectResult.user) {
-        const token = await user.getIdToken();
-
-        callback(token, '');
-      }
-    });
-  } catch (err) {
-    if (err.code === 'auth/account-exists-with-different-credential') {
-      throw new Error(
-        'このメールアドレスは別のログイン方法に紐づけされています',
-      ); // TODO: link account, snackbar
-    }
-    throw new Error(err);
+    return { token, displayName };
   }
+  return null;
+};
+
+const getCurrentUser = async (): Promise<AuthSeed | null> => {
+  const user = firebase.auth().currentUser;
+  if (user) {
+    const token = await user.getIdToken();
+
+    return { token, displayName: '' };
+  }
+  return null;
+};
+
+const onAuthStateChanged = async (callback: AuthSeed => void) => {
+  firebase.auth().onAuthStateChanged(async user => {
+    if (user) {
+      const token = await user.getIdToken();
+
+      callback({ token, displayName: '' });
+    }
+  });
 };
 
 const deleteUser = async () => {
@@ -84,6 +79,8 @@ const getImageUrl = (filename: string, option?: 'thumb') => {
 };
 
 export default {
+  getRedirectResult,
+  getCurrentUser,
   onAuthStateChanged,
   deleteUser,
   signInWithGoogle,

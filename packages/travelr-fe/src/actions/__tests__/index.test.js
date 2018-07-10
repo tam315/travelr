@@ -30,7 +30,10 @@ describe('actions', () => {
       mock = {
         dispatch: jest.fn(),
       };
-      thunk = actions.getOrCreateUserInfo(DUMMY_TOKEN, DUMMY_DISPLAY_NAME);
+      thunk = actions.getOrCreateUserInfo({
+        token: DUMMY_TOKEN,
+        displayName: DUMMY_DISPLAY_NAME,
+      });
     });
 
     test('generates correct url', async () => {

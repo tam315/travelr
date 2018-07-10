@@ -11,22 +11,81 @@ describe('App component', () => {
   let mock;
 
   beforeEach(() => {
+    jest.resetAllMocks();
     mock = {
       actions: {
         getOrCreateUserInfo: jest.fn(),
         fetchUserInfo: jest.fn(),
+        startProgress: jest.fn(),
+        finishProgress: jest.fn(),
       },
     };
   });
 
-  test('initial auth setup executed on component mount', () => {
+  test('if user is NOT redirected and have NO token', done => {
     shallow(
       <App
         fetchUserInfo={mock.actions.fetchUserInfo}
         getOrCreateUserInfo={mock.actions.getOrCreateUserInfo}
+        startProgress={mock.actions.startProgress}
+        finishProgress={mock.actions.finishProgress}
         user={DUMMY_USER_STORE}
       />,
     );
-    expect(firebaseUtils.onAuthStateChanged).toBeCalled();
+    setImmediate(() => {
+      expect(mock.actions.startProgress).toBeCalled();
+      expect(firebaseUtils.getRedirectResult).toBeCalled();
+      expect(mock.actions.getOrCreateUserInfo).not.toBeCalled();
+      expect(firebaseUtils.getCurrentUser).toBeCalled();
+      expect(firebaseUtils.onAuthStateChanged).toBeCalled();
+      expect(mock.actions.finishProgress).toBeCalled();
+      done();
+    });
+  });
+
+  test('if user is NOT redirected and HAVE token', done => {
+    // $FlowIgnore
+    firebaseUtils.getCurrentUser = jest.fn().mockResolvedValue({});
+    shallow(
+      <App
+        fetchUserInfo={mock.actions.fetchUserInfo}
+        getOrCreateUserInfo={mock.actions.getOrCreateUserInfo}
+        startProgress={mock.actions.startProgress}
+        finishProgress={mock.actions.finishProgress}
+        user={DUMMY_USER_STORE}
+      />,
+    );
+    setImmediate(() => {
+      expect(mock.actions.startProgress).toBeCalled();
+      expect(firebaseUtils.getRedirectResult).toBeCalled();
+      expect(firebaseUtils.getCurrentUser).toBeCalled();
+      expect(mock.actions.getOrCreateUserInfo).toBeCalledTimes(1);
+      expect(firebaseUtils.onAuthStateChanged).toBeCalled();
+      expect(mock.actions.finishProgress).toBeCalled();
+      done();
+    });
+  });
+
+  test('if user is redirected', done => {
+    // $FlowIgnore
+    firebaseUtils.getRedirectResult = jest.fn().mockResolvedValue({});
+    shallow(
+      <App
+        fetchUserInfo={mock.actions.fetchUserInfo}
+        getOrCreateUserInfo={mock.actions.getOrCreateUserInfo}
+        startProgress={mock.actions.startProgress}
+        finishProgress={mock.actions.finishProgress}
+        user={DUMMY_USER_STORE}
+      />,
+    );
+    setImmediate(() => {
+      expect(mock.actions.startProgress).toBeCalled();
+      expect(firebaseUtils.getRedirectResult).toBeCalled();
+      expect(mock.actions.getOrCreateUserInfo).toBeCalledTimes(1);
+      expect(firebaseUtils.getCurrentUser).not.toBeCalled();
+      expect(firebaseUtils.onAuthStateChanged).toBeCalled();
+      expect(mock.actions.finishProgress).toBeCalled();
+      done();
+    });
   });
 });
