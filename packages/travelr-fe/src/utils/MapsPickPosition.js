@@ -30,6 +30,8 @@ class MapsPickPosition {
       lat: (defaultPosition && defaultPosition.lat) || 35.681235,
       lng: (defaultPosition && defaultPosition.lng) || 139.763995,
     };
+    // initial feedback
+    callback(this.defaultPosition);
 
     const mapInitializer = this.mapInitializerGenerator(mapRef);
 

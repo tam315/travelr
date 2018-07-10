@@ -115,6 +115,13 @@ describe('MapsPickPosition', () => {
     expect(google.maps.LatLng).toBeCalledWith(10.0, 100.0);
   });
 
+  test('callback is called on itinial setup', () => {
+    // eslint-disable-next-line
+    const mapsPickPosition = new MapsPickPosition(mapRef, mockCallback);
+
+    expect(mockCallback).toBeCalledTimes(1);
+  });
+
   test('callback is called if pin is dragged', () => {
     setGoogleMapsApiMock();
     const mapsPickPosition = new MapsPickPosition(mapRef, mockCallback);
@@ -128,6 +135,7 @@ describe('MapsPickPosition', () => {
 
     mapsPickPosition.handleMarkerDragend(mockEvent);
 
+    expect(mockCallback).toBeCalledTimes(2);
     expect(mockCallback).toBeCalledWith({ lng: 135.0, lat: 35.0 });
   });
 
@@ -144,6 +152,7 @@ describe('MapsPickPosition', () => {
 
     mapsPickPosition.handleMapClick(mockEvent);
 
+    expect(mockCallback).toBeCalledTimes(2);
     expect(mockCallback).toBeCalledWith({ lng: 135.0, lat: 35.0 });
   });
 
