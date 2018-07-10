@@ -4,7 +4,7 @@ import 'babel-polyfill';
 import fetchIntercept from 'fetch-intercept';
 import React from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 import { compose } from 'redux';
 import actions from '../actions';
 import Header from '../components/Header';
@@ -19,6 +19,7 @@ import PageViewPosts from '../components/PageViewPosts';
 import ProgressService from '../components/ProgressService';
 import SnackbarService from '../components/SnackbarService';
 import firebaseUtils from '../utils/firebaseUtils';
+import history from '../utils/history';
 import type { UserStore, TaskName, AuthSeed } from '../config/types';
 
 type Props = {
@@ -123,7 +124,9 @@ export class App extends React.Component<Props> {
         {/* $FlowIgnore */}
         <SnackbarService {...this.props} />
         <ProgressService {...this.props} />
-        <BrowserRouter>
+
+        {/* this should be 'Router' not 'BrowserRouter' to use custom history */}
+        <Router history={history}>
           <React.Fragment>
             <Header {...this.props} />
             <Switch>
@@ -151,7 +154,7 @@ export class App extends React.Component<Props> {
               />
             </Switch>
           </React.Fragment>
-        </BrowserRouter>
+        </Router>
       </React.Fragment>
     );
   }

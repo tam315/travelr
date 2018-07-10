@@ -10,8 +10,6 @@ import { PageCreatePost } from '../PageCreatePost';
 jest.mock('../../utils/firebaseUtils');
 jest.mock('../../utils/MapsPickPosition');
 
-const DUMMY_POST_ID_CREATED = 12345;
-
 const DUMMY_STATE = {
   oldImageFilePath: 'dummy',
   newImageFilePath: 'dummy',
@@ -27,17 +25,13 @@ describe('PageCreatePost component', () => {
 
   beforeEach(() => {
     mock = {
-      history: { push: jest.fn() },
-      createPost: jest.fn((user, newPost, callback) =>
-        callback(DUMMY_POST_ID_CREATED),
-      ),
+      createPost: jest.fn(),
       addSnackbarQueue: jest.fn(),
     };
 
     wrapper = shallow(
       <PageCreatePost
         // $FlowIgnore
-        history={mock.history}
         classes={{}}
         user={DUMMY_USER_STORE}
         createPost={mock.createPost}
@@ -78,28 +72,6 @@ describe('PageCreatePost component', () => {
     setImmediate(() => {
       expect(firebaseUtils.uploadImageFile).toBeCalledTimes(2);
       expect(mock.createPost).toBeCalled();
-      expect(mock.history.push).toBeCalled();
-      done();
-    });
-  });
-
-  test('navigete to post page if success', async done => {
-    wrapper.setState(DUMMY_STATE);
-    wrapper.instance().oldImage.current = {
-      files: [{ dummyFile: { type: 'image/jpeg' } }],
-    };
-    wrapper.instance().newImage.current = {
-      files: [{ dummyFile: { type: 'image/jpeg' } }],
-    };
-    wrapper
-      .find(Button)
-      .last()
-      .simulate('click');
-
-    setImmediate(() => {
-      expect(mock.history.push).toBeCalledWith(
-        `/post/${DUMMY_POST_ID_CREATED}`,
-      );
       done();
     });
   });

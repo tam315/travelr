@@ -17,9 +17,7 @@ describe('PageViewPostComments component', () => {
     fetch.resetMocks();
     mock = {
       actions: {
-        createComment: jest.fn((user, postId, comment, successCallback) =>
-          successCallback(),
-        ),
+        createComment: jest.fn(),
         deleteComment: jest.fn(),
       },
     };
@@ -68,8 +66,24 @@ describe('PageViewPostComments component', () => {
     expect(mock.actions.createComment.mock.calls[0][0]).toBe(DUMMY_USER_STORE);
     expect(mock.actions.createComment.mock.calls[0][1]).toBe(DUMMY_POST.postId);
     expect(mock.actions.createComment.mock.calls[0][2]).toBe('cat');
+  });
 
-    // reset comment input
+  test('clear comment input if comment creation succeed', () => {
+    // user enter a comment
+    wrapper
+      .find({ placeholder: 'コメントを書く' })
+      .simulate('change', { target: { value: 'dummy_comment1' } });
+
+    expect(wrapper.state('comment')).toBe('dummy_comment1');
+
+    // user pressed send button
+    wrapper.find(Button).simulate('click');
+
+    wrapper.setProps({ post: DUMMY_POST });
+    wrapper.instance().componentDidUpdate();
+
+    // assume that comment creation is succeed
+    // if the new props has the same string as the comment input
     expect(wrapper.state('comment')).toBe('');
   });
 

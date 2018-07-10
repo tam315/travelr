@@ -1,9 +1,9 @@
 // @flow
 import { shallow } from 'enzyme';
 import React from 'react';
-import { App } from '../App';
 import { DUMMY_USER_STORE } from '../../config/dummies';
 import firebaseUtils from '../../utils/firebaseUtils';
+import { App } from '../App';
 
 jest.mock('../../utils/firebaseUtils');
 
@@ -18,6 +18,7 @@ describe('App component', () => {
         fetchUserInfo: jest.fn(),
         startProgress: jest.fn(),
         finishProgress: jest.fn(),
+        addSnackbarQueue: jest.fn(),
       },
     };
   });
@@ -29,6 +30,7 @@ describe('App component', () => {
         getOrCreateUserInfo={mock.actions.getOrCreateUserInfo}
         startProgress={mock.actions.startProgress}
         finishProgress={mock.actions.finishProgress}
+        addSnackbarQueue={mock.actions.addSnackbarQueue}
         user={DUMMY_USER_STORE}
       />,
     );
@@ -52,6 +54,7 @@ describe('App component', () => {
         getOrCreateUserInfo={mock.actions.getOrCreateUserInfo}
         startProgress={mock.actions.startProgress}
         finishProgress={mock.actions.finishProgress}
+        addSnackbarQueue={mock.actions.addSnackbarQueue}
         user={DUMMY_USER_STORE}
       />,
     );
@@ -75,6 +78,7 @@ describe('App component', () => {
         getOrCreateUserInfo={mock.actions.getOrCreateUserInfo}
         startProgress={mock.actions.startProgress}
         finishProgress={mock.actions.finishProgress}
+        addSnackbarQueue={mock.actions.addSnackbarQueue}
         user={DUMMY_USER_STORE}
       />,
     );

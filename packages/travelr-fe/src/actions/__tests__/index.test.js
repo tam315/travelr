@@ -1,834 +1,780 @@
 // @flow
 import {
-  DUMMY_FILTER_CRITERION,
   DUMMY_COMMENTS,
+  DUMMY_FILTER_CRITERION,
   DUMMY_NEW_POST,
-  DUMMY_POST_TO_EDIT,
-  DUMMY_POSTS_IDS,
   DUMMY_POSTS,
+  DUMMY_POSTS_IDS,
+  DUMMY_POST_TO_EDIT,
   DUMMY_USER_STORE,
   DUMMY_USER_STORE_UNAUTHORIZED,
 } from '../../config/dummies';
+import firebaseUtils from '../../utils/firebaseUtils';
+import history from '../../utils/history';
 import actions from '../index';
 import types from '../types';
-import firebaseUtils from '../../utils/firebaseUtils';
 
 jest.mock('../../utils/firebaseUtils');
+jest.mock('../../utils/history');
 
 beforeEach(() => {
   fetch.resetMocks();
 });
 
-describe('actions', () => {
-  describe('getOrCreateUserInfo', () => {
-    let mock;
-    let thunk;
-    const DUMMY_TOKEN = DUMMY_USER_STORE.token;
-    const DUMMY_DISPLAY_NAME = 'DUMMY_DISPLAY_NAME';
+describe('getOrCreateUserInfo', () => {
+  let mock;
+  let thunk;
+  const DUMMY_TOKEN = DUMMY_USER_STORE.token;
+  const DUMMY_DISPLAY_NAME = 'DUMMY_DISPLAY_NAME';
 
-    beforeEach(() => {
-      mock = {
-        dispatch: jest.fn(),
-      };
-      thunk = actions.getOrCreateUserInfo({
-        token: DUMMY_TOKEN,
-        displayName: DUMMY_DISPLAY_NAME,
-      });
-    });
-
-    test('generates correct url', async () => {
-      await thunk(mock.dispatch);
-
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOption = fetch.mock.calls[0][1];
-      const body = JSON.parse(fetchOption.body);
-
-      expect(fetchUrl).toContain('/users');
-      expect(fetchOption.method).toContain('POST');
-      expect(body).toEqual({ displayName: DUMMY_DISPLAY_NAME });
-    });
-
-    test('makes correct action when success', async () => {
-      fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
-      await thunk(mock.dispatch);
-
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
-        payload: DUMMY_USER_STORE,
-      });
-    });
-
-    test('makes correct action when fail', async () => {
-      fetch.mockReject();
-      await thunk(mock.dispatch);
-
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.GET_OR_CREATE_USER_INFO_FAIL,
-      });
-    });
-  });
-
-  describe('fetchUserInfo', () => {
-    test('generates correct url', async () => {
-      fetch.mockResponse();
-
-      const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOptions = fetch.mock.calls[0][1];
-      expect(fetchUrl).toContain('/users/token');
-      expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
-    });
-
-    test('makes correct action when success', async () => {
-      const dummyResponse = DUMMY_USER_STORE;
-
-      fetch.mockResponse(JSON.stringify(dummyResponse));
-
-      const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_USER_INFO_SUCCESS,
-        payload: dummyResponse,
-      });
-    });
-
-    test('makes correct action when fail', async () => {
-      fetch.mockReject();
-
-      const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_USER_INFO_FAIL,
-      });
-    });
-  });
-
-  describe('updateUserInfo', () => {
-    const DUMMY_NEW_USER_INFO = {
-      displayName: 'dd',
+  beforeEach(() => {
+    mock = {
+      dispatch: jest.fn(),
     };
-
-    test('make a correct fetch and action if success', async () => {
-      fetch.mockResponse();
-
-      const thunk = actions.updateUserInfo(
-        DUMMY_USER_STORE,
-        DUMMY_NEW_USER_INFO,
-      );
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOptions = fetch.mock.calls[0][1];
-
-      // make a correct fetch
-      expect(fetchUrl).toContain(`/users/${DUMMY_USER_STORE.userId}`);
-      expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
-      expect(fetchOptions.method).toBe('PUT');
-
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.UPDATE_USER_INFO_SUCCESS,
-        payload: DUMMY_NEW_USER_INFO,
-      });
-    });
-
-    test('make a correct action if fail', async () => {
-      fetch.mockReject();
-
-      const thunk = actions.updateUserInfo(
-        DUMMY_USER_STORE,
-        DUMMY_NEW_USER_INFO,
-      );
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.UPDATE_USER_INFO_FAIL,
-      });
+    thunk = actions.getOrCreateUserInfo({
+      token: DUMMY_TOKEN,
+      displayName: DUMMY_DISPLAY_NAME,
     });
   });
 
-  describe('deleteUser', () => {
-    test('make a correct fetch and action if success', async () => {
-      fetch.mockResponse();
+  test('generates correct url', async () => {
+    await thunk(mock.dispatch);
 
-      const mockCallback = jest.fn();
-      const mockDispatch = jest.fn();
-      const thunk = actions.deleteUser(DUMMY_USER_STORE, mockCallback);
-      await thunk(mockDispatch);
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOption = fetch.mock.calls[0][1];
+    const body = JSON.parse(fetchOption.body);
 
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOptions = fetch.mock.calls[0][1];
+    expect(fetchUrl).toContain('/users');
+    expect(fetchOption.method).toContain('POST');
+    expect(body).toEqual({ displayName: DUMMY_DISPLAY_NAME });
+  });
 
-      // make a correct fetch
-      expect(fetchUrl).toContain(`/users/${DUMMY_USER_STORE.userId}`);
-      expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
-      expect(fetchOptions.method).toBe('DELETE');
+  test('makes correct action when success', async () => {
+    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+    await thunk(mock.dispatch);
 
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_USER_SUCCESS,
-      });
-
-      // callback called
-      expect(mockCallback).toBeCalled();
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
+      payload: DUMMY_USER_STORE,
     });
+    expect(history.push).toBeCalledWith('/');
+  });
 
-    test('make a correct action if fail', async () => {
-      fetch.mockReject();
+  test('makes correct action when fail', async () => {
+    fetch.mockReject();
+    await thunk(mock.dispatch);
 
-      const mockCallback = jest.fn();
-      const mockDispatch = jest.fn();
-      const thunk = actions.deleteUser(DUMMY_USER_STORE, mockCallback);
-      await thunk(mockDispatch);
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.GET_OR_CREATE_USER_INFO_FAIL,
+    });
+  });
+});
 
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_USER_FAIL,
-      });
+describe('fetchUserInfo', () => {
+  test('generates correct url', async () => {
+    fetch.mockResponse();
 
-      // callback shouldn't called
-      expect(mockCallback).not.toBeCalled();
+    const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOptions = fetch.mock.calls[0][1];
+    expect(fetchUrl).toContain('/users/token');
+    expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
+  });
+
+  test('makes correct action when success', async () => {
+    const dummyResponse = DUMMY_USER_STORE;
+
+    fetch.mockResponse(JSON.stringify(dummyResponse));
+
+    const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.FETCH_USER_INFO_SUCCESS,
+      payload: dummyResponse,
     });
   });
 
-  describe('signOutUser', () => {
-    test('invoke firebaseUtils', async () => {
-      const mockCallback = jest.fn();
-      const mockDispatch = jest.fn();
-      const thunk = actions.signOutUser(mockCallback);
-      await thunk(mockDispatch);
+  test('makes correct action when fail', async () => {
+    fetch.mockReject();
 
-      expect(firebaseUtils.signOutUser).toBeCalled();
+    const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.FETCH_USER_INFO_FAIL,
     });
+  });
+});
 
-    test('make a correct action if success', async () => {
-      const mockCallback = jest.fn();
-      const mockDispatch = jest.fn();
-      const thunk = actions.signOutUser(mockCallback);
-      await thunk(mockDispatch);
+describe('updateUserInfo', () => {
+  const DUMMY_NEW_USER_INFO = {
+    displayName: 'dd',
+  };
 
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.SIGN_OUT_USER_SUCCESS,
-      });
+  test('make a correct fetch and action if success', async () => {
+    fetch.mockResponse();
 
-      // callback shouldn't called
-      expect(mockCallback).toBeCalled();
-    });
+    const thunk = actions.updateUserInfo(DUMMY_USER_STORE, DUMMY_NEW_USER_INFO);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
 
-    test('make a correct action if fail', async () => {
-      firebaseUtils.signOutUser = jest.fn().mockRejectedValue();
-      const mockCallback = jest.fn();
-      const mockDispatch = jest.fn();
-      const thunk = actions.signOutUser(mockCallback);
-      await thunk(mockDispatch);
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOptions = fetch.mock.calls[0][1];
 
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.SIGN_OUT_USER_FAIL,
-      });
+    // make a correct fetch
+    expect(fetchUrl).toContain(`/users/${DUMMY_USER_STORE.userId}`);
+    expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
+    expect(fetchOptions.method).toBe('PUT');
 
-      // callback shouldn't called
-      expect(mockCallback).not.toBeCalled();
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.UPDATE_USER_INFO_SUCCESS,
+      payload: DUMMY_NEW_USER_INFO,
     });
   });
 
-  describe('fetchAllPosts', () => {
-    test('generates correct url', async () => {
-      const criterion = DUMMY_FILTER_CRITERION;
+  test('make a correct action if fail', async () => {
+    fetch.mockReject();
 
-      const thunk = actions.fetchAllPosts(criterion);
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
+    const thunk = actions.updateUserInfo(DUMMY_USER_STORE, DUMMY_NEW_USER_INFO);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
 
-      expect(fetch.mock.calls[0][0]).toContain(
-        'posts?' +
-          'user_id=dummy_userId' +
-          '&display_name=dummy_displayName' +
-          '&description=dummy_description' +
-          '&min_date=1990-01-01' +
-          '&max_date=1999-12-31' +
-          '&lng=1' +
-          '&lat=2' +
-          '&radius=3' +
-          '&min_view_count=4' +
-          '&max_view_count=5' +
-          '&min_liked_count=6' +
-          '&max_liked_count=7' +
-          '&min_comments_count=8' +
-          '&max_comments_count=9' +
-          '&limit=10',
-      );
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.UPDATE_USER_INFO_FAIL,
+    });
+  });
+});
+
+describe('deleteUser', () => {
+  test('make a correct fetch and action if success', async () => {
+    fetch.mockResponse();
+
+    const mockDispatch = jest.fn();
+    const thunk = actions.deleteUser(DUMMY_USER_STORE);
+    await thunk(mockDispatch);
+
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOptions = fetch.mock.calls[0][1];
+
+    // make a correct fetch
+    expect(fetchUrl).toContain(`/users/${DUMMY_USER_STORE.userId}`);
+    expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
+    expect(fetchOptions.method).toBe('DELETE');
+
+    expect(firebaseUtils.deleteUser).toBeCalled();
+
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.DELETE_USER_SUCCESS,
     });
 
-    test('makes GET request', async () => {
-      const thunk = actions.fetchAllPosts();
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
+    // navigate to the top page
+    expect(history.push).toBeCalledWith('/');
+  });
 
-      expect(fetch.mock.calls.length).toBe(1);
+  test('make a correct action if fail', async () => {
+    fetch.mockReject();
+
+    const mockDispatch = jest.fn();
+    const thunk = actions.deleteUser(DUMMY_USER_STORE);
+    await thunk(mockDispatch);
+
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.DELETE_USER_FAIL,
+    });
+  });
+});
+
+describe('signOutUser', () => {
+  test('invoke firebaseUtils', async () => {
+    const mockDispatch = jest.fn();
+    const thunk = actions.signOutUser();
+    await thunk(mockDispatch);
+
+    expect(firebaseUtils.signOutUser).toBeCalled();
+  });
+
+  test('make a correct action if success', async () => {
+    const mockDispatch = jest.fn();
+    const thunk = actions.signOutUser();
+    await thunk(mockDispatch);
+
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.SIGN_OUT_USER_SUCCESS,
     });
 
-    test('makes correct action when success', async () => {
-      const DUMMY_RESPONSE = ['dummyPost1', 'dummyPost2'];
+    expect(history.push).toBeCalledWith('/');
+  });
 
-      fetch.mockResponseOnce(JSON.stringify(DUMMY_RESPONSE));
-      const thunk = actions.fetchAllPosts();
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
+  test('make a correct action if fail', async () => {
+    firebaseUtils.signOutUser = jest.fn().mockRejectedValue();
+    const mockDispatch = jest.fn();
+    const thunk = actions.signOutUser();
+    await thunk(mockDispatch);
 
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_ALL_POSTS_SUCCESS,
-        payload: DUMMY_RESPONSE,
-      });
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.SIGN_OUT_USER_FAIL,
     });
+  });
+});
 
-    test('makes correct action when fail', async () => {
-      fetch.mockReject(new Error('fake error message'));
-      const thunk = actions.fetchAllPosts();
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
+describe('fetchAllPosts', () => {
+  test('generates correct url', async () => {
+    const criterion = DUMMY_FILTER_CRITERION;
 
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_ALL_POSTS_FAIL,
-      });
+    const thunk = actions.fetchAllPosts(criterion);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(fetch.mock.calls[0][0]).toContain(
+      'posts?' +
+        'user_id=dummy_userId' +
+        '&display_name=dummy_displayName' +
+        '&description=dummy_description' +
+        '&min_date=1990-01-01' +
+        '&max_date=1999-12-31' +
+        '&lng=1' +
+        '&lat=2' +
+        '&radius=3' +
+        '&min_view_count=4' +
+        '&max_view_count=5' +
+        '&min_liked_count=6' +
+        '&max_liked_count=7' +
+        '&min_comments_count=8' +
+        '&max_comments_count=9' +
+        '&limit=10',
+    );
+  });
+
+  test('makes GET request', async () => {
+    const thunk = actions.fetchAllPosts();
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(fetch.mock.calls.length).toBe(1);
+  });
+
+  test('makes correct action when success', async () => {
+    const DUMMY_RESPONSE = ['dummyPost1', 'dummyPost2'];
+
+    fetch.mockResponseOnce(JSON.stringify(DUMMY_RESPONSE));
+    const thunk = actions.fetchAllPosts();
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.FETCH_ALL_POSTS_SUCCESS,
+      payload: DUMMY_RESPONSE,
     });
   });
 
-  describe('fetchPost', () => {
-    const DUMMY_POST_ID = 123;
+  test('makes correct action when fail', async () => {
+    fetch.mockReject(new Error('fake error message'));
+    const thunk = actions.fetchAllPosts();
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
 
-    test('generates correct url (if user is NOT authenticated)', async () => {
-      const thunk = actions.fetchPost(
-        DUMMY_POST_ID,
-        DUMMY_USER_STORE_UNAUTHORIZED,
-      );
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      expect(fetch).toHaveBeenCalledTimes(1);
-      expect(fetch.mock.calls[0][0]).toContain(`/posts/${DUMMY_POST_ID}`);
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.FETCH_ALL_POSTS_FAIL,
     });
+  });
+});
 
-    test('generates correct url (if user IS authenticated)', async () => {
-      const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
+describe('fetchPost', () => {
+  const DUMMY_POST_ID = 123;
 
-      expect(fetch).toHaveBeenCalledTimes(1);
-      expect(fetch.mock.calls[0][0]).toContain(
-        `/posts/${DUMMY_POST_ID}?user_id=${DUMMY_USER_STORE.userId}`,
-      );
+  test('generates correct url (if user is NOT authenticated)', async () => {
+    const thunk = actions.fetchPost(
+      DUMMY_POST_ID,
+      DUMMY_USER_STORE_UNAUTHORIZED,
+    );
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch.mock.calls[0][0]).toContain(`/posts/${DUMMY_POST_ID}`);
+  });
+
+  test('generates correct url (if user IS authenticated)', async () => {
+    const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch.mock.calls[0][0]).toContain(
+      `/posts/${DUMMY_POST_ID}?user_id=${DUMMY_USER_STORE.userId}`,
+    );
+  });
+
+  test('makes correct action when success', async () => {
+    fetch.mockResponseOnce(JSON.stringify(DUMMY_POSTS[0]));
+    const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.FETCH_POST_START,
+      payload: DUMMY_POST_ID,
     });
-
-    test('makes correct action when success', async () => {
-      fetch.mockResponseOnce(JSON.stringify(DUMMY_POSTS[0]));
-      const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_POST_START,
-        payload: DUMMY_POST_ID,
-      });
-      expect(mockDispatch.mock.calls[1][0]).toEqual({
-        type: types.FETCH_POST_SUCCESS,
-        payload: DUMMY_POSTS[0],
-      });
-    });
-
-    test('makes correct action when fail', async () => {
-      fetch.mockReject();
-      const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
-      const mockDispatch = jest.fn();
-      await thunk(mockDispatch);
-
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_POST_START,
-        payload: DUMMY_POST_ID,
-      });
-      expect(mockDispatch.mock.calls[1][0]).toEqual({
-        type: types.FETCH_POST_FAIL,
-      });
+    expect(mockDispatch.mock.calls[1][0]).toEqual({
+      type: types.FETCH_POST_SUCCESS,
+      payload: DUMMY_POSTS[0],
     });
   });
 
-  describe('createPost', () => {
-    let mock;
-    let thunk;
+  test('makes correct action when fail', async () => {
+    fetch.mockReject();
+    const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
 
-    beforeEach(() => {
-      mock = {
-        callback: jest.fn(),
-        dispatch: jest.fn(),
-      };
-      thunk = actions.createPost(
-        DUMMY_USER_STORE,
-        DUMMY_NEW_POST,
-        mock.callback,
-      );
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.FETCH_POST_START,
+      payload: DUMMY_POST_ID,
+    });
+    expect(mockDispatch.mock.calls[1][0]).toEqual({
+      type: types.FETCH_POST_FAIL,
+    });
+  });
+});
+
+describe('createPost', () => {
+  let mock;
+  let thunk;
+
+  beforeEach(() => {
+    mock = {
+      callback: jest.fn(),
+      dispatch: jest.fn(),
+    };
+    thunk = actions.createPost(DUMMY_USER_STORE, DUMMY_NEW_POST);
+  });
+
+  test('generates correct url and body', async () => {
+    await thunk(mock.dispatch);
+
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOption = fetch.mock.calls[0][1];
+    const fetchBody = JSON.parse(fetchOption.body);
+
+    expect(fetchUrl).toContain('/posts');
+    expect(fetchOption.method).toContain('POST');
+    expect(fetchBody).toEqual(DUMMY_NEW_POST);
+  });
+
+  test('makes correct action when success', async () => {
+    const mockNewPostId = 123;
+    fetch.mockResponse(JSON.stringify({ postId: mockNewPostId }));
+    await thunk(mock.dispatch);
+
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.CREATE_POST_SUCCESS,
+      payload: mockNewPostId,
     });
 
-    test('generates correct url and body', async () => {
-      await thunk(mock.dispatch);
+    expect(history.push).toBeCalledWith(`/post/${mockNewPostId}`);
+  });
 
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOption = fetch.mock.calls[0][1];
-      const fetchBody = JSON.parse(fetchOption.body);
+  test('makes correct action when fail', async () => {
+    fetch.mockReject();
+    await thunk(mock.dispatch);
 
-      expect(fetchUrl).toContain('/posts');
-      expect(fetchOption.method).toContain('POST');
-      expect(fetchBody).toEqual(DUMMY_NEW_POST);
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.CREATE_POST_FAIL,
+    });
+  });
+});
+
+describe('editPost', () => {
+  let mock;
+  let thunk;
+
+  beforeEach(() => {
+    mock = {
+      callback: jest.fn(),
+      dispatch: jest.fn(),
+    };
+    thunk = actions.editPost(DUMMY_USER_STORE, DUMMY_POST_TO_EDIT);
+  });
+
+  test('generates correct url and body', async () => {
+    await thunk(mock.dispatch);
+
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOption = fetch.mock.calls[0][1];
+    const fetchBody = JSON.parse(fetchOption.body);
+
+    expect(fetchUrl).toContain(`/posts/${DUMMY_POST_TO_EDIT.postId}`);
+    expect(fetchOption.method).toContain('PUT');
+    expect(fetchBody).toEqual(DUMMY_POST_TO_EDIT);
+  });
+
+  test('makes correct action when success', async () => {
+    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_TO_EDIT.postId }));
+    await thunk(mock.dispatch);
+
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.EDIT_POST_SUCCESS,
     });
 
-    test('makes correct action when success', async () => {
-      const mockNewPostId = 123;
-      fetch.mockResponse(JSON.stringify({ postId: mockNewPostId }));
-      await thunk(mock.dispatch);
+    expect(history.push).toBeCalledWith(`/post/${DUMMY_POST_TO_EDIT.postId}`);
+  });
 
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.CREATE_POST_SUCCESS,
-        payload: mockNewPostId,
-      });
+  test('makes correct action when fail', async () => {
+    fetch.mockReject();
+    await thunk(mock.dispatch);
+
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.EDIT_POST_FAIL,
+    });
+  });
+});
+
+describe('deletePost', () => {
+  test('generate a correct url', async () => {
+    fetch.mockResponse();
+
+    const mockDispatch = jest.fn();
+    const thunk = actions.deletePost(DUMMY_USER_STORE, DUMMY_POSTS_IDS[0]);
+    await thunk(mockDispatch);
+
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOptions = fetch.mock.calls[0][1];
+
+    // make a correct fetch
+    expect(fetchUrl).toContain(`/posts/${DUMMY_POSTS_IDS[0]}`);
+    expect(fetchOptions.method).toBe('DELETE');
+  });
+
+  test('make a correct action if test succeed', async () => {
+    fetch.mockResponse();
+    const mockDispatch = jest.fn();
+    const thunk = actions.deletePost(DUMMY_USER_STORE, DUMMY_POSTS_IDS[0]);
+    await thunk(mockDispatch);
+
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.DELETE_POST_SUCCESS,
     });
 
-    test('callback is invoked when success', async () => {
-      const mockNewPostId = 123;
-      fetch.mockResponse(JSON.stringify({ postId: mockNewPostId }));
-      await thunk(mock.dispatch);
+    expect(history.push).toBeCalledWith('/account/posts');
+  });
 
-      expect(mock.callback).toBeCalledWith(mockNewPostId);
+  test('make a correct action if test failed', async () => {
+    fetch.mockReject();
+    const mockDispatch = jest.fn();
+    const thunk = actions.deletePost(DUMMY_USER_STORE, DUMMY_POSTS_IDS[0]);
+    await thunk(mockDispatch);
+
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.DELETE_POST_FAIL,
     });
+  });
+});
 
-    test('makes correct action when fail', async () => {
-      fetch.mockReject();
-      await thunk(mock.dispatch);
+describe('deletePosts', () => {
+  test('generate a correct url', async () => {
+    fetch.mockResponse();
 
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.CREATE_POST_FAIL,
-      });
+    const mockDispatch = jest.fn();
+    const thunk = actions.deletePosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
+    await thunk(mockDispatch);
+
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOptions = fetch.mock.calls[0][1];
+    const body = JSON.parse(fetchOptions.body);
+
+    // make a correct fetch
+    expect(fetchUrl).toContain('/posts');
+    expect(fetchOptions.method).toBe('DELETE');
+    expect(body).toEqual(DUMMY_POSTS_IDS);
+  });
+
+  test('make a correct action if test succeed', async () => {
+    fetch.mockResponse();
+
+    const mockDispatch = jest.fn();
+    const thunk = actions.deletePosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
+    await thunk(mockDispatch);
+
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.DELETE_POSTS_SUCCESS,
+      payload: DUMMY_POSTS_IDS,
     });
   });
 
-  describe('editPost', () => {
-    let mock;
-    let thunk;
+  test('make a correct action if test failed', async () => {
+    fetch.mockReject();
 
-    beforeEach(() => {
-      mock = {
-        callback: jest.fn(),
-        dispatch: jest.fn(),
-      };
-      thunk = actions.editPost(
-        DUMMY_USER_STORE,
-        DUMMY_POST_TO_EDIT,
-        mock.callback,
-      );
+    const mockDispatch = jest.fn();
+    const thunk = actions.deletePosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
+    await thunk(mockDispatch);
+
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.DELETE_POSTS_FAIL,
     });
+  });
+});
 
-    test('generates correct url and body', async () => {
-      await thunk(mock.dispatch);
+describe('fetchMyPosts', () => {
+  test('generate a correct url', async () => {
+    fetch.mockResponse();
 
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOption = fetch.mock.calls[0][1];
-      const fetchBody = JSON.parse(fetchOption.body);
+    const mockDispatch = jest.fn();
+    const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+    await thunk(mockDispatch);
 
-      expect(fetchUrl).toContain(`/posts/${DUMMY_POST_TO_EDIT.postId}`);
-      expect(fetchOption.method).toContain('PUT');
-      expect(fetchBody).toEqual(DUMMY_POST_TO_EDIT);
-    });
+    const fetchUrl = fetch.mock.calls[0][0];
 
-    test('makes correct action when success', async () => {
-      fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_TO_EDIT.postId }));
-      await thunk(mock.dispatch);
+    // make a correct fetch
+    expect(fetchUrl).toContain(`/posts?user_id=${DUMMY_USER_STORE.userId}`);
+  });
 
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.EDIT_POST_SUCCESS,
-      });
-    });
+  test('do nothing if userId is not provided', async () => {
+    fetch.mockResponse();
 
-    test('callback is invoked when success', async () => {
-      fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_TO_EDIT.postId }));
-      await thunk(mock.dispatch);
+    const mockDispatch = jest.fn();
+    const thunk = actions.fetchMyPosts({ ...DUMMY_USER_STORE, userId: '' });
+    await thunk(mockDispatch);
 
-      expect(mock.callback).toBeCalledWith(DUMMY_POST_TO_EDIT.postId);
-    });
+    expect(fetch).not.toBeCalled();
+  });
 
-    test('makes correct action when fail', async () => {
-      fetch.mockReject();
-      await thunk(mock.dispatch);
+  test('make a correct action if test succeed', async () => {
+    fetch.mockResponse(JSON.stringify(DUMMY_POSTS));
 
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.EDIT_POST_FAIL,
-      });
+    const mockDispatch = jest.fn();
+    const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+    await thunk(mockDispatch);
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.FETCH_MY_POSTS_SUCCESS,
+      payload: DUMMY_POSTS,
     });
   });
 
-  describe('deletePost', () => {
-    test('generate a correct url', async () => {
-      fetch.mockResponse();
-      const mockCallback = jest.fn();
+  test('make a correct action if test failed', async () => {
+    fetch.mockReject();
 
-      const mockDispatch = jest.fn();
-      const thunk = actions.deletePost(
-        DUMMY_USER_STORE,
-        DUMMY_POSTS_IDS[0],
-        mockCallback,
-      );
-      await thunk(mockDispatch);
+    const mockDispatch = jest.fn();
+    const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+    await thunk(mockDispatch);
 
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOptions = fetch.mock.calls[0][1];
-
-      // make a correct fetch
-      expect(fetchUrl).toContain(`/posts/${DUMMY_POSTS_IDS[0]}`);
-      expect(fetchOptions.method).toBe('DELETE');
+    // make a correct action
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.FETCH_MY_POSTS_FAIL,
     });
+  });
+});
 
-    test('make a correct action if test succeed', async () => {
-      fetch.mockResponse();
-      const mockCallback = jest.fn();
-      const mockDispatch = jest.fn();
-      const thunk = actions.deletePost(
-        DUMMY_USER_STORE,
-        DUMMY_POSTS_IDS[0],
-        mockCallback,
-      );
-      await thunk(mockDispatch);
-
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_POST_SUCCESS,
-      });
+describe('selectMyPosts', () => {
+  test('make a correct action if success', () => {
+    const action = actions.selectMyPosts(DUMMY_POSTS_IDS);
+    expect(action).toEqual({
+      type: types.SELECT_MY_POSTS,
+      payload: DUMMY_POSTS_IDS,
     });
+  });
+});
 
-    test('make a correct action if test failed', async () => {
-      fetch.mockReject();
-      const mockCallback = jest.fn();
-      const mockDispatch = jest.fn();
-      const thunk = actions.deletePost(
-        DUMMY_USER_STORE,
-        DUMMY_POSTS_IDS[0],
-        mockCallback,
-      );
-      await thunk(mockDispatch);
+describe('selectMyPostsAll', () => {
+  test('make a correct action if success', () => {
+    const action = actions.selectMyPostsAll();
+    expect(action).toEqual({
+      type: types.SELECT_MY_POSTS_ALL,
+    });
+  });
+});
 
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_POST_FAIL,
-      });
+describe('selectMyPostsReset', () => {
+  test('make a correct action if success', () => {
+    const action = actions.selectMyPostsReset();
+    expect(action).toEqual({
+      type: types.SELECT_MY_POSTS_RESET,
+    });
+  });
+});
+
+describe('createComment', () => {
+  let mock;
+  let thunk;
+  const DUMMY_COMMENT = 'dummy_comment';
+  const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
+
+  beforeEach(() => {
+    mock = {
+      dispatch: jest.fn(),
+    };
+    thunk = actions.createComment(
+      DUMMY_USER_STORE,
+      DUMMY_POST_ID,
+      DUMMY_COMMENT,
+    );
+  });
+
+  test('generates correct url and body', async () => {
+    await thunk(mock.dispatch);
+
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOption = fetch.mock.calls[0][1];
+    const fetchBody = JSON.parse(fetchOption.body);
+
+    expect(fetchUrl).toContain(`/posts/${DUMMY_POST_ID}/comments`);
+    expect(fetchOption.method).toContain('POST');
+    expect(fetchBody).toEqual({ comment: DUMMY_COMMENT });
+  });
+
+  test('makes correct action when success', async () => {
+    fetch.mockResponse();
+    actions.fetchPost = jest.fn();
+    await thunk(mock.dispatch);
+
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.CREATE_COMMENT_SUCCESS,
+    });
+    expect(actions.fetchPost).toBeCalled();
+  });
+
+  test('makes correct action when fail', async () => {
+    fetch.mockReject();
+    await thunk(mock.dispatch);
+
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.CREATE_COMMENT_FAIL,
+    });
+  });
+});
+
+describe('deleteComment', () => {
+  let mock;
+  let thunk;
+  const DUMMY_COMMENT = DUMMY_COMMENTS[0];
+
+  beforeEach(() => {
+    mock = {
+      dispatch: jest.fn(),
+    };
+    thunk = actions.deleteComment(DUMMY_USER_STORE, DUMMY_COMMENT);
+  });
+
+  test('generates correct url and body', async () => {
+    await thunk(mock.dispatch);
+
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOption = fetch.mock.calls[0][1];
+
+    expect(fetchUrl).toContain(`/posts/comments/${DUMMY_COMMENT.commentId}`);
+    expect(fetchOption.method).toContain('DELETE');
+  });
+
+  test('makes correct action when success', async () => {
+    fetch.mockResponse();
+    await thunk(mock.dispatch);
+
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.DELETE_COMMENT_SUCCESS,
     });
   });
 
-  describe('deletePosts', () => {
-    test('generate a correct url', async () => {
-      fetch.mockResponse();
+  test('makes correct action when fail', async () => {
+    fetch.mockReject();
+    await thunk(mock.dispatch);
 
-      const mockDispatch = jest.fn();
-      const thunk = actions.deletePosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
-      await thunk(mockDispatch);
-
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOptions = fetch.mock.calls[0][1];
-      const body = JSON.parse(fetchOptions.body);
-
-      // make a correct fetch
-      expect(fetchUrl).toContain('/posts');
-      expect(fetchOptions.method).toBe('DELETE');
-      expect(body).toEqual(DUMMY_POSTS_IDS);
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.DELETE_COMMENT_FAIL,
     });
+  });
+});
 
-    test('make a correct action if test succeed', async () => {
-      fetch.mockResponse();
+describe('toggleLike', () => {
+  let mock;
+  let thunk;
 
-      const mockDispatch = jest.fn();
-      const thunk = actions.deletePosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
-      await thunk(mockDispatch);
+  beforeEach(() => {
+    mock = {
+      dispatch: jest.fn(),
+    };
+    thunk = actions.toggleLike(DUMMY_USER_STORE, DUMMY_POSTS[0]);
+  });
 
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_POSTS_SUCCESS,
-        payload: DUMMY_POSTS_IDS,
-      });
-    });
+  test('generates correct url', async () => {
+    await thunk(mock.dispatch);
 
-    test('make a correct action if test failed', async () => {
-      fetch.mockReject();
+    const fetchUrl = fetch.mock.calls[0][0];
+    const fetchOption = fetch.mock.calls[0][1];
 
-      const mockDispatch = jest.fn();
-      const thunk = actions.deletePosts(DUMMY_USER_STORE, DUMMY_POSTS_IDS);
-      await thunk(mockDispatch);
+    expect(fetchUrl).toContain(`/posts/${DUMMY_POSTS[0].postId}/like/toggle`);
+    expect(fetchOption.method).toContain('POST');
+  });
 
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_POSTS_FAIL,
-      });
+  test('makes correct action when success', async () => {
+    fetch.mockResponse();
+    await thunk(mock.dispatch);
+
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.TOGGLE_LIKE_SUCCESS,
     });
   });
 
-  describe('fetchMyPosts', () => {
-    test('generate a correct url', async () => {
-      fetch.mockResponse();
+  test('makes correct action when fail', async () => {
+    fetch.mockReject();
+    await thunk(mock.dispatch);
 
-      const mockDispatch = jest.fn();
-      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
-      await thunk(mockDispatch);
-
-      const fetchUrl = fetch.mock.calls[0][0];
-
-      // make a correct fetch
-      expect(fetchUrl).toContain(`/posts?user_id=${DUMMY_USER_STORE.userId}`);
-    });
-
-    test('do nothing if userId is not provided', async () => {
-      fetch.mockResponse();
-
-      const mockDispatch = jest.fn();
-      const thunk = actions.fetchMyPosts({ ...DUMMY_USER_STORE, userId: '' });
-      await thunk(mockDispatch);
-
-      expect(fetch).not.toBeCalled();
-    });
-
-    test('make a correct action if test succeed', async () => {
-      fetch.mockResponse(JSON.stringify(DUMMY_POSTS));
-
-      const mockDispatch = jest.fn();
-      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
-      await thunk(mockDispatch);
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_MY_POSTS_SUCCESS,
-        payload: DUMMY_POSTS,
-      });
-    });
-
-    test('make a correct action if test failed', async () => {
-      fetch.mockReject();
-
-      const mockDispatch = jest.fn();
-      const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
-      await thunk(mockDispatch);
-
-      // make a correct action
-      expect(mockDispatch.mock.calls[0][0]).toEqual({
-        type: types.FETCH_MY_POSTS_FAIL,
-      });
+    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+      type: types.TOGGLE_LIKE_FAIL,
     });
   });
+});
 
-  describe('selectMyPosts', () => {
-    test('make a correct action if success', () => {
-      const action = actions.selectMyPosts(DUMMY_POSTS_IDS);
-      expect(action).toEqual({
-        type: types.SELECT_MY_POSTS,
-        payload: DUMMY_POSTS_IDS,
-      });
+describe('reduceSnackbarQueue', () => {
+  test('make a correct action', () => {
+    const action = actions.reduceSnackbarQueue();
+    expect(action).toEqual({
+      type: types.REDUCE_SNACKBAR_QUEUE,
     });
   });
+});
 
-  describe('selectMyPostsAll', () => {
-    test('make a correct action if success', () => {
-      const action = actions.selectMyPostsAll();
-      expect(action).toEqual({
-        type: types.SELECT_MY_POSTS_ALL,
-      });
+describe('addSnackbarQueue', () => {
+  test('make a correct action', () => {
+    const action = actions.addSnackbarQueue('message1');
+    expect(action).toEqual({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload: 'message1',
     });
   });
+});
 
-  describe('selectMyPostsReset', () => {
-    test('make a correct action if success', () => {
-      const action = actions.selectMyPostsReset();
-      expect(action).toEqual({
-        type: types.SELECT_MY_POSTS_RESET,
-      });
+describe('startProgress', () => {
+  test('make a correct action', () => {
+    const action = actions.startProgress('signin');
+    expect(action).toEqual({
+      type: types.START_PROGRESS,
+      payload: 'signin',
     });
   });
+});
 
-  describe('createComment', () => {
-    let mock;
-    let thunk;
-    const DUMMY_COMMENT = 'dummy_comment';
-    const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
-
-    beforeEach(() => {
-      mock = {
-        dispatch: jest.fn(),
-        successCallback: jest.fn(),
-      };
-      thunk = actions.createComment(
-        DUMMY_USER_STORE,
-        DUMMY_POST_ID,
-        DUMMY_COMMENT,
-        mock.successCallback,
-      );
-    });
-
-    test('generates correct url and body', async () => {
-      await thunk(mock.dispatch);
-
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOption = fetch.mock.calls[0][1];
-      const fetchBody = JSON.parse(fetchOption.body);
-
-      expect(fetchUrl).toContain(`/posts/${DUMMY_POST_ID}/comments`);
-      expect(fetchOption.method).toContain('POST');
-      expect(fetchBody).toEqual({ comment: DUMMY_COMMENT });
-    });
-
-    test('makes correct action when success', async () => {
-      fetch.mockResponse();
-      await thunk(mock.dispatch);
-
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.CREATE_COMMENT_SUCCESS,
-      });
-    });
-
-    test('callback function is called when success', async () => {
-      fetch.mockResponse();
-      await thunk(mock.dispatch);
-
-      expect(mock.successCallback).toBeCalled();
-    });
-
-    test('makes correct action when fail', async () => {
-      fetch.mockReject();
-      await thunk(mock.dispatch);
-
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.CREATE_COMMENT_FAIL,
-      });
-    });
-  });
-
-  describe('createComment', () => {
-    let mock;
-    let thunk;
-    const DUMMY_COMMENT = DUMMY_COMMENTS[0];
-
-    beforeEach(() => {
-      mock = {
-        dispatch: jest.fn(),
-      };
-      thunk = actions.deleteComment(DUMMY_USER_STORE, DUMMY_COMMENT);
-    });
-
-    test('generates correct url and body', async () => {
-      await thunk(mock.dispatch);
-
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOption = fetch.mock.calls[0][1];
-
-      expect(fetchUrl).toContain(`/posts/comments/${DUMMY_COMMENT.commentId}`);
-      expect(fetchOption.method).toContain('DELETE');
-    });
-
-    test('makes correct action when success', async () => {
-      fetch.mockResponse();
-      await thunk(mock.dispatch);
-
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_COMMENT_SUCCESS,
-      });
-    });
-
-    test('makes correct action when fail', async () => {
-      fetch.mockReject();
-      await thunk(mock.dispatch);
-
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.DELETE_COMMENT_FAIL,
-      });
-    });
-  });
-
-  describe('toggleLike', () => {
-    let mock;
-    let thunk;
-
-    beforeEach(() => {
-      mock = {
-        dispatch: jest.fn(),
-      };
-      thunk = actions.toggleLike(DUMMY_USER_STORE, DUMMY_POSTS[0]);
-    });
-
-    test('generates correct url', async () => {
-      await thunk(mock.dispatch);
-
-      const fetchUrl = fetch.mock.calls[0][0];
-      const fetchOption = fetch.mock.calls[0][1];
-
-      expect(fetchUrl).toContain(`/posts/${DUMMY_POSTS[0].postId}/like/toggle`);
-      expect(fetchOption.method).toContain('POST');
-    });
-
-    test('makes correct action when success', async () => {
-      fetch.mockResponse();
-      await thunk(mock.dispatch);
-
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.TOGGLE_LIKE_SUCCESS,
-      });
-    });
-
-    test('makes correct action when fail', async () => {
-      fetch.mockReject();
-      await thunk(mock.dispatch);
-
-      expect(mock.dispatch.mock.calls[0][0]).toEqual({
-        type: types.TOGGLE_LIKE_FAIL,
-      });
-    });
-  });
-
-  describe('reduceSnackbarQueue', () => {
-    test('make a correct action', () => {
-      const action = actions.reduceSnackbarQueue();
-      expect(action).toEqual({
-        type: types.REDUCE_SNACKBAR_QUEUE,
-      });
-    });
-  });
-
-  describe('addSnackbarQueue', () => {
-    test('make a correct action', () => {
-      const action = actions.addSnackbarQueue('message1');
-      expect(action).toEqual({
-        type: types.ADD_SNACKBAR_QUEUE,
-        payload: 'message1',
-      });
-    });
-  });
-
-  describe('startProgress', () => {
-    test('make a correct action', () => {
-      const action = actions.startProgress('signin');
-      expect(action).toEqual({
-        type: types.START_PROGRESS,
-        payload: 'signin',
-      });
-    });
-  });
-
-  describe('finishProgress', () => {
-    test('make a correct action', () => {
-      const action = actions.finishProgress('signin');
-      expect(action).toEqual({
-        type: types.FINISH_PROGRESS,
-        payload: 'signin',
-      });
+describe('finishProgress', () => {
+  test('make a correct action', () => {
+    const action = actions.finishProgress('signin');
+    expect(action).toEqual({
+      type: types.FINISH_PROGRESS,
+      payload: 'signin',
     });
   });
 });

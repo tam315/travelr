@@ -7,7 +7,6 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import { DUMMY_USER_STORE } from '../../config/dummies';
 import { PageManageAccount } from '../PageManageAccount';
-import firebaseUtils from '../../utils/firebaseUtils';
 
 jest.mock('../../utils/firebaseUtils');
 
@@ -16,13 +15,13 @@ describe('PageManageAccount component', () => {
   let wrapper;
 
   beforeEach(() => {
+    jest.resetAllMocks();
     mock = {
       actions: {
         updateUserInfo: jest.fn(),
-        deleteUser: jest.fn((user, callback) => callback()),
-        signOutUser: jest.fn(callback => callback()),
+        signOutUser: jest.fn(),
+        deleteUser: jest.fn(),
       },
-      history: { push: jest.fn() },
     };
 
     wrapper = shallow(
@@ -31,7 +30,6 @@ describe('PageManageAccount component', () => {
         signOutUser={mock.actions.signOutUser}
         deleteUser={mock.actions.deleteUser}
         // $FlowIgnore
-        history={mock.history}
         user={DUMMY_USER_STORE}
         classes={{}}
       />,
@@ -62,7 +60,7 @@ describe('PageManageAccount component', () => {
     expect(mock.actions.updateUserInfo).toBeCalled();
   });
 
-  test('invoke signOutUser() when signout button is clicked, and navigate to the top page', () => {
+  test('invoke signOutUser() when signout button is clicked', () => {
     fetch.mockResponse();
 
     wrapper
@@ -71,10 +69,9 @@ describe('PageManageAccount component', () => {
       .simulate('click');
 
     expect(mock.actions.signOutUser).toBeCalled();
-    expect(mock.history.push).toBeCalled();
   });
 
-  test('invoke deleteUser() when delete account button is clicked, and navigate to the top page', done => {
+  test('invoke deleteUser() when delete account button is clicked', () => {
     window.confirm = jest.fn().mockImplementation(() => true);
     window.alert = jest.fn();
 
@@ -86,11 +83,5 @@ describe('PageManageAccount component', () => {
       .simulate('click');
 
     expect(mock.actions.deleteUser).toBeCalled();
-    expect(firebaseUtils.deleteUser).toBeCalled();
-
-    setImmediate(() => {
-      expect(mock.history.push).toBeCalled();
-      done();
-    });
   });
 });

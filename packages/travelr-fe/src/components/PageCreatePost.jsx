@@ -10,7 +10,6 @@ import * as React from 'react';
 import uuid from 'uuid/v4';
 import firebaseUtils from '../utils/firebaseUtils';
 import MapsPickPosition from '../utils/MapsPickPosition';
-import type { RouterHistory } from 'react-router-dom';
 import type { UserStore, NewPost, LatLng } from '../config/types';
 
 const styles = theme => ({
@@ -33,14 +32,9 @@ type ReactObjRef<ElementType: React.ElementType> = {
 
 type Props = {
   classes: any,
-  history: RouterHistory,
   user: UserStore,
-  createPost: (
-    user: UserStore,
-    newPost: NewPost,
-    successCallback: (any) => any,
-  ) => void,
-  addSnackbarQueue: string => any,
+  createPost: (user: UserStore, newPost: NewPost) => void,
+  addSnackbarQueue: (message: string) => any,
 };
 
 type State = {
@@ -166,11 +160,7 @@ export class PageCreatePost extends React.Component<Props, State> {
       lat,
     };
 
-    const successCallback = (postId: number): void => {
-      this.props.history.push(`/post/${postId}`);
-    };
-
-    return this.props.createPost(user, newPost, successCallback);
+    return this.props.createPost(user, newPost);
   };
 
   render() {

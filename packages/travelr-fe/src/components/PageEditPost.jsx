@@ -1,20 +1,20 @@
 // @flow
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 import Input from '@material-ui/core/Input';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
+import MapsPickPosition from '../utils/MapsPickPosition';
 import type {
   LatLng,
   PostsStore,
   PostToEdit,
   UserStore,
 } from '../config/types';
-import type { Match, RouterHistory } from 'react-router-dom';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import MapsPickPosition from '../utils/MapsPickPosition';
+import type { Match } from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -41,20 +41,11 @@ type ReactObjRef<ElementType: React.ElementType> = {
 type Props = {
   classes: any,
   match: Match,
-  history: RouterHistory,
   user: UserStore,
   posts: PostsStore,
-  editPost: (
-    user: UserStore,
-    postToEdit: PostToEdit,
-    successCallback: (any) => any,
-  ) => void,
+  editPost: (user: UserStore, postToEdit: PostToEdit) => void,
   fetchPost: (postId: number) => void,
-  deletePost: (
-    user: UserStore,
-    postId: number,
-    successCallback: (void) => void,
-  ) => void,
+  deletePost: (user: UserStore, postId: number) => void,
 };
 
 type State = {
@@ -135,7 +126,7 @@ export class PageEditPost extends React.Component<Props, State> {
   };
 
   handleSubmit = () => {
-    const { editPost, user, history } = this.props;
+    const { editPost, user } = this.props;
 
     const postToEdit: PostToEdit = {
       postId: this.state.postId,
@@ -147,23 +138,16 @@ export class PageEditPost extends React.Component<Props, State> {
       lat: this.state.lat,
     };
 
-    const successCallback = (postId: number): void => {
-      history.push(`/post/${postId}`);
-    };
-    editPost(user, postToEdit, successCallback);
+    editPost(user, postToEdit);
   };
 
   handleDeletePost = () => {
-    const { deletePost, user, history } = this.props;
-
-    const successCallback = () => {
-      history.push('/all-grid');
-    };
+    const { deletePost, user } = this.props;
 
     // eslint-disable-next-line
     if (confirm('本当に削除してよろしいですか？')) {
       // TODO: dialog
-      deletePost(user, this.state.postId, successCallback);
+      deletePost(user, this.state.postId);
     }
   };
 

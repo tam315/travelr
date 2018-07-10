@@ -12,6 +12,7 @@ import type {
 } from '../config/types';
 import config from '../config';
 import firebaseUtils from '../utils/firebaseUtils';
+import history from '../utils/history';
 import actionTypes from './types';
 import type { Dispatch } from 'redux';
 
@@ -43,6 +44,7 @@ actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
       type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS,
       payload: { ...userInfo, token },
     });
+    history.push('/');
   } catch (err) {
     dispatch({
       type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
@@ -112,9 +114,7 @@ actions.updateUserInfo = (user: UserStore, newUserInfo: NewUserInfo) => async (
   }
 };
 
-actions.deleteUser = (user: UserStore, callback: any => any) => async (
-  dispatch: Dispatch<any>,
-) => {
+actions.deleteUser = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   const { userId, token } = user;
   try {
     const response = await fetch(`${config.apiUrl}users/${userId}`, {
@@ -131,10 +131,12 @@ actions.deleteUser = (user: UserStore, callback: any => any) => async (
       return;
     }
 
+    await firebaseUtils.deleteUser(); // TODO: reauthentication
+
     dispatch({
       type: actionTypes.DELETE_USER_SUCCESS,
     });
-    callback();
+    history.push('/');
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_USER_FAIL,
@@ -142,16 +144,14 @@ actions.deleteUser = (user: UserStore, callback: any => any) => async (
   }
 };
 
-actions.signOutUser = (callback: any => any) => async (
-  dispatch: Dispatch<any>,
-) => {
+actions.signOutUser = () => async (dispatch: Dispatch<any>) => {
   try {
     await firebaseUtils.signOutUser();
 
     dispatch({
       type: actionTypes.SIGN_OUT_USER_SUCCESS,
     });
-    callback();
+    history.push('/');
   } catch (err) {
     dispatch({
       type: actionTypes.SIGN_OUT_USER_FAIL,
@@ -253,11 +253,9 @@ actions.fetchPost = (postId: number, user: UserStore) => async (
   }
 };
 
-actions.createPost = (
-  user: UserStore,
-  newPost: NewPost,
-  successCallback: any => any,
-) => async (dispatch: Dispatch<any>) => {
+actions.createPost = (user: UserStore, newPost: NewPost) => async (
+  dispatch: Dispatch<any>,
+) => {
   try {
     const response = await fetch(`${config.apiUrl}posts`, {
       method: 'POST',
@@ -279,7 +277,7 @@ actions.createPost = (
       type: actionTypes.CREATE_POST_SUCCESS,
       payload: postId,
     });
-    successCallback(postId);
+    history.push(`/post/${postId}`);
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_POST_FAIL,
@@ -287,11 +285,9 @@ actions.createPost = (
   }
 };
 
-actions.editPost = (
-  user: UserStore,
-  postToEdit: PostToEdit,
-  successCallback: any => any,
-) => async (dispatch: Dispatch<any>) => {
+actions.editPost = (user: UserStore, postToEdit: PostToEdit) => async (
+  dispatch: Dispatch<any>,
+) => {
   try {
     const response = await fetch(`${config.apiUrl}posts/${postToEdit.postId}`, {
       method: 'PUT',
@@ -311,7 +307,7 @@ actions.editPost = (
     dispatch({
       type: actionTypes.EDIT_POST_SUCCESS,
     });
-    successCallback(postToEdit.postId);
+    history.push(`/post/${postToEdit.postId}`);
   } catch (err) {
     dispatch({
       type: actionTypes.EDIT_POST_FAIL,
@@ -319,11 +315,9 @@ actions.editPost = (
   }
 };
 
-actions.deletePost = (
-  user: UserStore,
-  postId: number,
-  successCallback: void => void,
-) => async (dispatch: Dispatch<any>) => {
+actions.deletePost = (user: UserStore, postId: number) => async (
+  dispatch: Dispatch<any>,
+) => {
   const { token } = user;
 
   try {
@@ -342,7 +336,7 @@ actions.deletePost = (
     dispatch({
       type: actionTypes.DELETE_POST_SUCCESS,
     });
-    successCallback();
+    history.push('/account/posts');
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_POST_FAIL,
@@ -422,7 +416,6 @@ actions.createComment = (
   user: UserStore,
   postId: number,
   comment: string,
-  successCallback: void => void,
 ) => async (dispatch: Dispatch<any>) => {
   try {
     const response = await fetch(`${config.apiUrl}posts/${postId}/comments`, {
@@ -442,7 +435,6 @@ actions.createComment = (
       type: actionTypes.CREATE_COMMENT_SUCCESS,
     });
 
-    successCallback();
     await actions.fetchPost(postId, user)(dispatch);
   } catch (err) {
     dispatch({

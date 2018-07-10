@@ -20,10 +20,8 @@ describe('PageEditPost component', () => {
     mock = {
       history: { push: jest.fn() },
       actions: {
-        editPost: jest.fn((user, postToEdit, callback) =>
-          callback(postToEdit.postId),
-        ),
-        deletePost: jest.fn((user, postId, callback) => callback()),
+        editPost: jest.fn(),
+        deletePost: jest.fn(),
         fetchPost: jest.fn(),
       },
     };
@@ -34,8 +32,6 @@ describe('PageEditPost component', () => {
         classes={{}}
         // $FlowIgnore
         match={match}
-        // $FlowIgnore
-        history={mock.history}
         user={DUMMY_USER_STORE}
         posts={DUMMY_POSTS_STORE}
         editPost={mock.actions.editPost}
@@ -60,16 +56,6 @@ describe('PageEditPost component', () => {
     expect(mock.actions.editPost.mock.calls[0][1]).toEqual(DUMMY_POST_TO_EDIT);
   });
 
-  test('navigete to post page if edit succeed', async () => {
-    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_TO_EDIT.postId }));
-    wrapper.setState(DUMMY_POST_TO_EDIT);
-    wrapper.find(Button).simulate('click');
-
-    expect(mock.history.push).toBeCalledWith(
-      `/post/${DUMMY_POST_TO_EDIT.postId}`,
-    );
-  });
-
   test('deletePost() is called when a delete button is clicked', async () => {
     window.confirm = jest.fn().mockImplementation(() => true);
     wrapper.setState(DUMMY_POST_TO_EDIT);
@@ -83,18 +69,6 @@ describe('PageEditPost component', () => {
     expect(mock.actions.deletePost.mock.calls[0][1]).toEqual(
       DUMMY_POST_TO_EDIT.postId,
     );
-  });
-
-  test('navigete to all-grid page if deletion succeed', async () => {
-    window.confirm = jest.fn().mockImplementation(() => true);
-    fetch.mockResponse();
-    wrapper.setState(DUMMY_POST_TO_EDIT);
-    wrapper
-      .find(Typography)
-      .last()
-      .simulate('click');
-
-    expect(mock.history.push).toBeCalledWith('/all-grid');
   });
 
   test('instantiate map', async () => {

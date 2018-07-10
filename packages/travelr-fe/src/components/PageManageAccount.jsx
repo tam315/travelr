@@ -5,10 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import IconDone from '@material-ui/icons/Done';
 import IconEdit from '@material-ui/icons/Edit';
 import React from 'react';
-import firebaseUtils from '../utils/firebaseUtils';
 import StatusBadge from './StatusBadge';
 import type { UserStore, NewUserInfo } from '../config/types';
-import type { RouterHistory } from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -41,10 +39,9 @@ const styles = theme => ({
 type Props = {
   classes: any,
   user: UserStore,
-  history: RouterHistory,
   updateUserInfo: (user: UserStore, newUserInfo: NewUserInfo) => void,
-  signOutUser: (callback: (any) => any) => any,
-  deleteUser: (user: UserStore, callback: (any) => any) => void,
+  signOutUser: void => any,
+  deleteUser: (user: UserStore) => void,
 };
 
 type State = {
@@ -88,22 +85,14 @@ export class PageManageAccount extends React.Component<Props, State> {
   };
 
   handeSignOutUser = () => {
-    const successCallback = async () => {
-      this.props.history.push('/');
-    };
-    this.props.signOutUser(successCallback);
+    this.props.signOutUser();
   };
 
   handleDeleteUser = () => {
-    const callback = async () => {
-      await firebaseUtils.deleteUser(); // TODO: reauthentication
-      this.props.history.push('/');
-    };
-
     // eslint-disable-next-line
     if (confirm('本当に削除してよろしいですか？')) {
       // TODO: dialog
-      this.props.deleteUser(this.props.user, callback);
+      this.props.deleteUser(this.props.user);
     }
   };
 

@@ -15,6 +15,7 @@
     "babel-polyfill": "^6.26.0",
     "fetch-intercept": "^2.2.3",
     "firebase": "^5.2.0",
+    "history": "^4.7.2",
     "react": "^16.4.1",
     "react-compare-image": "^0.4.0",
     "react-dom": "^16.4.1",

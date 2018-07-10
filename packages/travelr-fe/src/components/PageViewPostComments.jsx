@@ -10,12 +10,7 @@ const styles = () => ({});
 type Props = {
   user: UserStore,
   post: Post,
-  createComment: (
-    user: UserStore,
-    postId: number,
-    comment: string,
-    successCallback: (void) => void,
-  ) => void,
+  createComment: (user: UserStore, postId: number, comment: string) => void,
   deleteComment: (user: UserStore, comment: Comment) => void,
 };
 
@@ -32,6 +27,17 @@ export class PageViewPostComments extends React.Component<Props, State> {
     deleteCommentMenuCommentId: null,
   };
 
+  componentDidUpdate = () => {
+    if (!this.props.post) return;
+
+    // clear comment form if the comment is created successfully
+    const { comments } = this.props.post;
+    const commentCreated = comments.find(
+      comment => comment.comment === this.state.comment,
+    );
+    if (commentCreated) this.setState({ comment: '' });
+  };
+
   handleChange(e: SyntheticInputEvent<HTMLElement>, stateKeyName: string) {
     this.setState({ [stateKeyName]: e.target.value });
   }
@@ -39,15 +45,10 @@ export class PageViewPostComments extends React.Component<Props, State> {
   handleCreateComment = () => {
     if (!this.props.post) return;
 
-    const successCallback = () => {
-      this.setState({ comment: '' });
-    };
-
     this.props.createComment(
       this.props.user,
       this.props.post.postId,
       this.state.comment,
-      successCallback,
     );
   };
 
