@@ -41,7 +41,7 @@ export class SnackbarService extends React.Component<Props, State> {
     if (this.isProcessing) return;
 
     if (snackbarQueue.length) {
-      this.isProcessing = false;
+      this.isProcessing = true;
 
       this.setState({
         message: snackbarQueue[0],
