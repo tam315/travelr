@@ -77,7 +77,7 @@ const getImageUrl = (filename: string, option: '1024w' | '96w') => {
   // TODO: delete this (showing absolute pass as is)
   if (filename.indexOf('http') !== -1) return filename;
 
-  const folder = `${option}%2Fresized_${option}_`;
+  const folder = `${option}%2F`;
 
   return `https://firebasestorage.googleapis.com/v0/b/travelr-a75c4.appspot.com/o/${folder}${filename}?alt=media`;
 };
