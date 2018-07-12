@@ -40,7 +40,7 @@ describe('PageManageAccount component', () => {
   test('shows not editable displayName first', () => {
     expect(
       wrapper
-        .find({ dataEnzyme: 'displayName' })
+        .find({ dataenzyme: 'displayName' })
         .children()
         .text(),
     ).toBe(DUMMY_USER_STORE.displayName);
@@ -56,7 +56,7 @@ describe('PageManageAccount component', () => {
   test('shows emailVerified status', () => {
     expect(
       wrapper
-        .find({ dataEnzyme: 'emailVerified' })
+        .find({ dataenzyme: 'emailVerified' })
         .children()
         .at(1)
         .text(),
@@ -66,7 +66,7 @@ describe('PageManageAccount component', () => {
 
     expect(
       wrapper
-        .find({ dataEnzyme: 'emailVerified' })
+        .find({ dataenzyme: 'emailVerified' })
         .children()
         .at(1)
         .text(),

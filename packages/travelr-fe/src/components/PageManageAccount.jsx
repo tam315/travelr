@@ -122,7 +122,7 @@ export class PageManageAccount extends React.Component<Props, State> {
     return (
       <div className={classes.nameContainer}>
         <Typography>ユーザ名：</Typography>
-        <Typography dataEnzyme="displayName">{displayName}</Typography>
+        <Typography dataenzyme="displayName">{displayName}</Typography>
         <IconEdit onClick={() => this.setState({ isEditMode: true })} />
       </div>
     );
@@ -137,7 +137,7 @@ export class PageManageAccount extends React.Component<Props, State> {
 
         {this.renderNameContainer()}
 
-        <Typography dataEnzyme="emailVerified">
+        <Typography dataenzyme="emailVerified">
           メール認証：
           {user.emailVerified ? '認証済み' : '未認証（画像の投稿ができません）'}
         </Typography>
