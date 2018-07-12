@@ -159,7 +159,7 @@ export class PageManageAccount extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, user } = this.props;
 
     return (
       <div className={classes.root}>
@@ -169,9 +169,9 @@ export class PageManageAccount extends React.Component<Props, State> {
         {this.renderEmailVerificationStatus()}
 
         <div className={classes.badges}>
-          <StatusBadge icon="like" count={1} />
-          <StatusBadge icon="comment" count={2} />
-          <StatusBadge icon="view" count={3} />
+          <StatusBadge icon="like" count={user.earnedLikes} />
+          <StatusBadge icon="comment" count={user.earnedComments} />
+          <StatusBadge icon="view" count={user.earnedViews} />
         </div>
 
         <Typography
