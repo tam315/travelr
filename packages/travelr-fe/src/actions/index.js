@@ -317,6 +317,22 @@ actions.signUpWithEmail = (
   }
 };
 
+actions.resetPassword = (email: string) => async (dispatch: Dispatch<any>) => {
+  dispatch({ type: actionTypes.START_PROGRESS, payload: 'resetPassword' });
+
+  try {
+    await authRef.sendPasswordResetEmail(email);
+    dispatch({
+      type: actionTypes.ADD_SNACKBAR_QUEUE,
+      payload: 'パスワードリセットのメールを送信しました',
+    });
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'resetPassword' });
+  } catch (err) {
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'resetPassword' });
+    errorNotifier(err, dispatch);
+  }
+};
+
 actions.signOutUser = () => async (dispatch: Dispatch<any>) => {
   try {
     await authRef.signOut();

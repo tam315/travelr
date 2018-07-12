@@ -362,6 +362,39 @@ describe('signUpWithEmail', () => {
   });
 });
 
+describe('resetPassword', () => {
+  const mock = {
+    dispatch: jest.fn(),
+  };
+  const thunk = actions.resetPassword('email');
+
+  test('send mail if success', async () => {
+    firebaseUtils.authRef.sendPasswordResetEmail = jest.fn();
+    await thunk(mock.dispatch);
+
+    expect(firebaseUtils.authRef.sendPasswordResetEmail).toBeCalled();
+    expect(mock.dispatch).toBeCalledWith({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload: 'パスワードリセットのメールを送信しました',
+    });
+  });
+
+  test('notify user the error if failed', async () => {
+    firebaseUtils.authRef.sendPasswordResetEmail = jest
+      .fn()
+      .mockRejectedValue();
+
+    await thunk(mock.dispatch);
+
+    // errorNotifier() is called and generate following message
+    // as in the test enviroment 'err' will be undefined
+    expect(mock.dispatch).toBeCalledWith({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload: '不明なエラーが発生しました',
+    });
+  });
+});
+
 describe('signOutUser', () => {
   const thunk = actions.signOutUser();
 

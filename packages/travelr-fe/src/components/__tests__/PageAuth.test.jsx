@@ -16,6 +16,7 @@ describe('', () => {
         signInWithFacebook: jest.fn(),
         signInWithEmail: jest.fn(),
         signUpWithEmail: jest.fn(),
+        resetPassword: jest.fn(),
       },
       signInWithRedirect: jest.fn(),
     };
@@ -29,6 +30,7 @@ describe('', () => {
         signInWithFacebook={mock.actions.signInWithFacebook}
         signInWithEmail={mock.actions.signInWithEmail}
         signUpWithEmail={mock.actions.signUpWithEmail}
+        resetPassword={mock.actions.resetPassword}
       />,
     );
 
@@ -48,6 +50,7 @@ describe('', () => {
         signInWithFacebook={mock.actions.signInWithFacebook}
         signInWithEmail={mock.actions.signInWithEmail}
         signUpWithEmail={mock.actions.signUpWithEmail}
+        resetPassword={mock.actions.resetPassword}
       />,
     );
 
@@ -67,6 +70,7 @@ describe('', () => {
         signInWithFacebook={mock.actions.signInWithFacebook}
         signInWithEmail={mock.actions.signInWithEmail}
         signUpWithEmail={mock.actions.signUpWithEmail}
+        resetPassword={mock.actions.resetPassword}
       />,
     );
 
@@ -86,12 +90,13 @@ describe('', () => {
         signInWithFacebook={mock.actions.signInWithFacebook}
         signInWithEmail={mock.actions.signInWithEmail}
         signUpWithEmail={mock.actions.signUpWithEmail}
+        resetPassword={mock.actions.resetPassword}
       />,
     );
 
     wrapper
       .find(Typography)
-      .last()
+      .at(4)
       .simulate('click');
 
     wrapper
@@ -100,5 +105,30 @@ describe('', () => {
       .simulate('click');
 
     expect(mock.actions.signInWithEmail).toBeCalled();
+  });
+
+  test('resetPassword is called when a button is clicked', () => {
+    const wrapper = shallow(
+      <PageAuth
+        classes={{}}
+        signInWithGoogle={mock.actions.signInWithGoogle}
+        signInWithFacebook={mock.actions.signInWithFacebook}
+        signInWithEmail={mock.actions.signInWithEmail}
+        signUpWithEmail={mock.actions.signUpWithEmail}
+        resetPassword={mock.actions.resetPassword}
+      />,
+    );
+
+    wrapper
+      .find(Typography)
+      .at(5)
+      .simulate('click');
+
+    wrapper
+      .find(Button)
+      .last()
+      .simulate('click');
+
+    expect(mock.actions.resetPassword).toBeCalled();
   });
 });

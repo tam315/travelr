@@ -43,10 +43,11 @@ type Props = {
     password: string,
     displayName: string,
   ) => any,
+  resetPassword: (email: string) => void,
 };
 
 type State = {
-  mailAuthMode: 'signin' | 'signup',
+  mailAuthMode: 'signin' | 'signup' | 'resetPassword',
   displayName: string,
   email: string,
   password: string,
@@ -80,6 +81,12 @@ export class PageAuth extends React.Component<Props, State> {
     const { signUpWithEmail } = this.props;
     const { email, password, displayName } = this.state;
     signUpWithEmail(email, password, displayName);
+  };
+
+  resetPassword = () => {
+    const { resetPassword } = this.props;
+    const { email } = this.state;
+    resetPassword(email);
   };
 
   handleChange(e: SyntheticInputEvent<>, stateKayName: string) {
@@ -135,6 +142,17 @@ export class PageAuth extends React.Component<Props, State> {
         >
           メールでサインインはこちら
         </Typography>
+
+        <div className={classes.spacer} />
+
+        <Typography
+          color="secondary"
+          onClick={() => this.setState({ mailAuthMode: 'resetPassword' })}
+          align="center"
+          style={{ cursor: 'pointer' }}
+        >
+          パスワードを忘れた方はこちら
+        </Typography>
       </React.Fragment>
     );
   };
@@ -168,6 +186,33 @@ export class PageAuth extends React.Component<Props, State> {
           onClick={this.signInWithEmail}
         >
           <Typography color="inherit">メールアドレスでサインイン</Typography>
+        </Button>
+      </React.Fragment>
+    );
+  };
+
+  renderResetPassword = () => {
+    const { classes } = this.props;
+    const { email } = this.state;
+
+    return (
+      <React.Fragment>
+        <TextField
+          label="メールアドレス"
+          margin="normal"
+          value={email}
+          onChange={e => this.handleChange(e, 'email')}
+        />
+
+        <div className={classes.spacer} />
+
+        <Button
+          size="large"
+          variant="contained"
+          color="default"
+          onClick={this.resetPassword}
+        >
+          <Typography color="inherit">パスワードをリセット</Typography>
         </Button>
       </React.Fragment>
     );
@@ -220,6 +265,7 @@ export class PageAuth extends React.Component<Props, State> {
 
           {mailAuthMode === 'signup' && this.renderSignUp()}
           {mailAuthMode === 'signin' && this.renderSignIn()}
+          {mailAuthMode === 'resetPassword' && this.renderResetPassword()}
         </Grid>
       </div>
     );
