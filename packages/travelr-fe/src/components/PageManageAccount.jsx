@@ -122,20 +122,26 @@ export class PageManageAccount extends React.Component<Props, State> {
     return (
       <div className={classes.nameContainer}>
         <Typography>ユーザ名：</Typography>
-        <Typography variant="subheading">{displayName}</Typography>
+        <Typography dataEnzyme="displayName">{displayName}</Typography>
         <IconEdit onClick={() => this.setState({ isEditMode: true })} />
       </div>
     );
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, user } = this.props;
 
     return (
       <div className={classes.root}>
         <Typography variant="title">アカウント管理</Typography>
 
         {this.renderNameContainer()}
+
+        <Typography dataEnzyme="emailVerified">
+          メール認証：
+          {user.emailVerified ? '認証済み' : '未認証（画像の投稿ができません）'}
+        </Typography>
+
         <div className={classes.badges}>
           <StatusBadge icon="like" count={1} />
           <StatusBadge icon="comment" count={2} />

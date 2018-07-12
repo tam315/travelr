@@ -7,6 +7,7 @@ export const INITIAL_STATE: UserStore = {
   token: '',
   displayName: '',
   isAdmin: false,
+  emailVerified: false,
   earnedLikes: 0,
   earnedComments: 0,
   earnedViews: 0,
@@ -15,18 +16,15 @@ export const INITIAL_STATE: UserStore = {
 export default (state: UserStore = INITIAL_STATE, action: any): UserStore => {
   switch (action.type) {
     case actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS: {
-      return action.payload;
+      return { ...state, ...action.payload };
     }
     case actionTypes.FETCH_USER_INFO_SUCCESS: {
-      return action.payload;
+      return { ...state, ...action.payload };
     }
     case actionTypes.UPDATE_USER_INFO_SUCCESS: {
       const { displayName } = action.payload;
 
-      return {
-        ...state,
-        displayName,
-      };
+      return { ...state, displayName };
     }
     case actionTypes.DELETE_USER_SUCCESS: {
       return INITIAL_STATE;

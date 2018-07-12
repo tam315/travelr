@@ -89,6 +89,10 @@ describe('getOrCreateUserInfo', () => {
   const DUMMY_TOKEN = DUMMY_USER_STORE.token;
   const DUMMY_DISPLAY_NAME = 'DUMMY_DISPLAY_NAME';
 
+  const DUMMY_RESPONSE = { ...DUMMY_USER_STORE };
+  delete DUMMY_RESPONSE.emailVerified;
+  delete DUMMY_RESPONSE.token;
+
   beforeEach(() => {
     mock = {
       dispatch: jest.fn(),
@@ -96,11 +100,12 @@ describe('getOrCreateUserInfo', () => {
     thunk = actions.getOrCreateUserInfo({
       token: DUMMY_TOKEN,
       displayName: DUMMY_DISPLAY_NAME,
+      emailVerified: false,
     });
   });
 
   test('generates correct url', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+    fetch.mockResponse(JSON.stringify(DUMMY_RESPONSE));
     await thunk(mock.dispatch);
 
     const fetchUrl = fetch.mock.calls[0][0];
@@ -113,13 +118,17 @@ describe('getOrCreateUserInfo', () => {
   });
 
   test('makes correct action when success', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+    fetch.mockResponse(JSON.stringify(DUMMY_RESPONSE));
     history.location.pathname = '/auth';
     await thunk(mock.dispatch);
 
     expect(mock.dispatch.mock.calls[0][0]).toEqual({
       type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
-      payload: DUMMY_USER_STORE,
+      payload: {
+        ...DUMMY_USER_STORE,
+        token: DUMMY_TOKEN,
+        emailVerified: false,
+      },
     });
 
     // redirect if user intended sign in/up

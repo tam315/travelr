@@ -78,6 +78,7 @@ export type TaskName = 'fetch' | 'signin' | 'createPost' | 'editPost';
 export type AuthSeed = {
   token: string,
   displayName: string,
+  emailVerified: boolean,
 };
 
 export type AppStore = {

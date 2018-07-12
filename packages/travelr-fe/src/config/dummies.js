@@ -213,6 +213,7 @@ export const DUMMY_USER_STORE: UserStore = {
   displayName: 'DUMMY_USER_DISPLAY_NAME',
   isAdmin: false,
   token: 'DUMMY_USER_TOKEN',
+  emailVerified: true,
   earnedLikes: 123,
   earnedComments: 456,
   earnedViews: 789,

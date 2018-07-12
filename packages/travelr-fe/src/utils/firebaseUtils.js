@@ -16,8 +16,9 @@ const getRedirectedUserAuthSeed = async (): Promise<AuthSeed | null> => {
   if (result.user) {
     const token = await result.user.getIdToken();
     const displayName = result.additionalUserInfo.profile.given_name;
+    const { emailVerified } = result.user;
 
-    return { token, displayName };
+    return { token, displayName, emailVerified };
   }
   return null;
 };
@@ -26,8 +27,9 @@ const getCurrentUserAuthSeed = async (): Promise<AuthSeed | null> => {
   const user = authRef.currentUser;
   if (user) {
     const token = await user.getIdToken();
+    const { emailVerified } = user;
 
-    return { token, displayName: '' };
+    return { token, displayName: '', emailVerified };
   }
   return null;
 };

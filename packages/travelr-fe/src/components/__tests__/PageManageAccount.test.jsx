@@ -1,6 +1,5 @@
 // @flow
 import Input from '@material-ui/core/Input';
-import Typography from '@material-ui/core/Typography';
 import IconDone from '@material-ui/icons/Done';
 import IconEdit from '@material-ui/icons/Edit';
 import { shallow } from 'enzyme';
@@ -41,8 +40,7 @@ describe('PageManageAccount component', () => {
   test('shows not editable displayName first', () => {
     expect(
       wrapper
-        .find(Typography)
-        .find({ variant: 'subheading' })
+        .find({ dataEnzyme: 'displayName' })
         .children()
         .text(),
     ).toBe(DUMMY_USER_STORE.displayName);
@@ -53,6 +51,26 @@ describe('PageManageAccount component', () => {
     expect(wrapper.find(Input).prop('value')).toBe(
       DUMMY_USER_STORE.displayName,
     );
+  });
+
+  test('shows emailVerified status', () => {
+    expect(
+      wrapper
+        .find({ dataEnzyme: 'emailVerified' })
+        .children()
+        .at(1)
+        .text(),
+    ).toBe('認証済み');
+
+    wrapper.setProps({ user: { ...DUMMY_USER_STORE, emailVerified: false } });
+
+    expect(
+      wrapper
+        .find({ dataEnzyme: 'emailVerified' })
+        .children()
+        .at(1)
+        .text(),
+    ).toBe('未認証（画像の投稿ができません）');
   });
 
   test('invoke updateUserInfo() after finish edit button is clicked', () => {

@@ -107,7 +107,7 @@ actions.initAuth = () => async (dispatch: Dispatch<any>) => {
 actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
   dispatch: Dispatch<any>,
 ) => {
-  const { token, displayName } = authSeed;
+  const { token, displayName, emailVerified } = authSeed;
   try {
     const fetchOptions = {
       method: 'POST',
@@ -129,7 +129,7 @@ actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
     const userInfo = await response.json();
     dispatch({
       type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS,
-      payload: { ...userInfo, token },
+      payload: { ...userInfo, token, emailVerified },
     });
     dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
 
@@ -281,10 +281,16 @@ actions.signInWithEmail = (email: string, password: string) => async (
 
     await authRef.signInWithEmailAndPassword(email, password);
 
-    const token = await authRef.currentUser.getIdToken();
+    const user = authRef.currentUser;
+    const token = await user.getIdToken();
+    const { emailVerified } = user;
 
     // if sign in succeed
-    actions.getOrCreateUserInfo({ token, displayName: 'newuser' })(dispatch);
+    actions.getOrCreateUserInfo({
+      token,
+      displayName: 'newuser',
+      emailVerified,
+    })(dispatch);
   } catch (err) {
     errorNotifier(err, dispatch);
     dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
@@ -304,8 +310,14 @@ actions.signUpWithEmail = (
       password,
     );
     await result.user.sendEmailVerification();
-    const token = await authRef.currentUser.getIdToken();
-    actions.getOrCreateUserInfo({ token, displayName })(dispatch);
+
+    const user = authRef.currentUser;
+    const token = await user.getIdToken();
+    const { emailVerified } = user;
+
+    actions.getOrCreateUserInfo({ token, displayName, emailVerified })(
+      dispatch,
+    );
     dispatch({
       type: actionTypes.ADD_SNACKBAR_QUEUE,
       payload:
