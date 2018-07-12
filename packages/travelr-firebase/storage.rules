@@ -1,7 +1,7 @@
 service firebase.storage {
   match /b/{bucket}/o {
     match /original/{userId}/{allPaths=**} {
-      allow write: if request.auth.uid == userId;
+      allow write: if request.auth.uid == userId && request.auth.token.email_verified
     }
     match /1024w/{allPaths=**} {
       allow read;

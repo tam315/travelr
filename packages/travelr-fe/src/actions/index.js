@@ -70,6 +70,13 @@ export const errorNotifier = (err: any, dispatch: Dispatch<any>) => {
         payload: 'このメールアドレスは既に使用されています',
       });
       break;
+    case 'storage/unauthorized':
+      dispatch({
+        type: actionTypes.ADD_SNACKBAR_QUEUE,
+        payload:
+          'メール認証が完了していません。アカウント管理画面からメール認証を行ってください。',
+      });
+      break;
     default:
       dispatch({
         type: actionTypes.ADD_SNACKBAR_QUEUE,
