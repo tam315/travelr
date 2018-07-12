@@ -159,8 +159,8 @@ export const DUMMY_POSTS_IDS: Array<number> = DUMMY_POSTS.map(
 );
 
 export const DUMMY_NEW_POST: NewPost = {
-  oldImageUrl: 'dummy',
-  newImageUrl: 'dummy',
+  oldImageFile: { type: 'image/jpeg' },
+  newImageFile: { type: 'image/png' },
   description: 'dummy_description',
   shootDate: '1985-3-31',
   lng: 135.0,

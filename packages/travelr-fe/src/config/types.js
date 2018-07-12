@@ -32,8 +32,8 @@ export type Post = {
 };
 
 export type NewPost = {
-  oldImageUrl: string,
-  newImageUrl: string,
+  oldImageFile: any,
+  newImageFile: any,
   description?: string,
   shootDate: string,
   lng: number,
@@ -72,7 +72,7 @@ export type FilterCriterion = {
   limit?: number,
 };
 
-export type TaskName = 'fetch' | 'signin';
+export type TaskName = 'fetch' | 'signin' | 'postCreation';
 
 // required info to authenticate with the main API
 export type AuthSeed = {

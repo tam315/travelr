@@ -7,8 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
-import uuid from 'uuid/v4';
-import firebaseUtils from '../utils/firebaseUtils';
+
 import MapsPickPosition from '../utils/MapsPickPosition';
 import type { UserStore, NewPost, LatLng } from '../config/types';
 
@@ -140,30 +139,16 @@ export class PageCreatePost extends React.Component<Props, State> {
       return addSnackbarQueue('入力項目が不足しています。');
     }
 
-    const extentionOf = {
-      'image/jpeg': '.jpg',
-      'image/png': '.png',
-    };
     if (!this.oldImage.current || !this.newImage.current) {
       return addSnackbarQueue('画像ファイルを取得できませんでした');
     }
 
-    const oldFile = this.oldImage.current.files[0];
-    const newFile = this.newImage.current.files[0];
-
-    const oldFileName = uuid() + extentionOf[oldFile.type];
-    const newFileName = uuid() + extentionOf[newFile.type];
-
-    try {
-      await firebaseUtils.uploadImageFile(oldFile, oldFileName, user);
-      await firebaseUtils.uploadImageFile(newFile, newFileName, user);
-    } catch (err) {
-      return addSnackbarQueue('画像のアップロードに失敗しました');
-    }
+    const oldImageFile = this.oldImage.current.files[0];
+    const newImageFile = this.newImage.current.files[0];
 
     const newPost: NewPost = {
-      oldImageUrl: oldFileName,
-      newImageUrl: newFileName,
+      oldImageFile,
+      newImageFile,
       description,
       shootDate,
       lng,

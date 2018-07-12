@@ -531,6 +531,8 @@ describe('createPost', () => {
   });
 
   test('generates correct url and body', async () => {
+    const mockNewPostId = 123;
+    fetch.mockResponse(JSON.stringify({ postId: mockNewPostId }));
     await thunk(mock.dispatch);
 
     const fetchUrl = fetch.mock.calls[0][0];
@@ -539,15 +541,17 @@ describe('createPost', () => {
 
     expect(fetchUrl).toContain('/posts');
     expect(fetchOption.method).toContain('POST');
-    expect(fetchBody).toEqual(DUMMY_NEW_POST);
+    expect(Object.keys(fetchBody).length).toBe(6);
   });
 
   test('makes correct action when success', async () => {
     const mockNewPostId = 123;
     fetch.mockResponse(JSON.stringify({ postId: mockNewPostId }));
+    firebaseUtils.uploadImageFile = jest.fn();
     await thunk(mock.dispatch);
 
-    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+    expect(firebaseUtils.uploadImageFile).toBeCalledTimes(2);
+    expect(mock.dispatch.mock.calls[1][0]).toEqual({
       type: types.CREATE_POST_SUCCESS,
       payload: mockNewPostId,
     });
@@ -559,7 +563,7 @@ describe('createPost', () => {
     fetch.mockReject();
     await thunk(mock.dispatch);
 
-    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+    expect(mock.dispatch.mock.calls[1][0]).toEqual({
       type: types.CREATE_POST_FAIL,
     });
   });

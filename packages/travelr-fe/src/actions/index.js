@@ -1,5 +1,6 @@
 // @flow
 import firebase from 'firebase/app';
+import uuid from 'uuid/v4';
 import config from '../config';
 import firebaseUtils from '../utils/firebaseUtils';
 import history from '../utils/history';
@@ -428,19 +429,51 @@ actions.fetchPost = (postId: number, user: UserStore) => async (
 actions.createPost = (user: UserStore, newPost: NewPost) => async (
   dispatch: Dispatch<any>,
 ) => {
+  const {
+    oldImageFile,
+    newImageFile,
+    description,
+    shootDate,
+    lng,
+    lat,
+  } = newPost;
+  const extentionOf = {
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+  };
+
+  dispatch({ type: actionTypes.START_PROGRESS, payload: 'createPost' });
+
   try {
+    const oldImageFileName = uuid() + extentionOf[oldImageFile.type];
+    const newImageFileName = uuid() + extentionOf[newImageFile.type];
+
+    await firebaseUtils.uploadImageFile(oldImageFile, oldImageFileName, user);
+    await firebaseUtils.uploadImageFile(newImageFile, newImageFileName, user);
+
+    // TODO: change API key names
+    const newPostForApi = {
+      oldImageUrl: oldImageFileName,
+      newImageUrl: newImageFileName,
+      description: description || '',
+      shootDate,
+      lng,
+      lat,
+    };
+
     const response = await fetch(`${config.apiUrl}posts`, {
       method: 'POST',
       headers: {
         authorization: user.token,
       },
-      body: JSON.stringify(newPost),
+      body: JSON.stringify(newPostForApi),
     });
 
     if (!response.ok) {
       dispatch({
         type: actionTypes.CREATE_POST_FAIL,
       });
+      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'createPost' });
       return;
     }
 
@@ -450,10 +483,13 @@ actions.createPost = (user: UserStore, newPost: NewPost) => async (
       payload: postId,
     });
     history.push(`/post/${postId}`);
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'createPost' });
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_POST_FAIL,
     });
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'createPost' });
+    errorNotifier(err, dispatch);
   }
 };
 

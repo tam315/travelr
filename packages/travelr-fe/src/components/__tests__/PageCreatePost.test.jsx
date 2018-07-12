@@ -70,7 +70,6 @@ describe('PageCreatePost component', () => {
       .simulate('click');
 
     setImmediate(() => {
-      expect(firebaseUtils.uploadImageFile).toBeCalledTimes(2);
       expect(mock.createPost).toBeCalled();
       done();
     });
