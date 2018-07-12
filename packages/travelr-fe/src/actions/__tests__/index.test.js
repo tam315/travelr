@@ -11,7 +11,7 @@ import {
 } from '../../config/dummies';
 import firebaseUtils from '../../utils/firebaseUtils';
 import history from '../../utils/history';
-import actions from '../index';
+import actions, { errorNotifier } from '../index';
 import types from '../types';
 
 jest.mock('../../utils/firebaseUtils');
@@ -19,6 +19,64 @@ jest.mock('../../utils/history');
 
 beforeEach(() => {
   fetch.resetMocks();
+});
+
+describe('errorNotifier', () => {
+  const mockDispatch = jest.fn();
+
+  test('dispatches actions', () => {
+    const err = {
+      code: 'auth/user-not-found',
+    };
+    errorNotifier(err, mockDispatch);
+    expect(mockDispatch).toBeCalledWith({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload: 'このメールアドレスは登録されていません',
+    });
+  });
+
+  test('throw error is error is unknown', () => {
+    const err = {
+      code: 'some unknown error',
+    };
+    expect(() => errorNotifier(err, mockDispatch)).toThrow(Error);
+  });
+});
+
+describe('initAuth', () => {
+  const mock = {
+    dispatch: jest.fn(),
+  };
+  const thunk = actions.initAuth();
+
+  test("if the user doesn't have token", async () => {
+    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue();
+    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue();
+    await thunk(mock.dispatch);
+
+    // getOrCreateUserInfo() will NOT be called
+    expect(fetch).toBeCalledTimes(0);
+  });
+
+  test('if the user is redirected', async () => {
+    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue({});
+    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue();
+    await thunk(mock.dispatch);
+
+    // getOrCreateUserInfo() will be called
+    expect(fetch).toBeCalledTimes(1);
+  });
+
+  test('if the user already has the token', async () => {
+    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue();
+    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue({});
+    await thunk(mock.dispatch);
+
+    // getOrCreateUserInfo() will be called
+    expect(fetch).toBeCalledTimes(1);
+  });
 });
 
 describe('getOrCreateUserInfo', () => {
@@ -38,6 +96,7 @@ describe('getOrCreateUserInfo', () => {
   });
 
   test('generates correct url', async () => {
+    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
     await thunk(mock.dispatch);
 
     const fetchUrl = fetch.mock.calls[0][0];
@@ -75,7 +134,7 @@ describe('getOrCreateUserInfo', () => {
 
 describe('fetchUserInfo', () => {
   test('generates correct url', async () => {
-    fetch.mockResponse();
+    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
 
     const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
     const mockDispatch = jest.fn();
@@ -88,9 +147,7 @@ describe('fetchUserInfo', () => {
   });
 
   test('makes correct action when success', async () => {
-    const dummyResponse = DUMMY_USER_STORE;
-
-    fetch.mockResponse(JSON.stringify(dummyResponse));
+    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
 
     const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
     const mockDispatch = jest.fn();
@@ -98,7 +155,7 @@ describe('fetchUserInfo', () => {
 
     expect(mockDispatch.mock.calls[0][0]).toEqual({
       type: types.FETCH_USER_INFO_SUCCESS,
-      payload: dummyResponse,
+      payload: DUMMY_USER_STORE,
     });
   });
 
@@ -157,11 +214,15 @@ describe('updateUserInfo', () => {
 });
 
 describe('deleteUser', () => {
+  const thunk = actions.deleteUser(DUMMY_USER_STORE);
+  firebaseUtils.authRef.currentUser = {
+    delete: jest.fn(),
+  };
+
   test('make a correct fetch and action if success', async () => {
     fetch.mockResponse();
 
     const mockDispatch = jest.fn();
-    const thunk = actions.deleteUser(DUMMY_USER_STORE);
     await thunk(mockDispatch);
 
     const fetchUrl = fetch.mock.calls[0][0];
@@ -172,7 +233,7 @@ describe('deleteUser', () => {
     expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
     expect(fetchOptions.method).toBe('DELETE');
 
-    expect(firebaseUtils.deleteUser).toBeCalled();
+    expect(firebaseUtils.authRef.currentUser.delete).toBeCalled();
 
     // make a correct action
     expect(mockDispatch.mock.calls[0][0]).toEqual({
@@ -187,7 +248,6 @@ describe('deleteUser', () => {
     fetch.mockReject();
 
     const mockDispatch = jest.fn();
-    const thunk = actions.deleteUser(DUMMY_USER_STORE);
     await thunk(mockDispatch);
 
     // make a correct action
@@ -197,18 +257,104 @@ describe('deleteUser', () => {
   });
 });
 
+describe('signInWithEmail', () => {
+  const mock = {
+    dispatch: jest.fn(),
+  };
+  const thunk = actions.signInWithEmail('email', 'password');
+
+  test('get user info if signin succeed', async () => {
+    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+    firebaseUtils.authRef.signInWithEmailAndPassword = jest.fn();
+    firebaseUtils.authRef.currentUser.getIdToken = jest
+      .fn()
+      .mockResolvedValue();
+    await thunk(mock.dispatch);
+
+    expect(firebaseUtils.authRef.signInWithEmailAndPassword).toBeCalled();
+    expect(firebaseUtils.authRef.currentUser.getIdToken).toBeCalled();
+    // getOrCreateUserInfo() will be called
+    expect(fetch).toBeCalledTimes(1);
+  });
+
+  test('notify user the error if signin failed', async () => {
+    fetch.mockResponse();
+    firebaseUtils.authRef.signInWithEmailAndPassword = jest
+      .fn()
+      .mockRejectedValue();
+    firebaseUtils.authRef.currentUser.getIdToken = jest
+      .fn()
+      .mockResolvedValue();
+
+    await thunk(mock.dispatch);
+
+    // errorNotifier() is called and generate following message
+    // as in the test enviroment 'err' will be undefined
+    expect(mock.dispatch).toBeCalledWith({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload: '不明なエラーが発生しました',
+    });
+  });
+});
+
+describe('signUpWithEmail', () => {
+  const mock = {
+    dispatch: jest.fn(),
+  };
+  const thunk = actions.signUpWithEmail('email', 'password', 'displayName');
+
+  test('get user info if signup succeed', async () => {
+    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+    firebaseUtils.authRef.createUserWithEmailAndPassword = jest.fn(() => ({
+      user: {
+        sendEmailVerification: jest.fn(),
+      },
+    }));
+    firebaseUtils.authRef.currentUser.getIdToken = jest
+      .fn()
+      .mockResolvedValue();
+    await thunk(mock.dispatch);
+
+    expect(firebaseUtils.authRef.createUserWithEmailAndPassword).toBeCalled();
+    expect(firebaseUtils.authRef.currentUser.getIdToken).toBeCalled();
+    // getOrCreateUserInfo() will be called
+    expect(fetch).toBeCalledTimes(1);
+    expect(mock.dispatch).toBeCalledWith({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload:
+        'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
+    });
+  });
+
+  test('notify user the error if signup failed', async () => {
+    firebaseUtils.authRef.createUserWithEmailAndPassword = jest
+      .fn()
+      .mockRejectedValue();
+
+    await thunk(mock.dispatch);
+
+    // errorNotifier() is called and generate following message
+    // as in the test enviroment 'err' will be undefined
+    expect(mock.dispatch).toBeCalledWith({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload: '不明なエラーが発生しました',
+    });
+  });
+});
+
 describe('signOutUser', () => {
+  const thunk = actions.signOutUser();
+
   test('invoke firebaseUtils', async () => {
     const mockDispatch = jest.fn();
-    const thunk = actions.signOutUser();
     await thunk(mockDispatch);
 
-    expect(firebaseUtils.signOutUser).toBeCalled();
+    expect(firebaseUtils.authRef.signOut).toBeCalled();
   });
 
   test('make a correct action if success', async () => {
+    firebaseUtils.authRef.signOut = jest.fn();
     const mockDispatch = jest.fn();
-    const thunk = actions.signOutUser();
     await thunk(mockDispatch);
 
     // make a correct action
@@ -220,9 +366,9 @@ describe('signOutUser', () => {
   });
 
   test('make a correct action if fail', async () => {
-    firebaseUtils.signOutUser = jest.fn().mockRejectedValue();
+    firebaseUtils.authRef.signOut = jest.fn().mockRejectedValue();
+
     const mockDispatch = jest.fn();
-    const thunk = actions.signOutUser();
     await thunk(mockDispatch);
 
     // make a correct action

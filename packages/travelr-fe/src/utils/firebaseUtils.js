@@ -9,8 +9,10 @@ import type { AuthSeed, UserStore } from '../config/types';
 
 firebase.initializeApp(config.firebase);
 
-const getRedirectResult = async (): Promise<AuthSeed | null> => {
-  const result = await firebase.auth().getRedirectResult();
+const authRef = firebase.auth();
+
+const getRedirectedUserAuthSeed = async (): Promise<AuthSeed | null> => {
+  const result = await authRef.getRedirectResult();
   if (result.user) {
     const token = await result.user.getIdToken();
     const displayName = result.additionalUserInfo.profile.given_name;
@@ -20,8 +22,8 @@ const getRedirectResult = async (): Promise<AuthSeed | null> => {
   return null;
 };
 
-const getCurrentUser = async (): Promise<AuthSeed | null> => {
-  const user = firebase.auth().currentUser;
+const getCurrentUserAuthSeed = async (): Promise<AuthSeed | null> => {
+  const user = authRef.currentUser;
   if (user) {
     const token = await user.getIdToken();
 
@@ -31,32 +33,12 @@ const getCurrentUser = async (): Promise<AuthSeed | null> => {
 };
 
 const canUserDeletedNow = async () => {
-  const user = firebase.auth().currentUser;
+  const user = authRef.currentUser;
   const signInDurationMinutes =
     (new Date() - new Date(user.metadata.lastSignInTime)) / 1000 / 60;
 
   if (signInDurationMinutes > 3) return false;
   return true;
-};
-
-const deleteUser = async () => {
-  await firebase.auth().currentUser.delete();
-};
-
-const signOutUser = async () => {
-  await firebase.auth().signOut();
-};
-
-const signInWithGoogle = async () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  provider.addScope('email');
-  await firebase.auth().signInWithRedirect(provider);
-};
-
-const signInWithFacebook = async () => {
-  const provider = new firebase.auth.FacebookAuthProvider();
-  provider.addScope('email');
-  await firebase.auth().signInWithRedirect(provider);
 };
 
 const uploadImageFile = async (
@@ -83,13 +65,10 @@ const getImageUrl = (filename: string, option: '1024w' | '96w') => {
 };
 
 export default {
-  getRedirectResult,
-  getCurrentUser,
+  authRef,
+  getRedirectedUserAuthSeed,
+  getCurrentUserAuthSeed,
   canUserDeletedNow,
-  deleteUser,
-  signInWithGoogle,
-  signInWithFacebook,
-  signOutUser,
   uploadImageFile,
   getImageUrl,
 };

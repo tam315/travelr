@@ -18,16 +18,13 @@ import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
 import ProgressService from '../components/ProgressService';
 import SnackbarService from '../components/SnackbarService';
-import firebaseUtils from '../utils/firebaseUtils';
 import history from '../utils/history';
-import type { UserStore, TaskName, AuthSeed } from '../config/types';
+import type { UserStore, TaskName } from '../config/types';
 
 type Props = {
-  fetchUserInfo: (user: UserStore) => void,
-  getOrCreateUserInfo: (authSeed: AuthSeed) => void,
+  initAuth: () => any,
   startProgress: (taskName: TaskName) => void,
   finishProgress: (taskName: TaskName) => void,
-  addSnackbarQueue: (message: string) => void,
   user: UserStore,
 };
 
@@ -55,35 +52,8 @@ export class App extends React.Component<Props> {
         return Promise.reject(error);
       },
     });
-    await this.handleAuthentication();
-  };
 
-  handleAuthentication = async () => {
-    try {
-      this.props.startProgress('signin');
-
-      const redirectedUserInfo = await firebaseUtils.getRedirectResult();
-
-      if (redirectedUserInfo) {
-        this.props.getOrCreateUserInfo(redirectedUserInfo);
-      } else {
-        const currentUserInfo = await firebaseUtils.getCurrentUser();
-        if (currentUserInfo) {
-          this.props.getOrCreateUserInfo(currentUserInfo);
-        }
-      }
-
-      this.props.finishProgress('signin');
-    } catch (err) {
-      if (err.code === 'auth/account-exists-with-different-credential') {
-        // TODO: link account, snackbar
-        this.props.addSnackbarQueue(
-          'このメールアドレスは別のログイン方法に紐づけされています',
-        );
-      }
-      this.props.finishProgress('signin');
-      throw new Error(err);
-    }
+    this.props.initAuth();
   };
 
   // these lines are inevitable.

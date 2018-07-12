@@ -10,13 +10,98 @@ import type {
   TaskName,
   UserStore,
 } from '../config/types';
+import firebase from 'firebase/app';
 import config from '../config';
 import firebaseUtils from '../utils/firebaseUtils';
 import history from '../utils/history';
 import actionTypes from './types';
 import type { Dispatch } from 'redux';
 
+const { authRef } = firebaseUtils;
+
 const actions = {};
+
+export const errorNotifier = (err, dispatch) => {
+  if (!err) {
+    dispatch({
+      type: actionTypes.ADD_SNACKBAR_QUEUE,
+      payload: '不明なエラーが発生しました',
+    });
+    return;
+  }
+
+  switch (err.code) {
+    case 'auth/user-not-found':
+      dispatch({
+        type: actionTypes.ADD_SNACKBAR_QUEUE,
+        payload: 'このメールアドレスは登録されていません',
+      });
+      break;
+    case 'auth/account-exists-with-different-credential':
+      // TODO: link account
+      dispatch({
+        type: actionTypes.ADD_SNACKBAR_QUEUE,
+        payload: 'このメールアドレスは別のログイン方法に紐づけされています',
+      });
+      break;
+    case 'auth/wrong-password':
+      dispatch({
+        type: actionTypes.ADD_SNACKBAR_QUEUE,
+        payload:
+          'パスワードが間違っているか、メールアドレスがほかのログイン方法に紐付けされています。',
+      });
+      break;
+    case 'auth/invalid-email':
+      dispatch({
+        type: actionTypes.ADD_SNACKBAR_QUEUE,
+        payload: 'メールアドレスの形式が正しくありません',
+      });
+      break;
+    case 'auth/weak-password':
+      dispatch({
+        type: actionTypes.ADD_SNACKBAR_QUEUE,
+        payload: 'パスワードは6文字以上必要です',
+      });
+      break;
+    case 'auth/email-already-in-use':
+      dispatch({
+        type: actionTypes.ADD_SNACKBAR_QUEUE,
+        payload: 'このメールアドレスは既に使用されています',
+      });
+      break;
+    default:
+      dispatch({
+        type: actionTypes.ADD_SNACKBAR_QUEUE,
+        payload: '不明なエラーが発生しました',
+      });
+      throw new Error(err);
+  }
+};
+
+actions.initAuth = () => async (dispatch: Dispatch<any>) => {
+  dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+
+  try {
+    const redirectedUserAuthSeed = await firebaseUtils.getRedirectedUserAuthSeed();
+    const currentUserAuthSeed = await firebaseUtils.getCurrentUserAuthSeed();
+
+    if (redirectedUserAuthSeed) {
+      // if the user is redirected
+      actions.getOrCreateUserInfo(redirectedUserAuthSeed)(dispatch);
+    } else if (currentUserAuthSeed) {
+      // if the user already has the token
+      actions.getOrCreateUserInfo(currentUserAuthSeed)(dispatch);
+    } else {
+      // if the user doesn't have token
+      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+    }
+    return true;
+  } catch (err) {
+    errorNotifier(err, dispatch);
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+    return true;
+  }
+};
 
 actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
   dispatch: Dispatch<any>,
@@ -36,7 +121,8 @@ actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
       dispatch({
         type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
       });
-      return;
+      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+      return true;
     }
 
     const userInfo = await response.json();
@@ -44,12 +130,18 @@ actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
       type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS,
       payload: { ...userInfo, token },
     });
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
 
     if (history.location.pathname === '/auth') history.push('/all-map');
+
+    return true;
   } catch (err) {
     dispatch({
       type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
     });
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+    errorNotifier(err, dispatch);
+    return true;
   }
 };
 
@@ -132,7 +224,7 @@ actions.deleteUser = (user: UserStore) => async (dispatch: Dispatch<any>) => {
       return;
     }
 
-    await firebaseUtils.deleteUser(); // TODO: reauthentication
+    await authRef.currentUser.delete();
 
     dispatch({
       type: actionTypes.DELETE_USER_SUCCESS,
@@ -145,9 +237,67 @@ actions.deleteUser = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   }
 };
 
+actions.signInWithGoogle = () => async (dispatch: Dispatch<any>) => {
+  dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('email');
+  await authRef.signInWithRedirect(provider);
+};
+
+actions.signInWithFacebook = () => async (dispatch: Dispatch<any>) => {
+  dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+  const provider = new firebase.auth.FacebookAuthProvider();
+  provider.addScope('email');
+  await authRef.signInWithRedirect(provider);
+};
+
+actions.signInWithEmail = (email: string, password: string) => async (
+  dispatch: Dispatch<any>,
+) => {
+  try {
+    dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+
+    await authRef.signInWithEmailAndPassword(email, password);
+
+    const token = await authRef.currentUser.getIdToken();
+
+    // if sign in succeed
+    actions.getOrCreateUserInfo({ token, displayName: 'newuser' })(dispatch);
+  } catch (err) {
+    errorNotifier(err, dispatch);
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+  }
+};
+
+actions.signUpWithEmail = (
+  email: string,
+  password: string,
+  displayName: string,
+) => async (dispatch: Dispatch<any>) => {
+  try {
+    dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+
+    const result = await authRef.createUserWithEmailAndPassword(
+      email,
+      password,
+    );
+    await result.user.sendEmailVerification();
+    const token = await authRef.currentUser.getIdToken();
+    actions.getOrCreateUserInfo({ token, displayName })(dispatch);
+    dispatch({
+      type: actionTypes.ADD_SNACKBAR_QUEUE,
+      payload:
+        'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
+    });
+  } catch (err) {
+    errorNotifier(err, dispatch);
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+  }
+};
+
 actions.signOutUser = () => async (dispatch: Dispatch<any>) => {
   try {
-    await firebaseUtils.signOutUser();
+    await authRef.signOut();
 
     dispatch({
       type: actionTypes.SIGN_OUT_USER_SUCCESS,

@@ -21,12 +21,6 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
       };
       return newState;
     }
-    case actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS: {
-      return {
-        ...state,
-        snackbarQueue: [...state.snackbarQueue, 'サインインしました'],
-      };
-    }
     case actionTypes.GET_OR_CREATE_USER_INFO_FAIL: {
       return {
         ...state,

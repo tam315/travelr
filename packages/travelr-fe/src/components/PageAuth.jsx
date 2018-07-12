@@ -9,7 +9,6 @@ import {
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
-import firebaseUtils from '../utils/firebaseUtils';
 import Hr from './Hr';
 
 const googleTheme = createMuiTheme({
@@ -36,15 +35,136 @@ const styles = theme => ({
 
 type Props = {
   classes: any,
+  signInWithGoogle: () => any,
+  signInWithFacebook: () => any,
+  signInWithEmail: (email: string, password: string) => any,
+  signUpWithEmail: (
+    email: string,
+    password: string,
+    displayName: string,
+  ) => any,
 };
 
-export class PageAuth extends React.Component<Props> {
+type State = {
+  mailAuthMode: 'signin' | 'signup',
+  displayName: string,
+  email: string,
+  password: string,
+};
+
+export class PageAuth extends React.Component<Props, State> {
+  state = {
+    mailAuthMode: 'signup',
+    displayName: '',
+    email: '',
+    password: '',
+  };
+
   signInWithGoogle = () => {
-    firebaseUtils.signInWithGoogle();
+    this.props.signInWithGoogle();
   };
 
   signInWithFacebook = async () => {
-    firebaseUtils.signInWithFacebook();
+    this.props.signInWithFacebook();
+  };
+
+  signInWithEmail = async () => {
+    const { email, password } = this.state;
+    this.props.signInWithEmail(email, password);
+  };
+
+  signUpWithEmail = async () => {
+    const { email, password, displayName } = this.state;
+
+    this.props.signUpWithEmail(email, password, displayName);
+  };
+
+  handleChange(e: SyntheticInputEvent<>, stateKayName: string) {
+    e.preventDefault();
+    this.setState({ [stateKayName]: e.target.value });
+  }
+
+  renderSignUp = () => {
+    const { classes } = this.props;
+    return (
+      <React.Fragment>
+        <TextField
+          label="ニックネーム"
+          margin="normal"
+          value={this.state.displayName}
+          onChange={e => this.handleChange(e, 'displayName')}
+        />
+
+        <TextField
+          label="メールアドレス"
+          margin="normal"
+          value={this.state.email}
+          onChange={e => this.handleChange(e, 'email')}
+        />
+        <TextField
+          label="パスワード"
+          type="password"
+          margin="normal"
+          value={this.state.password}
+          onChange={e => this.handleChange(e, 'password')}
+        />
+
+        <div className={classes.spacer} />
+
+        <Button
+          size="large"
+          variant="contained"
+          color="default"
+          onClick={this.signUpWithEmail}
+        >
+          <Typography color="inherit">メールアドレスでサインアップ</Typography>
+        </Button>
+
+        <div className={classes.spacer} />
+
+        <Typography
+          color="secondary"
+          onClick={() => this.setState({ mailAuthMode: 'signin' })}
+          align="center"
+          style={{ cursor: 'pointer' }}
+        >
+          メールでサインインはこちら
+        </Typography>
+      </React.Fragment>
+    );
+  };
+
+  renderSignIn = () => {
+    const { classes } = this.props;
+
+    return (
+      <React.Fragment>
+        <TextField
+          label="メールアドレス"
+          margin="normal"
+          value={this.state.email}
+          onChange={e => this.handleChange(e, 'email')}
+        />
+        <TextField
+          label="パスワード"
+          type="password"
+          margin="normal"
+          value={this.state.password}
+          onChange={e => this.handleChange(e, 'password')}
+        />
+
+        <div className={classes.spacer} />
+
+        <Button
+          size="large"
+          variant="contained"
+          color="default"
+          onClick={this.signInWithEmail}
+        >
+          <Typography color="inherit">メールアドレスでサインイン</Typography>
+        </Button>
+      </React.Fragment>
+    );
   };
 
   render = () => {
@@ -91,14 +211,8 @@ export class PageAuth extends React.Component<Props> {
           <div className={classes.spacer} />
           <Hr text="or" />
 
-          <TextField label="メールアドレス" margin="normal" />
-          <TextField label="パスワード" type="password" margin="normal" />
-
-          <div className={classes.spacer} />
-
-          <Button size="large" variant="contained" color="default">
-            <Typography color="inherit">メールアドレスでサインイン</Typography>
-          </Button>
+          {this.state.mailAuthMode === 'signup' && this.renderSignUp()}
+          {this.state.mailAuthMode === 'signin' && this.renderSignIn()}
         </Grid>
       </div>
     );
