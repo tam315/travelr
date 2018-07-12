@@ -72,7 +72,12 @@ export type FilterCriterion = {
   limit?: number,
 };
 
-export type TaskName = 'fetch' | 'signin' | 'createPost' | 'editPost';
+export type TaskName =
+  | 'fetch'
+  | 'signin'
+  | 'createPost'
+  | 'editPost'
+  | 'sendEmailVerification';
 
 // required info to authenticate with the main API
 export type AuthSeed = {

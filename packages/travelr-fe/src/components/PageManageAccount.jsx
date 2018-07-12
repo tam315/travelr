@@ -42,6 +42,7 @@ type Props = {
   updateUserInfo: (user: UserStore, newUserInfo: NewUserInfo) => void,
   signOutUser: void => any,
   deleteUser: (user: UserStore) => void,
+  sendEmailVerification: void => void,
 };
 
 type State = {
@@ -105,6 +106,11 @@ export class PageManageAccount extends React.Component<Props, State> {
     deleteUser(user);
   };
 
+  handleSendEmailVerification = () => {
+    const { sendEmailVerification } = this.props;
+    sendEmailVerification();
+  };
+
   renderNameContainer = () => {
     const { classes } = this.props;
     const { isEditMode, displayName } = this.state;
@@ -128,19 +134,39 @@ export class PageManageAccount extends React.Component<Props, State> {
     );
   };
 
-  render() {
+  renderEmailVerificationStatus = () => {
     const { classes, user } = this.props;
+
+    return (
+      <div className={classes.nameContainer}>
+        <Typography dataenzyme="emailVerified">
+          メール認証：
+          {user.emailVerified ? '認証済み' : '未認証（画像の投稿ができません）'}
+        </Typography>
+
+        {!user.emailVerified && (
+          <Typography
+            dataenzyme="sendEmailVerification"
+            color="secondary"
+            style={{ cursor: 'pointer' }}
+            onClick={this.handleSendEmailVerification}
+          >
+            認証メールを再送する
+          </Typography>
+        )}
+      </div>
+    );
+  };
+
+  render() {
+    const { classes } = this.props;
 
     return (
       <div className={classes.root}>
         <Typography variant="title">アカウント管理</Typography>
 
         {this.renderNameContainer()}
-
-        <Typography dataenzyme="emailVerified">
-          メール認証：
-          {user.emailVerified ? '認証済み' : '未認証（画像の投稿ができません）'}
-        </Typography>
+        {this.renderEmailVerificationStatus()}
 
         <div className={classes.badges}>
           <StatusBadge icon="like" count={1} />

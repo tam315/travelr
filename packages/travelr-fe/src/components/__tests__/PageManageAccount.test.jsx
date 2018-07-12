@@ -21,6 +21,7 @@ describe('PageManageAccount component', () => {
         signOutUser: jest.fn(),
         deleteUser: jest.fn(),
         addSnackbarQueue: jest.fn(),
+        sendEmailVerification: jest.fn(),
       },
     };
 
@@ -30,6 +31,7 @@ describe('PageManageAccount component', () => {
         signOutUser={mock.actions.signOutUser}
         deleteUser={mock.actions.deleteUser}
         addSnackbarQueue={mock.actions.addSnackbarQueue}
+        sendEmailVerification={mock.actions.sendEmailVerification}
         // $FlowIgnore
         user={DUMMY_USER_STORE}
         classes={{}}
@@ -71,6 +73,13 @@ describe('PageManageAccount component', () => {
         .at(1)
         .text(),
     ).toBe('未認証（画像の投稿ができません）');
+  });
+
+  test('send verification email', () => {
+    wrapper.setProps({ user: { ...DUMMY_USER_STORE, emailVerified: false } });
+    wrapper.find({ dataenzyme: 'sendEmailVerification' }).simulate('click');
+
+    expect(mock.actions.sendEmailVerification).toBeCalled();
   });
 
   test('invoke updateUserInfo() after finish edit button is clicked', () => {

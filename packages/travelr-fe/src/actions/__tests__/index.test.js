@@ -371,6 +371,36 @@ describe('signUpWithEmail', () => {
   });
 });
 
+describe('sendEmailVerification', () => {
+  const mock = {
+    dispatch: jest.fn(),
+  };
+  const thunk = actions.sendEmailVerification();
+
+  test.only('send email verification', async () => {
+    firebaseUtils.authRef.currentUser = { sendEmailVerification: jest.fn() };
+    await thunk(mock.dispatch);
+
+    expect(
+      firebaseUtils.authRef.currentUser.sendEmailVerification,
+    ).toBeCalled();
+  });
+
+  test('notify user the error if signup failed', async () => {
+    firebaseUtils.authRef.currentUser = {
+      sendEmailVerification: jest.fn().mockRejectedValue(),
+    };
+    await thunk(mock.dispatch);
+
+    // errorNotifier() is called and generate following message
+    // as in the test enviroment 'err' will be undefined
+    expect(mock.dispatch).toBeCalledWith({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload: '不明なエラーが発生しました',
+    });
+  });
+});
+
 describe('resetPassword', () => {
   const mock = {
     dispatch: jest.fn(),

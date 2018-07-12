@@ -329,6 +329,31 @@ actions.signUpWithEmail = (
   }
 };
 
+actions.sendEmailVerification = () => async (dispatch: Dispatch<any>) => {
+  dispatch({
+    type: actionTypes.START_PROGRESS,
+    payload: 'sendEmailVerification',
+  });
+
+  try {
+    await authRef.currentUser.sendEmailVerification();
+    dispatch({
+      type: actionTypes.ADD_SNACKBAR_QUEUE,
+      payload: '認証メールを再送しました',
+    });
+    dispatch({
+      type: actionTypes.FINISH_PROGRESS,
+      payload: 'sendEmailVerification',
+    });
+  } catch (err) {
+    dispatch({
+      type: actionTypes.FINISH_PROGRESS,
+      payload: 'sendEmailVerification',
+    });
+    errorNotifier(err, dispatch);
+  }
+};
+
 actions.resetPassword = (email: string) => async (dispatch: Dispatch<any>) => {
   dispatch({ type: actionTypes.START_PROGRESS, payload: 'resetPassword' });
 
