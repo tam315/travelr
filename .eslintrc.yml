@@ -24,11 +24,15 @@ rules:
   # react/no-danger: 0
   # react/react-in-jsx-scope: 0
 
-  # 以下、Prettierとバッティングを防ぐための設定
+  # 以下、PrettierとAirbnbのバッティングを防ぐための設定
   arrow-parens: 0
   function-paren-newline: 0
+  implicit-arrow-linebreak: 0
+  import/order: 0
   linebreak-style: 0
   object-curly-newline: 0
+  operator-linebreak: 0
+  react/jsx-one-expression-per-line: 0
 
   # HOC適用前（アプリ用）と適用後（Jest用）で同じ名前を使いたいため
   import/no-named-as-default: 0
