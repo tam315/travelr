@@ -6,7 +6,7 @@ import type { AppStore } from '../config/types';
 
 const styles = {
   root: {
-    position: 'absolute',
+    position: 'fixed',
     top: 0,
     zIndex: 1110,
     width: '100%',
