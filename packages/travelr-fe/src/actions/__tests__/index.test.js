@@ -582,6 +582,7 @@ describe('editPost', () => {
   });
 
   test('generates correct url and body', async () => {
+    fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_TO_EDIT.postId }));
     await thunk(mock.dispatch);
 
     const fetchUrl = fetch.mock.calls[0][0];
@@ -597,7 +598,7 @@ describe('editPost', () => {
     fetch.mockResponse(JSON.stringify({ postId: DUMMY_POST_TO_EDIT.postId }));
     await thunk(mock.dispatch);
 
-    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+    expect(mock.dispatch.mock.calls[1][0]).toEqual({
       type: types.EDIT_POST_SUCCESS,
     });
 
@@ -608,7 +609,7 @@ describe('editPost', () => {
     fetch.mockReject();
     await thunk(mock.dispatch);
 
-    expect(mock.dispatch.mock.calls[0][0]).toEqual({
+    expect(mock.dispatch.mock.calls[1][0]).toEqual({
       type: types.EDIT_POST_FAIL,
     });
   });

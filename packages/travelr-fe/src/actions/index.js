@@ -496,6 +496,8 @@ actions.createPost = (user: UserStore, newPost: NewPost) => async (
 actions.editPost = (user: UserStore, postToEdit: PostToEdit) => async (
   dispatch: Dispatch<any>,
 ) => {
+  dispatch({ type: actionTypes.START_PROGRESS, payload: 'editPost' });
+
   try {
     const response = await fetch(`${config.apiUrl}posts/${postToEdit.postId}`, {
       method: 'PUT',
@@ -509,17 +511,21 @@ actions.editPost = (user: UserStore, postToEdit: PostToEdit) => async (
       dispatch({
         type: actionTypes.EDIT_POST_FAIL,
       });
+      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'editPost' });
       return;
     }
 
     dispatch({
       type: actionTypes.EDIT_POST_SUCCESS,
     });
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'editPost' });
     history.push(`/post/${postToEdit.postId}`);
   } catch (err) {
     dispatch({
       type: actionTypes.EDIT_POST_FAIL,
     });
+    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'editPost' });
+    errorNotifier(err, dispatch);
   }
 };
 
