@@ -209,7 +209,28 @@ actions.updateUserInfo = (user: UserStore, newUserInfo: NewUserInfo) => async (
 
 actions.deleteUser = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   const { userId, token } = user;
+
   try {
+    const canUserDeletedNow = await firebaseUtils.canUserDeletedNow();
+    if (!canUserDeletedNow) {
+      dispatch({
+        type: actionTypes.ADD_SNACKBAR_QUEUE,
+        payload:
+          'アカウントを削除するには再認証が必要です。一度サインアウトしてから、もう一度サインインしたあとに、同じ操作を行ってください。',
+      });
+      return;
+    }
+
+    if (
+      // TODO: dialog
+      // eslint-disable-next-line
+      !confirm(
+        '本当にアカウントを削除してよろしいですか？すべてのデータが失われます。',
+      )
+    ) {
+      return;
+    }
+
     const response = await fetch(`${config.apiUrl}users/${userId}`, {
       method: 'DELETE',
       headers: {

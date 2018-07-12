@@ -74,28 +74,7 @@ describe('PageManageAccount component', () => {
     expect(mock.actions.signOutUser).toBeCalled();
   });
 
-  test('invoke addSnackbarQueue() when re-authentication is needed to delete user', done => {
-    firebaseUtils.canUserDeletedNow = jest.fn().mockResolvedValue(false);
-
-    wrapper
-      .find({ color: 'secondary' })
-      .at(1)
-      .simulate('click');
-
-    setImmediate(() => {
-      expect(mock.actions.addSnackbarQueue).toBeCalled();
-      expect(mock.actions.deleteUser).not.toBeCalled();
-      done();
-    });
-  });
-
   test('invoke deleteUser() when delete account button is clicked', done => {
-    window.confirm = jest.fn().mockImplementation(() => true);
-    window.alert = jest.fn();
-    firebaseUtils.canUserDeletedNow = jest.fn().mockResolvedValue(true);
-
-    fetch.mockResponse();
-
     wrapper
       .find({ color: 'secondary' })
       .at(1)

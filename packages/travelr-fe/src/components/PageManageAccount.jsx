@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import IconDone from '@material-ui/icons/Done';
 import IconEdit from '@material-ui/icons/Edit';
 import React from 'react';
-import firebaseUtils from '../utils/firebaseUtils';
 import StatusBadge from './StatusBadge';
 import type { UserStore, NewUserInfo } from '../config/types';
 
@@ -91,23 +90,7 @@ export class PageManageAccount extends React.Component<Props, State> {
   };
 
   handleDeleteUser = async () => {
-    const canUserDeletedNow = await firebaseUtils.canUserDeletedNow();
-    if (!canUserDeletedNow) {
-      this.props.addSnackbarQueue(
-        'アカウントを削除するには再認証が必要です。一度サインアウトしてから、もう一度サインインしたあとに、同じ操作を行ってください。',
-      );
-      return;
-    }
-
-    if (
-      // TODO: dialog
-      // eslint-disable-next-line
-      confirm(
-        '本当にアカウントを削除してよろしいですか？すべてのデータが失われます。',
-      )
-    ) {
-      this.props.deleteUser(this.props.user);
-    }
+    this.props.deleteUser(this.props.user);
   };
 
   renderNameContainer = () => {

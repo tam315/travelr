@@ -219,9 +219,24 @@ describe('deleteUser', () => {
     delete: jest.fn(),
   };
 
+  test('notify user to re-authenticate', async () => {
+    fetch.mockResponse();
+    firebaseUtils.canUserDeletedNow = jest.fn().mockResolvedValue(false);
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload:
+        'アカウントを削除するには再認証が必要です。一度サインアウトしてから、もう一度サインインしたあとに、同じ操作を行ってください。',
+    });
+    expect(fetch).not.toBeCalled();
+  });
+
   test('make a correct fetch and action if success', async () => {
     fetch.mockResponse();
-
+    firebaseUtils.canUserDeletedNow = jest.fn().mockResolvedValue(true);
+    window.confirm = jest.fn().mockImplementation(() => true);
     const mockDispatch = jest.fn();
     await thunk(mockDispatch);
 
@@ -246,7 +261,8 @@ describe('deleteUser', () => {
 
   test('make a correct action if fail', async () => {
     fetch.mockReject();
-
+    firebaseUtils.canUserDeletedNow = jest.fn().mockResolvedValue(true);
+    window.confirm = jest.fn().mockImplementation(() => true);
     const mockDispatch = jest.fn();
     await thunk(mockDispatch);
 
