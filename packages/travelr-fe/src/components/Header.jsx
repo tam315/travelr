@@ -49,11 +49,13 @@ class Header extends React.Component<Props, State> {
   };
 
   toggleMenu = () => {
-    this.setState({ isMenuOpen: !this.state.isMenuOpen });
+    const { isMenuOpen } = this.state;
+    this.setState({ isMenuOpen: !isMenuOpen });
   };
 
   render() {
     const { classes, user } = this.props;
+    const { isMenuOpen } = this.state;
     const isUserAuthorized = !!user.userId;
 
     return (
@@ -104,7 +106,7 @@ class Header extends React.Component<Props, State> {
         </AppBar>
 
         <Menu
-          isOpen={this.state.isMenuOpen}
+          isOpen={isMenuOpen}
           onOpen={this.toggleMenu}
           onClose={this.toggleMenu}
           isUserAuthorized={isUserAuthorized}

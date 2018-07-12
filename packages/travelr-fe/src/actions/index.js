@@ -1,4 +1,9 @@
 // @flow
+import firebase from 'firebase/app';
+import config from '../config';
+import firebaseUtils from '../utils/firebaseUtils';
+import history from '../utils/history';
+import actionTypes from './types';
 import type {
   AuthSeed,
   Comment,
@@ -10,11 +15,6 @@ import type {
   TaskName,
   UserStore,
 } from '../config/types';
-import firebase from 'firebase/app';
-import config from '../config';
-import firebaseUtils from '../utils/firebaseUtils';
-import history from '../utils/history';
-import actionTypes from './types';
 import type { Dispatch } from 'redux';
 
 const { authRef } = firebaseUtils;

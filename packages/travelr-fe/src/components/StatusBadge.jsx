@@ -108,16 +108,15 @@ function StatusBadge(props: Props) {
       iconElement = null;
   }
 
-  const isClickable = !!props.onClick;
+  const { onClick } = props;
+  const isClickable = !!onClick;
 
   return (
     <div
       style={isNormalSize ? stylesNormalSize.root : stylesSmallSize.root}
-      onClick={isClickable ? props.onClick : null}
+      onClick={isClickable ? onClick : null}
       tabIndex={isClickable ? 0 : null}
-      onKeyDown={e =>
-        isClickable && e.keyCode === 13 && props.onClick && props.onClick()
-      }
+      onKeyDown={e => isClickable && e.keyCode === 13 && onClick && onClick()}
       role="button"
     >
       {iconElement}

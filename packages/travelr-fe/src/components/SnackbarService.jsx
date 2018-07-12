@@ -26,13 +26,18 @@ export class SnackbarService extends React.Component<Props, State> {
   };
 
   componentDidUpdate = () => {
-    const { snackbarQueue } = this.props.app;
+    const {
+      app: { snackbarQueue },
+    } = this.props;
 
     if (snackbarQueue.length) this.processQueue();
   };
 
   processQueue = () => {
-    const { snackbarQueue } = this.props.app;
+    const {
+      app: { snackbarQueue },
+      reduceSnackbarQueue,
+    } = this.props;
 
     // we do not need to do anything if snackbar is currently open.
     // because remaining queues will be prosessed
@@ -47,7 +52,7 @@ export class SnackbarService extends React.Component<Props, State> {
         message: snackbarQueue[0],
         isOpen: true,
       });
-      this.props.reduceSnackbarQueue();
+      reduceSnackbarQueue();
     }
   };
 
@@ -62,14 +67,15 @@ export class SnackbarService extends React.Component<Props, State> {
   };
 
   render() {
+    const { isOpen, message } = this.state;
     return (
       <React.Fragment>
         <Snackbar
-          open={this.state.isOpen}
+          open={isOpen}
           autoHideDuration={5000}
           onClose={this.handleClose}
           onExited={this.handleExited}
-          message={this.state.message}
+          message={message}
           action={[
             <IconButton key="close" color="inherit" onClick={this.handleClose}>
               <CloseIcon />

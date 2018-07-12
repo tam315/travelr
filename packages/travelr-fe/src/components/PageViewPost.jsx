@@ -71,16 +71,18 @@ type Props = {
 
 export class PageViewPost extends React.Component<Props> {
   mapRef: ReactObjRef<'div'>;
+
   mapsShowPosition: MapsShowPosition;
+
   postId: number;
 
   constructor(props: Props) {
     super(props);
 
-    const { postId } = this.props.match.params;
+    const { match } = this.props;
 
-    if (postId) {
-      this.postId = Number(postId);
+    if (match.params.postId) {
+      this.postId = Number(match.params.postId);
     }
 
     // div element refs for google maps
@@ -88,17 +90,20 @@ export class PageViewPost extends React.Component<Props> {
   }
 
   componentDidMount = () => {
-    this.props.fetchPost(this.postId, this.props.user);
+    const { user, fetchPost } = this.props;
+    fetchPost(this.postId, user);
     this.refreshMap();
   };
 
   componentDidUpdate = (prevProps: Props) => {
-    if (prevProps.user.userId !== this.props.user.userId) {
-      this.props.fetchPost(this.postId, this.props.user);
+    const { user, posts, fetchPost } = this.props;
+
+    if (prevProps.user.userId !== user.userId) {
+      fetchPost(this.postId, user);
     }
 
     // do nothing if post is not fetched yet
-    const { currentPost } = this.props.posts;
+    const { currentPost } = posts;
     if (!currentPost) return;
 
     // do nothing if position is not changed
@@ -114,8 +119,10 @@ export class PageViewPost extends React.Component<Props> {
   };
 
   refreshMap = () => {
+    const { posts } = this.props;
+
     // do nothing if post is not fetched yet
-    const { currentPost } = this.props.posts;
+    const { currentPost } = posts;
     if (!currentPost) return;
 
     const { lng, lat } = currentPost;
@@ -133,16 +140,25 @@ export class PageViewPost extends React.Component<Props> {
   }
 
   handleLikeButtonClick = () => {
-    const { currentPost } = this.props.posts;
+    const {
+      user,
+      posts: { currentPost },
+      toggleLike,
+    } = this.props;
 
     if (currentPost) {
-      this.props.toggleLike(this.props.user, currentPost);
+      toggleLike(user, currentPost);
     }
   };
 
   render() {
     const { classes } = this.props;
-    const { currentPost } = this.props.posts;
+    const {
+      user,
+      posts: { currentPost },
+      createComment,
+      deleteComment,
+    } = this.props;
 
     if (!currentPost) return <div />;
     const {
@@ -167,7 +183,7 @@ export class PageViewPost extends React.Component<Props> {
             rightImage={firebaseUtils.getImageUrl(newImageUrl, '1024w')}
             skeleton={<div className={classes.skeleton}>loading...</div>}
           />
-          {userId === this.props.user.userId && (
+          {userId === user.userId && (
             <Link to={`/post/${postId}/edit`} className={classes.editButton}>
               <IconEdit />
             </Link>
@@ -200,10 +216,10 @@ export class PageViewPost extends React.Component<Props> {
           />
 
           <PageViewPostComments
-            user={this.props.user}
-            post={this.props.posts.currentPost}
-            createComment={this.props.createComment}
-            deleteComment={this.props.deleteComment}
+            user={user}
+            post={currentPost}
+            createComment={createComment}
+            deleteComment={deleteComment}
           />
         </div>
       </div>

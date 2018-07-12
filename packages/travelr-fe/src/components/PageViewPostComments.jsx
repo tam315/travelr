@@ -28,13 +28,14 @@ export class PageViewPostComments extends React.Component<Props, State> {
   };
 
   componentDidUpdate = () => {
-    if (!this.props.post) return;
+    const { post } = this.props;
+    const { comment } = this.state;
+
+    if (!post) return;
 
     // clear comment form if the comment is created successfully
-    const { comments } = this.props.post;
-    const commentCreated = comments.find(
-      comment => comment.comment === this.state.comment,
-    );
+    const { comments } = post;
+    const commentCreated = comments.find(item => item.comment === comment);
     if (commentCreated) this.setState({ comment: '' });
   };
 
@@ -43,20 +44,21 @@ export class PageViewPostComments extends React.Component<Props, State> {
   }
 
   handleCreateComment = () => {
-    if (!this.props.post) return;
+    const { user, post, createComment } = this.props;
+    const { comment } = this.state;
 
-    this.props.createComment(
-      this.props.user,
-      this.props.post.postId,
-      this.state.comment,
-    );
+    if (!post) return;
+
+    createComment(user, post.postId, comment);
   };
 
   handleCommentClick = (
     event: SyntheticEvent<HTMLElement>,
     comment: Comment,
   ) => {
-    if (comment.userId === this.props.user.userId) {
+    const { user } = this.props;
+
+    if (comment.userId === user.userId) {
       this.setState({
         deleteCommentMenuAnchor: event.currentTarget,
         deleteCommentMenuCommentId: comment.commentId,
@@ -72,16 +74,18 @@ export class PageViewPostComments extends React.Component<Props, State> {
   };
 
   handleDeleteComment = (comment: Comment) => {
-    const { user, post } = this.props;
+    const { user, post, deleteComment } = this.props;
 
     if (!post) return;
 
-    this.props.deleteComment(user, comment);
+    deleteComment(user, comment);
     this.handleDeleteCommentMenuClose();
   };
 
-  renderComments = (comments: Array<Comment>): Array<React.Element<any>> =>
-    comments.map(comment => (
+  renderComments = (comments: Array<Comment>): Array<React.Element<any>> => {
+    const { deleteCommentMenuAnchor, deleteCommentMenuCommentId } = this.state;
+
+    return comments.map(comment => (
       <React.Fragment key={comment.commentId}>
         <div
           className="comment"
@@ -99,8 +103,8 @@ export class PageViewPostComments extends React.Component<Props, State> {
           </Typography>
         </div>
         <Menu
-          anchorEl={this.state.deleteCommentMenuAnchor}
-          open={this.state.deleteCommentMenuCommentId === comment.commentId}
+          anchorEl={deleteCommentMenuAnchor}
+          open={deleteCommentMenuCommentId === comment.commentId}
           onClose={this.handleDeleteCommentMenuClose}
         >
           <MenuItem onClick={() => this.handleDeleteComment(comment)}>
@@ -109,20 +113,24 @@ export class PageViewPostComments extends React.Component<Props, State> {
         </Menu>
       </React.Fragment>
     ));
+  };
 
   render() {
-    if (!this.props.post) return <div />;
+    const { post } = this.props;
+    const { comment } = this.state;
 
-    const { comments } = this.props.post;
+    if (!post) return <div />;
+
+    const { comments } = post;
 
     return (
       <React.Fragment>
         <Input
           placeholder="コメントを書く"
-          value={this.state.comment}
+          value={comment}
           onChange={e => this.handleChange(e, 'comment')}
         />
-        {this.state.comment && (
+        {comment && (
           <Button
             onClick={this.handleCreateComment}
             color="primary"

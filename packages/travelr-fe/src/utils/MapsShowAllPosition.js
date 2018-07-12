@@ -9,10 +9,15 @@ type Marker = { setMap(any): any };
 
 class MapsShowAllPosition {
   isApiAndMapReady: boolean = false; // whether API and a map instance is ready
+
   map: HTMLElement; // reference to the maps div element
+
   markers: Array<Marker> = []; // reference marker instances
+
   markerCluster: any; // reference to the marker cluster
+
   infowindow: any; // reference to the info window which is currently opened
+
   queuedPosts: ?Array<Post>; // pending tasks because map was not initialized
 
   constructor(mapRef: HTMLElement) {

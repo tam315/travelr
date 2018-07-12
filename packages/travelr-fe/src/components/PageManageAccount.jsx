@@ -42,7 +42,6 @@ type Props = {
   updateUserInfo: (user: UserStore, newUserInfo: NewUserInfo) => void,
   signOutUser: void => any,
   deleteUser: (user: UserStore) => void,
-  addSnackbarQueue: (message: string) => void,
 };
 
 type State = {
@@ -53,16 +52,25 @@ type State = {
 export class PageManageAccount extends React.Component<Props, State> {
   state = {
     isEditMode: false,
-    displayName: this.props.user.displayName,
+    displayName: '',
   };
 
-  componentDidMount = async () => {};
+  componentDidMount = async () => {
+    const {
+      user: { displayName },
+    } = this.props;
+
+    this.setState({
+      displayName,
+    });
+  };
 
   componentDidUpdate = (prevProps: Props) => {
+    const { user } = this.props;
     // because the user information may not be fetched yet
     // when this component is mounted.
     const prevName = prevProps.user.displayName;
-    const currentName = this.props.user.displayName;
+    const currentName = user.displayName;
 
     if (prevName !== currentName) {
       this.setState({ displayName: currentName });
@@ -76,21 +84,25 @@ export class PageManageAccount extends React.Component<Props, State> {
   };
 
   handleDisplayNameChange = () => {
+    const { updateUserInfo } = this.props;
+    const { displayName } = this.state;
     this.setState({ isEditMode: false });
 
     const { user } = this.props;
     const newUserInfo = {
-      displayName: this.state.displayName,
+      displayName,
     };
-    this.props.updateUserInfo(user, newUserInfo);
+    updateUserInfo(user, newUserInfo);
   };
 
   handeSignOutUser = () => {
-    this.props.signOutUser();
+    const { signOutUser } = this.props;
+    signOutUser();
   };
 
   handleDeleteUser = async () => {
-    this.props.deleteUser(this.props.user);
+    const { user, deleteUser } = this.props;
+    deleteUser(user);
   };
 
   renderNameContainer = () => {

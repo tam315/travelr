@@ -60,7 +60,9 @@ type State = {
 
 export class PageEditPost extends React.Component<Props, State> {
   mapRef: ReactObjRef<'div'>;
+
   mapsPickPosition: MapsPickPosition;
+
   postId: number;
 
   constructor(props: Props) {
@@ -68,20 +70,23 @@ export class PageEditPost extends React.Component<Props, State> {
 
     this.mapRef = React.createRef();
 
-    const { postId } = this.props.match.params;
+    const { match } = this.props;
 
-    if (postId) {
-      this.postId = Number(postId);
+    if (match.params.postId) {
+      this.postId = Number(match.params.postId);
     }
   }
 
   componentDidMount = () => {
-    this.props.fetchPost(this.postId);
+    const { fetchPost } = this.props;
+    fetchPost(this.postId);
     this.refreshMap();
   };
 
   componentDidUpdate = (prevProps: any) => {
-    const { currentPost } = this.props.posts;
+    const {
+      posts: { currentPost },
+    } = this.props;
 
     // set state when the data is fetched from the API
     if (currentPost !== prevProps.posts.currentPost) {
@@ -102,8 +107,9 @@ export class PageEditPost extends React.Component<Props, State> {
   refreshMap = () => {
     // render the map if the DOM is ready and the map is not instantiated yet
     if (this.mapRef.current && !this.mapsPickPosition && this.state) {
+      const { lat, lng } = this.state;
       const options = {
-        defaultPosition: { lat: this.state.lat, lng: this.state.lng },
+        defaultPosition: { lat, lng },
       };
 
       this.mapsPickPosition = new MapsPickPosition(
@@ -127,15 +133,24 @@ export class PageEditPost extends React.Component<Props, State> {
 
   handleSubmit = () => {
     const { editPost, user } = this.props;
+    const {
+      postId,
+      oldImageUrl,
+      newImageUrl,
+      description,
+      shootDate,
+      lng,
+      lat,
+    } = this.state;
 
     const postToEdit: PostToEdit = {
-      postId: this.state.postId,
-      oldImageUrl: this.state.oldImageUrl,
-      newImageUrl: this.state.newImageUrl,
-      description: this.state.description,
-      shootDate: this.state.shootDate,
-      lng: this.state.lng,
-      lat: this.state.lat,
+      postId,
+      oldImageUrl,
+      newImageUrl,
+      description,
+      shootDate,
+      lng,
+      lat,
     };
 
     editPost(user, postToEdit);
@@ -143,11 +158,12 @@ export class PageEditPost extends React.Component<Props, State> {
 
   handleDeletePost = () => {
     const { deletePost, user } = this.props;
+    const { postId } = this.state;
 
     // eslint-disable-next-line
     if (confirm('本当に削除してよろしいですか？')) {
       // TODO: dialog
-      deletePost(user, this.state.postId);
+      deletePost(user, postId);
     }
   };
 

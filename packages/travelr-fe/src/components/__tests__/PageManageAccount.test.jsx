@@ -6,7 +6,6 @@ import IconEdit from '@material-ui/icons/Edit';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { DUMMY_USER_STORE } from '../../config/dummies';
-import firebaseUtils from '../../utils/firebaseUtils';
 import { PageManageAccount } from '../PageManageAccount';
 
 jest.mock('../../utils/firebaseUtils');

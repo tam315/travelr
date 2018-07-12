@@ -9,10 +9,15 @@ type Marker = { setMap: any => any, setPosition: any => any };
 
 class MapsPickPosition {
   callback: (position: LatLng) => any; // called when the pin position is changed
+
   defaultPosition: LatLng;
+
   handleMapClick: any => any;
+
   handleMarkerDragend: any => any;
+
   map: any; // reference to map instance
+
   marker: Marker; // reference marker instances
 
   constructor(

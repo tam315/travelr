@@ -20,7 +20,9 @@ type Props = {
 
 export const ProgressService = (props: Props) => {
   const { classes } = props;
-  const { tasksInProgress } = props.app;
+  const {
+    app: { tasksInProgress },
+  } = props;
 
   return (
     <div className={classes.root}>

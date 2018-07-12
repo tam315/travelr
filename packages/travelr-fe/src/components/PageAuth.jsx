@@ -61,22 +61,25 @@ export class PageAuth extends React.Component<Props, State> {
   };
 
   signInWithGoogle = () => {
-    this.props.signInWithGoogle();
+    const { signInWithGoogle } = this.props;
+    signInWithGoogle();
   };
 
   signInWithFacebook = async () => {
-    this.props.signInWithFacebook();
+    const { signInWithFacebook } = this.props;
+    signInWithFacebook();
   };
 
   signInWithEmail = async () => {
+    const { signInWithEmail } = this.props;
     const { email, password } = this.state;
-    this.props.signInWithEmail(email, password);
+    signInWithEmail(email, password);
   };
 
   signUpWithEmail = async () => {
+    const { signUpWithEmail } = this.props;
     const { email, password, displayName } = this.state;
-
-    this.props.signUpWithEmail(email, password, displayName);
+    signUpWithEmail(email, password, displayName);
   };
 
   handleChange(e: SyntheticInputEvent<>, stateKayName: string) {
@@ -86,26 +89,28 @@ export class PageAuth extends React.Component<Props, State> {
 
   renderSignUp = () => {
     const { classes } = this.props;
+    const { displayName, email, password } = this.state;
+
     return (
       <React.Fragment>
         <TextField
           label="ニックネーム"
           margin="normal"
-          value={this.state.displayName}
+          value={displayName}
           onChange={e => this.handleChange(e, 'displayName')}
         />
 
         <TextField
           label="メールアドレス"
           margin="normal"
-          value={this.state.email}
+          value={email}
           onChange={e => this.handleChange(e, 'email')}
         />
         <TextField
           label="パスワード"
           type="password"
           margin="normal"
-          value={this.state.password}
+          value={password}
           onChange={e => this.handleChange(e, 'password')}
         />
 
@@ -136,20 +141,21 @@ export class PageAuth extends React.Component<Props, State> {
 
   renderSignIn = () => {
     const { classes } = this.props;
+    const { email, password } = this.state;
 
     return (
       <React.Fragment>
         <TextField
           label="メールアドレス"
           margin="normal"
-          value={this.state.email}
+          value={email}
           onChange={e => this.handleChange(e, 'email')}
         />
         <TextField
           label="パスワード"
           type="password"
           margin="normal"
-          value={this.state.password}
+          value={password}
           onChange={e => this.handleChange(e, 'password')}
         />
 
@@ -169,6 +175,7 @@ export class PageAuth extends React.Component<Props, State> {
 
   render = () => {
     const { classes } = this.props;
+    const { mailAuthMode } = this.state;
 
     return (
       <div>
@@ -211,8 +218,8 @@ export class PageAuth extends React.Component<Props, State> {
           <div className={classes.spacer} />
           <Hr text="or" />
 
-          {this.state.mailAuthMode === 'signup' && this.renderSignUp()}
-          {this.state.mailAuthMode === 'signin' && this.renderSignIn()}
+          {mailAuthMode === 'signup' && this.renderSignUp()}
+          {mailAuthMode === 'signin' && this.renderSignIn()}
         </Grid>
       </div>
     );

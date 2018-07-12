@@ -30,30 +30,32 @@ type Props = {
 
 export class App extends React.Component<Props> {
   componentDidMount = async () => {
+    const { startProgress, finishProgress, initAuth } = this.props;
+
     // display progress bar for every fetch request
     fetchIntercept.register({
       request: (url, config) => {
-        this.props.startProgress('fetch');
+        startProgress('fetch');
         return [url, config];
       },
 
       requestError: error => {
-        this.props.finishProgress('fetch');
+        finishProgress('fetch');
         return Promise.reject(error);
       },
 
       response: response => {
-        this.props.finishProgress('fetch');
+        finishProgress('fetch');
         return response;
       },
 
       responseError: error => {
-        this.props.finishProgress('fetch');
+        finishProgress('fetch');
         return Promise.reject(error);
       },
     });
 
-    this.props.initAuth();
+    initAuth();
   };
 
   // these lines are inevitable.
@@ -63,21 +65,27 @@ export class App extends React.Component<Props> {
   renderPageAuth = (itemProps: any) => (
     <PageAuth {...itemProps} {...this.props} />
   );
+
   renderPageViewPosts = (itemProps: any) => (
     <PageViewPosts {...itemProps} {...this.props} />
   );
+
   renderPageCreatePost = (itemProps: any) => (
     <PageCreatePost {...itemProps} {...this.props} />
   );
+
   renderPageEditPost = (itemProps: any) => (
     <PageEditPost {...itemProps} {...this.props} />
   );
+
   renderPageViewPost = (itemProps: any) => (
     <PageViewPost {...itemProps} {...this.props} />
   );
+
   renderPageManagePosts = (itemProps: any) => (
     <PageManagePosts {...itemProps} {...this.props} />
   );
+
   renderPageManageAccount = (itemProps: any) => (
     <PageManageAccount {...itemProps} {...this.props} />
   );

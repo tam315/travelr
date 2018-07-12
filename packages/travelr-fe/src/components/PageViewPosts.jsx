@@ -47,7 +47,9 @@ export class PageViewPosts extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    const { pathname } = this.props.location;
+    const {
+      location: { pathname },
+    } = this.props;
 
     // switch child component based on pathname
     const defaultTabNumber = pathTabnumberMapping[pathname];
@@ -59,10 +61,13 @@ export class PageViewPosts extends React.Component<Props, State> {
   }
 
   componentDidMount = () => {
-    this.props.fetchAllPosts({ limit: 100 });
+    const { fetchAllPosts } = this.props;
+    fetchAllPosts({ limit: 100 });
   };
 
   handleTabChange = (event: SyntheticEvent<HTMLElement>, tabNumber: number) => {
+    const { history } = this.props;
+
     this.setState({
       tabNumber,
     });
@@ -72,7 +77,7 @@ export class PageViewPosts extends React.Component<Props, State> {
     if (tabNumber === 1) redirectTo = '/all-map';
 
     // synchronize URL with the currently displayed component
-    if (redirectTo) this.props.history.push(redirectTo);
+    if (redirectTo) history.push(redirectTo);
   };
 
   render() {
@@ -80,11 +85,14 @@ export class PageViewPosts extends React.Component<Props, State> {
       classes,
       posts: { all },
     } = this.props;
+
+    const { tabNumber, isFilterOpen } = this.state;
+
     return (
       <div>
         <Paper>
           <Tabs
-            value={this.state.tabNumber}
+            value={tabNumber}
             onChange={this.handleTabChange}
             fullWidth
             indicatorColor="primary"
@@ -99,18 +107,18 @@ export class PageViewPosts extends React.Component<Props, State> {
         </Paper>
 
         {/* grid view */}
-        {this.state.tabNumber === 0 && (
+        {tabNumber === 0 && (
           <div>
             <PageViewPostsGrid posts={all} />
           </div>
         )}
 
         {/* map view */}
-        {this.state.tabNumber === 1 && <PageViewPostsMap posts={all} />}
+        {tabNumber === 1 && <PageViewPostsMap posts={all} />}
 
         {/* filter */}
         <Filter
-          isOpen={this.state.isFilterOpen}
+          isOpen={isFilterOpen}
           onClose={(criterion: FilterCriterion) => {
             this.setState({ isFilterOpen: false });
             // TODO: call fetchAllPosts
@@ -124,10 +132,8 @@ export class PageViewPosts extends React.Component<Props, State> {
           aria-label="search"
           className={classes.filterButton}
           color="primary"
-          disabled={this.state.isFilterOpen}
-          onClick={() =>
-            this.setState({ isFilterOpen: !this.state.isFilterOpen })
-          }
+          disabled={isFilterOpen}
+          onClick={() => this.setState({ isFilterOpen: !isFilterOpen })}
           variant="fab"
         >
           <IconSearch />

@@ -75,33 +75,41 @@ export class PageManagePosts extends React.Component<Props, State> {
   };
 
   componentDidMount = () => {
-    this.props.fetchMyPosts(this.props.user);
+    const { user, fetchMyPosts } = this.props;
+    fetchMyPosts(user);
   };
 
   componentDidUpdate = (prevProps: Props) => {
-    if (prevProps.user.userId !== this.props.user.userId) {
-      this.props.fetchMyPosts(this.props.user);
+    const { user, fetchMyPosts } = this.props;
+
+    if (prevProps.user.userId !== user.userId) {
+      fetchMyPosts(user);
     }
   };
 
   onSelectMyPostsAll = () => {
+    const { selectMyPostsAll } = this.props;
+
     this.handleMenuClose();
-    this.props.selectMyPostsAll();
+    selectMyPostsAll();
   };
 
   onSelectMyPostsReset = () => {
+    const { selectMyPostsReset } = this.props;
+
     this.handleMenuClose();
-    this.props.selectMyPostsReset();
+    selectMyPostsReset();
   };
 
   onDeletePosts = () => {
     const {
       user,
       posts: { myPostsSelected },
+      deletePosts,
     } = this.props;
 
     this.handleMenuClose();
-    this.props.deletePosts(user, myPostsSelected);
+    deletePosts(user, myPostsSelected);
   };
 
   handleMenuClose = () => {

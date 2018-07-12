@@ -73,11 +73,6 @@ type State = {
 };
 
 export class Filter extends React.Component<Props, State> {
-  static defaultProps = {
-    isOpen: false,
-    onClose: null,
-  };
-
   state = {
     shootDate: {
       min: 0,
@@ -165,6 +160,7 @@ export class Filter extends React.Component<Props, State> {
           <InputRange
             maxValue={max}
             minValue={min}
+            // eslint-disable-next-line
             value={this.state[stateKeyName]}
             onChange={value => this.setState({ [stateKeyName]: value })}
             formatLabel={formatLabel}
@@ -176,6 +172,14 @@ export class Filter extends React.Component<Props, State> {
 
   render() {
     const { isOpen, classes } = this.props;
+    const {
+      placeName,
+      radius,
+      displayName,
+      description,
+      isListGroup1Open,
+      isListGroup2Open,
+    } = this.state;
 
     const menu = (
       <React.Fragment>
@@ -213,24 +217,18 @@ export class Filter extends React.Component<Props, State> {
 
         <ListItem
           button
-          onClick={() =>
-            this.setState({ isListGroup1Open: !this.state.isListGroup1Open })
-          }
+          onClick={() => this.setState({ isListGroup1Open: !isListGroup1Open })}
         >
           <ListItemText primary="場所で探す" />
-          {this.state.isListGroup1Open ? (
-            <IconExpandLess />
-          ) : (
-            <IconExpandMore />
-          )}
+          {isListGroup1Open ? <IconExpandLess /> : <IconExpandMore />}
         </ListItem>
-        <Collapse in={this.state.isListGroup1Open} timeout="auto" unmountOnExit>
+        <Collapse in={isListGroup1Open} timeout="auto" unmountOnExit>
           <List>
             <ListItem>
               <TextField
                 placeholder="市町村名・建物名"
                 onChange={e => this.handleChange(e, 'placeName')}
-                value={this.state.placeName}
+                value={placeName}
               />
               <Typography variant="body1">から</Typography>
             </ListItem>
@@ -238,7 +236,7 @@ export class Filter extends React.Component<Props, State> {
               <TextField
                 placeholder="半径"
                 onChange={e => this.handleChange(e, 'radius')}
-                value={this.state.radius}
+                value={radius}
               />
               <Typography variant="body1">km以内</Typography>
             </ListItem>
@@ -249,31 +247,25 @@ export class Filter extends React.Component<Props, State> {
 
         <ListItem
           button
-          onClick={() =>
-            this.setState({ isListGroup2Open: !this.state.isListGroup2Open })
-          }
+          onClick={() => this.setState({ isListGroup2Open: !isListGroup2Open })}
         >
           <ListItemText primary="その他の条件で探す" />
-          {this.state.isListGroup2Open ? (
-            <IconExpandLess />
-          ) : (
-            <IconExpandMore />
-          )}
+          {isListGroup2Open ? <IconExpandLess /> : <IconExpandMore />}
         </ListItem>
-        <Collapse in={this.state.isListGroup2Open} timeout="auto" unmountOnExit>
+        <Collapse in={isListGroup2Open} timeout="auto" unmountOnExit>
           <List>
             <ListItem>
               <TextField
                 placeholder="ユーザ名で探す"
                 onChange={e => this.handleChange(e, 'displayName')}
-                value={this.state.displayName}
+                value={displayName}
               />
             </ListItem>
             <ListItem>
               <TextField
                 placeholder="説明文で探す"
                 onChange={e => this.handleChange(e, 'description')}
-                value={this.state.description}
+                value={description}
               />
             </ListItem>
           </List>

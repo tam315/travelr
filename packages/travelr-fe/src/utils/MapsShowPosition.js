@@ -12,6 +12,7 @@ type Position = {
 
 class MapsShowPosition {
   map: any; // reference to map instance
+
   marker: Marker; // reference marker instances
 
   constructor(mapRef: HTMLElement, position: Position) {

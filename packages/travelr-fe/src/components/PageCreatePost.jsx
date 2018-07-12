@@ -55,9 +55,13 @@ export class PageCreatePost extends React.Component<Props, State> {
     lng: null,
     lat: null,
   };
+
   oldImage: ReactObjRef<'input'>;
+
   newImage: ReactObjRef<'input'>;
+
   mapRef: ReactObjRef<'div'>;
+
   mapsPickPosition: MapsPickPosition;
 
   constructor(props: Props) {
@@ -78,6 +82,8 @@ export class PageCreatePost extends React.Component<Props, State> {
   };
 
   getCurrentPosition = () => {
+    const { addSnackbarQueue } = this.props;
+
     if ('geolocation' in navigator) {
       const onSuccess = geom => {
         this.mapsPickPosition.setPosition({
@@ -90,13 +96,13 @@ export class PageCreatePost extends React.Component<Props, State> {
         });
       };
       const onError = () => {
-        this.props.addSnackbarQueue(
+        addSnackbarQueue(
           '位置情報を取得できませんでした。GPSの許可設定を確認してください。',
         );
       };
       navigator.geolocation.getCurrentPosition(onSuccess, onError);
     } else {
-      this.props.addSnackbarQueue('gpsが利用できない環境です。');
+      addSnackbarQueue('gpsが利用できない環境です。');
     }
   };
 
@@ -113,7 +119,7 @@ export class PageCreatePost extends React.Component<Props, State> {
   };
 
   handleSubmit = async () => {
-    const { user } = this.props;
+    const { user, addSnackbarQueue, createPost } = this.props;
     const {
       oldImageFilePath,
       newImageFilePath,
@@ -131,7 +137,7 @@ export class PageCreatePost extends React.Component<Props, State> {
       !lng ||
       !lat
     ) {
-      return this.props.addSnackbarQueue('入力項目が不足しています。');
+      return addSnackbarQueue('入力項目が不足しています。');
     }
 
     const extentionOf = {
@@ -139,7 +145,7 @@ export class PageCreatePost extends React.Component<Props, State> {
       'image/png': '.png',
     };
     if (!this.oldImage.current || !this.newImage.current) {
-      return this.props.addSnackbarQueue('画像ファイルを取得できませんでした');
+      return addSnackbarQueue('画像ファイルを取得できませんでした');
     }
 
     const oldFile = this.oldImage.current.files[0];
@@ -152,7 +158,7 @@ export class PageCreatePost extends React.Component<Props, State> {
       await firebaseUtils.uploadImageFile(oldFile, oldFileName, user);
       await firebaseUtils.uploadImageFile(newFile, newFileName, user);
     } catch (err) {
-      return this.props.addSnackbarQueue('画像のアップロードに失敗しました');
+      return addSnackbarQueue('画像のアップロードに失敗しました');
     }
 
     const newPost: NewPost = {
@@ -164,19 +170,24 @@ export class PageCreatePost extends React.Component<Props, State> {
       lat,
     };
 
-    return this.props.createPost(user, newPost);
+    return createPost(user, newPost);
   };
 
   render() {
     const { classes } = this.props;
+    const {
+      oldImageFilePath,
+      newImageFilePath,
+      description,
+      shootDate,
+    } = this.state;
+
     return (
       <div className={classes.root}>
         <Typography variant="title">写真を投稿する</Typography>
         <FormControl required>
           <FormLabel component="legend">昔の写真</FormLabel>
-          {this.state.oldImageFilePath && (
-            <Typography>{this.state.oldImageFilePath}</Typography>
-          )}
+          {oldImageFilePath && <Typography>{oldImageFilePath}</Typography>}
           <Button variant="contained" component="label">
             ファイルを選択
             <input
@@ -185,16 +196,14 @@ export class PageCreatePost extends React.Component<Props, State> {
               style={{ display: 'none' }}
               type="file"
               accept="image/*"
-              value={this.state.oldImageFilePath}
+              value={oldImageFilePath}
               onChange={e => this.handleChange(e, 'oldImageFilePath')}
             />
           </Button>
         </FormControl>
         <FormControl component="fieldset" required>
           <FormLabel component="legend">今の写真</FormLabel>
-          {this.state.newImageFilePath && (
-            <Typography>{this.state.newImageFilePath}</Typography>
-          )}
+          {newImageFilePath && <Typography>{newImageFilePath}</Typography>}
           <Button variant="contained" component="label">
             ファイルを選択
             <input
@@ -203,7 +212,7 @@ export class PageCreatePost extends React.Component<Props, State> {
               style={{ display: 'none' }}
               type="file"
               accept="image/*"
-              value={this.state.newImageFilePath}
+              value={newImageFilePath}
               onChange={e => this.handleChange(e, 'newImageFilePath')}
             />
           </Button>
@@ -213,7 +222,7 @@ export class PageCreatePost extends React.Component<Props, State> {
           <Input
             placeholder="説明文"
             multiline
-            value={this.state.description}
+            value={description}
             onChange={e => this.handleChange(e, 'description')}
           />
         </FormControl>
@@ -221,7 +230,7 @@ export class PageCreatePost extends React.Component<Props, State> {
           <FormLabel component="legend">昔の写真の撮影日</FormLabel>
           <TextField
             type="date"
-            value={this.state.shootDate}
+            value={shootDate}
             onChange={e => this.handleChange(e, 'shootDate')}
           />
         </FormControl>

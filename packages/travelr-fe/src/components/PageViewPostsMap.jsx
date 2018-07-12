@@ -27,6 +27,7 @@ type Props = {
 
 class PageViewPostsMap extends React.Component<Props> {
   mapRef: ReactObjRef<'div'>;
+
   mapsShowAllPosition: MapsShowAllPosition;
 
   constructor(props: Props) {
@@ -36,14 +37,16 @@ class PageViewPostsMap extends React.Component<Props> {
   }
 
   componentDidMount = () => {
+    const { posts } = this.props;
     if (this.mapRef.current) {
       this.mapsShowAllPosition = new MapsShowAllPosition(this.mapRef.current);
-      this.mapsShowAllPosition.placePosts(this.props.posts);
+      this.mapsShowAllPosition.placePosts(posts);
     }
   };
 
   componentDidUpdate = () => {
-    this.mapsShowAllPosition.placePosts(this.props.posts);
+    const { posts } = this.props;
+    this.mapsShowAllPosition.placePosts(posts);
   };
 
   render = () => {
