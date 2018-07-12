@@ -21,7 +21,7 @@ const { authRef } = firebaseUtils;
 
 const actions = {};
 
-export const errorNotifier = (err, dispatch) => {
+export const errorNotifier = (err: any, dispatch: Dispatch<any>) => {
   if (!err) {
     dispatch({
       type: actionTypes.ADD_SNACKBAR_QUEUE,

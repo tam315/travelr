@@ -50,8 +50,8 @@ describe('initAuth', () => {
   const thunk = actions.initAuth();
 
   test("if the user doesn't have token", async () => {
-    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue();
-    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue();
+    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue(null);
+    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue(null);
     await thunk(mock.dispatch);
 
     // getOrCreateUserInfo() will NOT be called
@@ -60,8 +60,10 @@ describe('initAuth', () => {
 
   test('if the user is redirected', async () => {
     fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
-    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue({});
-    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue();
+    firebaseUtils.getRedirectedUserAuthSeed = jest
+      .fn()
+      .mockResolvedValue({ token: 'token', displayName: 'displayName' });
+    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue(null);
     await thunk(mock.dispatch);
 
     // getOrCreateUserInfo() will be called
@@ -70,8 +72,10 @@ describe('initAuth', () => {
 
   test('if the user already has the token', async () => {
     fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
-    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue();
-    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue({});
+    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue(null);
+    firebaseUtils.getCurrentUserAuthSeed = jest
+      .fn()
+      .mockResolvedValue({ token: 'token', displayName: 'displayName' });
     await thunk(mock.dispatch);
 
     // getOrCreateUserInfo() will be called
