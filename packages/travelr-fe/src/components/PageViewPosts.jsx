@@ -66,6 +66,18 @@ export class PageViewPosts extends React.Component<Props, State> {
     fetchAllPosts();
   };
 
+  componentDidUpdate = prevProps => {
+    const {
+      location: { pathname },
+    } = this.props;
+
+    if (pathname !== prevProps.location.pathname) {
+      this.setState({
+        tabNumber: pathTabnumberMapping[pathname],
+      });
+    }
+  };
+
   handleTabChange = (event: SyntheticEvent<HTMLElement>, tabNumber: number) => {
     const { history } = this.props;
 

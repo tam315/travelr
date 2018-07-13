@@ -62,7 +62,7 @@ class Header extends React.Component<Props, State> {
       <React.Fragment>
         <AppBar>
           <Toolbar>
-            <Button component={Link} to="/" className={classes.title}>
+            <Button component={Link} to="/all-grid" className={classes.title}>
               <Typography variant="title" color="inherit">
                 Travelr
               </Typography>
