@@ -1,5 +1,5 @@
 // @flow
-import GridListTile from '@material-ui/core/GridListTile';
+import { Link } from 'react-router-dom';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { DUMMY_POSTS } from '../../config/dummies';
@@ -21,7 +21,7 @@ describe('PageViewPostsGrid component', () => {
   });
 
   test('shows tiles', () => {
-    expect(wrapper.find(GridListTile)).toHaveLength(DUMMY_POSTS.length);
+    expect(wrapper.find(Link)).toHaveLength(DUMMY_POSTS.length);
   });
 
   test('shows StatusBadges', () => {
@@ -54,6 +54,6 @@ describe('PageViewPostsGrid component', () => {
       />,
     ).dive();
 
-    expect(wrapper.find(GridListTile)).toHaveLength(2);
+    expect(wrapper.find(Link)).toHaveLength(2);
   });
 });
