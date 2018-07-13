@@ -224,6 +224,7 @@ export const DUMMY_USER_STORE_UNAUTHORIZED: UserStore = {
   token: '',
   displayName: '',
   isAdmin: false,
+  emailVerified: false,
   earnedLikes: 0,
   earnedComments: 0,
   earnedViews: 0,

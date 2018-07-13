@@ -104,6 +104,7 @@ export type UserStore = {
   token: string,
   displayName: string,
   isAdmin: boolean,
+  emailVerified: boolean,
   earnedLikes: number,
   earnedComments: number,
   earnedViews: number,
