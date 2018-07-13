@@ -30,7 +30,8 @@ describe('MapsShowAllPosition', () => {
   });
 
   test("loads API file if it's not ready", () => {
-    const mapsShowAllPosition = new MapsShowAllPosition(mapRef); /* eslint-disable-line */
+    //  eslint-disable-next-line
+    const mapsShowAllPosition = new MapsShowAllPosition(mapRef); /**/
 
     expect(loadJS).toHaveBeenCalledTimes(1);
     expect(loadJS.mock.calls[0][0]).toContain('maps.googleapis.com/maps/api/');
@@ -38,7 +39,8 @@ describe('MapsShowAllPosition', () => {
 
   test('initialize the maps if the API is already available', () => {
     setGoogleMapsApiMock();
-    const mapsShowAllPosition = new MapsShowAllPosition(mapRef); /* eslint-disable-line */
+    //  eslint-disable-next-line
+    const mapsShowAllPosition = new MapsShowAllPosition(mapRef);
 
     expect(google.maps.Map).toHaveBeenCalledTimes(1);
   });
