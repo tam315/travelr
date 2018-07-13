@@ -381,7 +381,7 @@ describe('sendEmailVerification', () => {
   };
   const thunk = actions.sendEmailVerification();
 
-  test.only('send email verification', async () => {
+  test('send email verification', async () => {
     firebaseUtils.authRef.currentUser = { sendEmailVerification: jest.fn() };
     await thunk(mock.dispatch);
 
