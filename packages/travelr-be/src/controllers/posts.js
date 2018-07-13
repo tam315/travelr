@@ -106,6 +106,8 @@ exports.getPosts = async (req, res) => {
     query += whereQuery;
   }
 
+  query += ' ORDER BY created_at DESC';
+
   if (limit) {
     const limitQuery = pgPromise.as.format(' LIMIT $1', +limit);
     query += limitQuery;
