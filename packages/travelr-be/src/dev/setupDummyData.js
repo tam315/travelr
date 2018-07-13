@@ -100,6 +100,9 @@ const setupDummyPosts = async () => {
         config.SRID,
       ]),
       view_count: getRandomInt(1000, 0),
+      created_at: new Date(
+        getRandomInt(1527814486286, 1468377278000),
+      ).toLocaleDateString(),
     });
   }
 
@@ -114,6 +117,7 @@ const setupDummyPosts = async () => {
       mod: '^', // format as raw text
     },
     'view_count',
+    'created_at',
   ];
   const query = pgPromise.helpers.insert(posts, column, 'posts');
 

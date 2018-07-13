@@ -98,6 +98,7 @@ describe('GET /posts', async () => {
     expect(res.body[0]).toHaveProperty('lng');
     expect(res.body[0]).toHaveProperty('lat');
     expect(res.body[0]).toHaveProperty('viewCount');
+    expect(res.body[0]).toHaveProperty('createdAt');
     expect(res.body[0]).toHaveProperty('displayName');
     expect(res.body[0]).toHaveProperty('likedCount');
     expect(res.body[0]).toHaveProperty('commentsCount');
@@ -288,6 +289,7 @@ describe('GET /posts/:postId', async () => {
     expect(res.body).toHaveProperty('lng');
     expect(res.body).toHaveProperty('lat');
     expect(res.body).toHaveProperty('viewCount');
+    expect(res.body).toHaveProperty('createdAt');
     expect(res.body).toHaveProperty('displayName');
     expect(res.body).toHaveProperty('likedCount');
     expect(res.body).toHaveProperty('commentsCount');

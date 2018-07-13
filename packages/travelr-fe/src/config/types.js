@@ -24,6 +24,7 @@ export type Post = {
   lng: number,
   lat: number,
   viewCount: number,
+  createdAt: string,
   displayName: string,
   likedCount: number,
   commentsCount: number,
