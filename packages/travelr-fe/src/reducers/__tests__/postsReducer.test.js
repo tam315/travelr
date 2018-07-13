@@ -1,16 +1,7 @@
 // @flow
-import postsReducer from '../postsReducer';
+import postsReducer, { INITIAL_STATE } from '../postsReducer';
 import types from '../../actions/types';
 import { DUMMY_POSTS, DUMMY_POSTS_IDS } from '../../config/dummies';
-import type { PostsStore } from '../../config/types';
-
-const INITIAL_STATE: PostsStore = {
-  all: [],
-  allFilter: {},
-  myPosts: [],
-  myPostsSelected: [],
-  currentPost: null,
-};
 
 describe('posts reducer', () => {
   test('FETCH_ALL_POSTS_SUCCESS', () => {
@@ -24,7 +15,7 @@ describe('posts reducer', () => {
       all: DUMMY_POSTS,
     };
 
-    expect(postsReducer(undefined, action)).toEqual(expected);
+    expect(postsReducer(INITIAL_STATE, action)).toEqual(expected);
   });
 
   test('FETCH_POST_START', () => {
@@ -68,7 +59,7 @@ describe('posts reducer', () => {
       currentPost: DUMMY_POSTS[0],
     };
 
-    expect(postsReducer(undefined, action)).toEqual(expected);
+    expect(postsReducer(INITIAL_STATE, action)).toEqual(expected);
   });
 
   test('FETCH_MY_POSTS_SUCCESS', () => {
@@ -82,7 +73,7 @@ describe('posts reducer', () => {
       myPosts: DUMMY_POSTS,
     };
 
-    expect(postsReducer(undefined, action)).toEqual(expected);
+    expect(postsReducer(INITIAL_STATE, action)).toEqual(expected);
   });
 
   test('DELETE_POSTS_SUCCESS', () => {
@@ -95,7 +86,20 @@ describe('posts reducer', () => {
       myPostsSelected: [],
     };
 
-    expect(postsReducer(undefined, action)).toEqual(expected);
+    expect(postsReducer(INITIAL_STATE, action)).toEqual(expected);
+  });
+
+  test('INCREASE_LIMIT_COUNT_OF_GRID', () => {
+    const action = {
+      type: types.INCREASE_LIMIT_COUNT_OF_GRID,
+    };
+
+    const expected = {
+      ...INITIAL_STATE,
+      limitCountOfGrid: 42,
+    };
+
+    expect(postsReducer(INITIAL_STATE, action)).toEqual(expected);
   });
 
   test('SELECT_MY_POSTS', () => {
@@ -109,7 +113,7 @@ describe('posts reducer', () => {
       myPostsSelected: [1, 2, 3, 4, 5],
     };
 
-    const currentState = postsReducer(undefined, action);
+    const currentState = postsReducer(INITIAL_STATE, action);
 
     expect(currentState).toEqual(expected);
 

@@ -2,9 +2,10 @@
 import type { PostsStore } from '../config/types';
 import actionTypes from '../actions/types';
 
-const INITIAL_STATE: PostsStore = {
+export const INITIAL_STATE: PostsStore = {
   all: [],
   allFilter: {},
+  limitCountOfGrid: 21,
   myPosts: [],
   myPostsSelected: [],
   currentPost: null,
@@ -47,7 +48,12 @@ const postsReducer = (
         myPostsSelected: [],
       };
     }
-
+    case actionTypes.INCREASE_LIMIT_COUNT_OF_GRID: {
+      return {
+        ...state,
+        limitCountOfGrid: state.limitCountOfGrid + 21,
+      };
+    }
     case actionTypes.SELECT_MY_POSTS: {
       const postIds = action.payload;
       const { myPostsSelected } = state;

@@ -33,6 +33,7 @@ const pathTabnumberMapping = {
 type Props = {
   classes: any,
   fetchAllPosts(criterion: FilterCriterion): any,
+  increaseLimitCountOfGrid: void => void,
   history: RouterHistory,
   location: Location,
   posts: PostsStore,
@@ -62,7 +63,7 @@ export class PageViewPosts extends React.Component<Props, State> {
 
   componentDidMount = () => {
     const { fetchAllPosts } = this.props;
-    fetchAllPosts({ limit: 100 });
+    fetchAllPosts();
   };
 
   handleTabChange = (event: SyntheticEvent<HTMLElement>, tabNumber: number) => {
@@ -83,13 +84,14 @@ export class PageViewPosts extends React.Component<Props, State> {
   render() {
     const {
       classes,
-      posts: { all },
+      posts: { all, limitCountOfGrid },
+      increaseLimitCountOfGrid,
     } = this.props;
 
     const { tabNumber, isFilterOpen } = this.state;
 
     return (
-      <div>
+      <React.Fragment>
         <Paper>
           <Tabs
             value={tabNumber}
@@ -109,7 +111,11 @@ export class PageViewPosts extends React.Component<Props, State> {
         {/* grid view */}
         {tabNumber === 0 && (
           <div>
-            <PageViewPostsGrid posts={all} />
+            <PageViewPostsGrid
+              posts={all}
+              limitCountOfGrid={limitCountOfGrid}
+              increaseLimitCountOfGrid={increaseLimitCountOfGrid}
+            />
           </div>
         )}
 
@@ -138,7 +144,7 @@ export class PageViewPosts extends React.Component<Props, State> {
         >
           <IconSearch />
         </Button>
-      </div>
+      </React.Fragment>
     );
   }
 }

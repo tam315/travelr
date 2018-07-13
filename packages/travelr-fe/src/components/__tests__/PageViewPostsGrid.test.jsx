@@ -12,7 +12,11 @@ describe('PageViewPostsGrid component', () => {
 
   beforeEach(() => {
     wrapper = shallow(
-      <PageViewPostsGrid posts={DUMMY_POSTS} classes={{}} />,
+      <PageViewPostsGrid
+        posts={DUMMY_POSTS}
+        limitCountOfGrid={21}
+        classes={{}}
+      />,
     ).dive();
   });
 
@@ -39,5 +43,17 @@ describe('PageViewPostsGrid component', () => {
     expect(wrapper.find({ to: `/post/${DUMMY_POSTS[0].postId}` })).toHaveLength(
       1,
     );
+  });
+
+  test('limit tile counts', () => {
+    wrapper = shallow(
+      <PageViewPostsGrid
+        posts={DUMMY_POSTS}
+        limitCountOfGrid={2}
+        classes={{}}
+      />,
+    ).dive();
+
+    expect(wrapper.find(GridListTile)).toHaveLength(2);
   });
 });

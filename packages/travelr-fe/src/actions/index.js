@@ -266,6 +266,10 @@ actions.deleteUser = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   }
 };
 
+actions.increaseLimitCountOfGrid = () => ({
+  type: actionTypes.INCREASE_LIMIT_COUNT_OF_GRID,
+});
+
 actions.signInWithGoogle = () => async (dispatch: Dispatch<any>) => {
   dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
   const provider = new firebase.auth.GoogleAuthProvider();
