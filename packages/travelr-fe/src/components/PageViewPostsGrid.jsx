@@ -4,6 +4,7 @@ import GridListTile from '@material-ui/core/GridListTile';
 import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import firebaseUtils from '../utils/firebaseUtils';
 import StatusBadge from './StatusBadge';
 import type { Post } from '../config/types';
 
@@ -55,7 +56,10 @@ class PageViewPostsGrid extends React.Component<Props> {
               component={Link}
               to={`/post/${tile.postId}`}
             >
-              <img src={tile.oldImageUrl} alt={tile.description} />
+              <img
+                src={firebaseUtils.getImageUrl(tile.oldImageUrl, '96w')}
+                alt={tile.description}
+              />
 
               <div className={classes.likedCount}>
                 <StatusBadge icon="like" count={tile.likedCount} size="small" />
