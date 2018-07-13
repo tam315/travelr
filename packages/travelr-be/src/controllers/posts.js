@@ -1,8 +1,10 @@
+/* eslint camelcase:0 */
+
 const pgPromise = require('pg-promise')();
 const { db } = require('../helper/db');
 const config = require('../../config');
 
-exports.getPosts = async (req, res, next) => {
+exports.getPosts = async (req, res) => {
   const {
     user_id,
     display_name,
@@ -52,7 +54,7 @@ exports.getPosts = async (req, res, next) => {
   }
 
   if (lng && lat && radius) {
-    radiusAsMeter = radius * 1000;
+    const radiusAsMeter = radius * 1000;
 
     const criteria = pgPromise.as.format(
       'ST_DWithin(geom, ST_GeomFromText($1), $2, true)',
@@ -101,12 +103,12 @@ exports.getPosts = async (req, res, next) => {
 
   if (criterions.length) {
     const whereQuery = ` WHERE ${criterions.join(' AND ')}`;
-    query = query + whereQuery;
+    query += whereQuery;
   }
 
   if (limit) {
     const limitQuery = pgPromise.as.format(' LIMIT $1', +limit);
-    query = query + limitQuery;
+    query += limitQuery;
   }
 
   try {
@@ -134,7 +136,7 @@ exports.getPosts = async (req, res, next) => {
   }
 };
 
-exports.createPost = async (req, res, next) => {
+exports.createPost = async (req, res) => {
   const { userId } = req;
   const {
     oldImageUrl,
@@ -145,8 +147,9 @@ exports.createPost = async (req, res, next) => {
     lat,
   } = req.body;
 
-  if (!(oldImageUrl && newImageUrl && shootDate && lng && lat))
+  if (!(oldImageUrl && newImageUrl && shootDate && lng && lat)) {
     return res.status(400).send('Some key is missing in body');
+  }
 
   const post = {
     user_id: userId,
@@ -176,13 +179,13 @@ exports.createPost = async (req, res, next) => {
   try {
     const createdPost = await db.one(`${query} RETURNING *`);
     const response = { postId: createdPost.id };
-    res.status(200).json(response);
+    return res.status(200).json(response);
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
 
-exports.deletePosts = async (req, res, next) => {
+exports.deletePosts = async (req, res) => {
   const { userId } = req;
   const postIds = req.body;
 
@@ -196,16 +199,17 @@ exports.deletePosts = async (req, res, next) => {
       [userId, postIds],
     );
 
-    if (result.length < postIds.length)
+    if (result.length < postIds.length) {
       return res.status(400).send('some posts were not deleted');
+    }
 
-    res.sendStatus(200);
+    return res.sendStatus(200);
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
 
-exports.getPost = async (req, res, next) => {
+exports.getPost = async (req, res) => {
   const { postId } = req.params;
   const { user_id } = req.query;
 
@@ -268,13 +272,13 @@ exports.getPost = async (req, res, next) => {
       response.likeStatus = likeStatus;
     }
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
 
-exports.updatePost = async (req, res, next) => {
+exports.updatePost = async (req, res) => {
   const { userId } = req;
   const { postId } = req.params;
   const {
@@ -346,13 +350,13 @@ exports.updatePost = async (req, res, next) => {
       commentsCount: +post.comments_count,
     };
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
 
-exports.deletePost = async (req, res, next) => {
+exports.deletePost = async (req, res) => {
   const { userId } = req;
   const { postId } = req.params;
 
@@ -367,7 +371,7 @@ exports.deletePost = async (req, res, next) => {
   }
 };
 
-exports.getComments = async (req, res, next) => {
+exports.getComments = async (req, res) => {
   const { postId } = req.params;
 
   try {
@@ -391,7 +395,7 @@ exports.getComments = async (req, res, next) => {
   }
 };
 
-exports.createComment = async (req, res, next) => {
+exports.createComment = async (req, res) => {
   const { userId } = req;
   const { postId } = req.params;
   const { comment } = req.body;
@@ -403,13 +407,13 @@ exports.createComment = async (req, res, next) => {
       'INSERT INTO comments(post_id, user_id, datetime, comment) VALUES ($1, $2, $3, $4) RETURNING *',
       [postId, userId, new Date().toISOString(), comment],
     );
-    res.sendStatus(200);
+    return res.sendStatus(200);
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
 
-exports.toggleLike = async (req, res, next) => {
+exports.toggleLike = async (req, res) => {
   const { userId } = req;
   const { postId } = req.params;
 
@@ -435,13 +439,13 @@ exports.toggleLike = async (req, res, next) => {
       response = { likeStatus: true };
     }
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
 
-exports.incrementViewCount = async (req, res, next) => {
+exports.incrementViewCount = async (req, res) => {
   const { postId } = req.params;
 
   try {
@@ -458,7 +462,7 @@ exports.incrementViewCount = async (req, res, next) => {
   }
 };
 
-exports.updateComment = async (req, res, next) => {
+exports.updateComment = async (req, res) => {
   const { userId } = req;
   const { commentId } = req.params;
   const { comment } = req.body;
@@ -466,24 +470,24 @@ exports.updateComment = async (req, res, next) => {
   if (!comment) return res.status(400).send('body missing');
 
   const query = pgPromise.as.format(
-    `UPDATE comments SET comment = $1 WHERE user_id = $2 AND id = $3 RETURNING *`,
+    'UPDATE comments SET comment = $1 WHERE user_id = $2 AND id = $3 RETURNING *',
     [comment, userId, commentId],
   );
 
   try {
     await db.one(query);
-    res.sendStatus(200);
+    return res.sendStatus(200);
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
 
-exports.deleteComment = async (req, res, next) => {
+exports.deleteComment = async (req, res) => {
   const { userId } = req;
   const { commentId } = req.params;
 
   try {
-    const comment = await db.one(
+    await db.one(
       'DELETE FROM comments WHERE user_id = $1 AND id = $2 RETURNING *',
       [userId, commentId],
     );

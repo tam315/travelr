@@ -1,8 +1,8 @@
 const dbHelper = require('../helper/db');
 
-const db = dbHelper.db;
+const { db } = dbHelper;
 
-exports.getOrCreateUser = async (req, res, next) => {
+exports.getOrCreateUser = async (req, res) => {
   const { userId } = req;
   const { displayName } = req.body;
 
@@ -26,7 +26,7 @@ exports.getOrCreateUser = async (req, res, next) => {
       userId,
     );
 
-    res.status(200).send({
+    return res.status(200).send({
       userId: user.id,
       displayName: user.display_name,
       isAdmin: user.is_admin,
@@ -35,11 +35,11 @@ exports.getOrCreateUser = async (req, res, next) => {
       earnedComments: +user.earned_comments,
     });
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
 
-exports.getUser = async (req, res, next) => {
+exports.getUser = async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -50,7 +50,7 @@ exports.getUser = async (req, res, next) => {
 
     if (!user) return res.status(400).send('user not found');
 
-    res.status(200).send({
+    return res.status(200).send({
       userId: user.id,
       displayName: user.display_name,
       isAdmin: user.is_admin,
@@ -59,11 +59,11 @@ exports.getUser = async (req, res, next) => {
       earnedComments: +user.earned_comments,
     });
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
 
-exports.updateUser = async (req, res, next) => {
+exports.updateUser = async (req, res) => {
   const { userId } = req;
   const { displayName } = req.body;
 
@@ -72,32 +72,14 @@ exports.updateUser = async (req, res, next) => {
 
   // check if the param is valid
   const userIdParams = req.params.userId;
-  if (userId !== userIdParams)
+  if (userId !== userIdParams) {
     return res.status(400).send("param doe's not match authenticated user");
+  }
 
   try {
-    const user = await db.one(
+    await db.one(
       'UPDATE users SET display_name = $1 WHERE id = $2 RETURNING *',
       [displayName, userId],
-    );
-    res.sendStatus(200);
-  } catch (err) {
-    res.status(400).send(err.message);
-  }
-};
-
-exports.deleteUser = async (req, res, next) => {
-  const { userId } = req;
-
-  // check if the param is valid
-  const userIdParams = req.params.userId;
-  if (userId !== userIdParams)
-    return res.status(400).send("param doe's not match authenticated user");
-
-  try {
-    const user = await db.one(
-      'DELETE FROM users WHERE id = $1 RETURNING *;',
-      userId,
     );
     return res.sendStatus(200);
   } catch (err) {
@@ -105,9 +87,25 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 
-exports.getUserByToken = async (req, res, next) => {
+exports.deleteUser = async (req, res) => {
   const { userId } = req;
-  const { token } = req.params;
+
+  // check if the param is valid
+  const userIdParams = req.params.userId;
+  if (userId !== userIdParams) {
+    return res.status(400).send("param doe's not match authenticated user");
+  }
+
+  try {
+    await db.one('DELETE FROM users WHERE id = $1 RETURNING *;', userId);
+    return res.sendStatus(200);
+  } catch (err) {
+    return res.status(400).send(err.message);
+  }
+};
+
+exports.getUserByToken = async (req, res) => {
+  const { userId } = req;
 
   try {
     const user = await db.oneOrNone(
@@ -117,7 +115,7 @@ exports.getUserByToken = async (req, res, next) => {
 
     if (!user) return res.status(400).send('user not found');
 
-    res.status(200).send({
+    return res.status(200).send({
       userId: user.id,
       displayName: user.display_name,
       isAdmin: user.is_admin,
@@ -126,6 +124,6 @@ exports.getUserByToken = async (req, res, next) => {
       earnedComments: +user.earned_comments,
     });
   } catch (err) {
-    res.status(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 };

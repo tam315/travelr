@@ -1,6 +1,8 @@
-const loremIpsum = require('lorem-ipsum');
-const prompt = require('prompt');
-const randomString = require('random-string');
+/* eslint no-console: 0 */
+
+const loremIpsum = require('lorem-ipsum'); /* eslint-disable-line */
+const prompt = require('prompt'); /* eslint-disable-line */
+const randomString = require('random-string'); /* eslint-disable-line */
 const pgPromise = require('pg-promise')();
 
 const dbHelper = require('../helper/db');
@@ -12,36 +14,11 @@ const POST_COUNT = 10000;
 const COMMENT_COUNT = 30000;
 const LIKE_COUNT = 30000;
 
-const db = dbHelper.db;
+const { db } = dbHelper;
 
-const actions = {
-  1: () => setupDummyUsers(),
-  2: () => setupDummyPosts(),
-  3: () => setupDummyLikes(),
-  4: () => setupDummyComments(),
-  9: () => process.exit(0),
-};
+const getUsersFromDB = () => db.many('SELECT * FROM users');
 
-// prompt
-prompt.start();
-console.log('What do you want:');
-console.log('1: Setup dummy users');
-console.log('2: Setup dummy posts');
-console.log('3: Setup dummy likes');
-console.log('4: Setup dummy comments');
-console.log('9: Exit');
-
-prompt.get(['choice'], (err, result) => {
-  actions[Number(result.choice)]();
-});
-
-const getUsersFromDB = () => {
-  return db.many('SELECT * FROM users');
-};
-
-const getPostsFromDB = () => {
-  return db.many('SELECT * FROM posts');
-};
+const getPostsFromDB = () => db.many('SELECT * FROM posts');
 
 const setupDummyUsers = async () => {
   const users = [];
@@ -79,7 +56,7 @@ const setupDummyPosts = async () => {
     'http://via.placeholder.com/500x200',
   ];
 
-  let posts = [];
+  const posts = [];
 
   const users = await getUsersFromDB(db);
 
@@ -139,17 +116,17 @@ const setupDummyLikes = async () => {
     const postId = posts[getRandomInt(posts.length - 1)].id;
     const userId = users[getRandomInt(users.length - 1)].id;
 
-    if (memory[userId] && memory[userId][postId]) continue;
+    if (!(memory[userId] && memory[userId][postId])) {
+      if (!memory[userId]) memory[userId] = {};
 
-    if (!memory[userId]) memory[userId] = {};
+      memory[userId][postId] = true;
 
-    memory[userId][postId] = true;
-
-    likes.push({
-      post_id: postId,
-      user_id: userId,
-    });
-    count += 1;
+      likes.push({
+        post_id: postId,
+        user_id: userId,
+      });
+      count += 1;
+    }
   }
 
   const column = ['post_id', 'user_id'];
@@ -186,3 +163,24 @@ const setupDummyComments = async () => {
 
   console.log('succeed addition of comments');
 };
+
+const actions = {
+  1: () => setupDummyUsers(),
+  2: () => setupDummyPosts(),
+  3: () => setupDummyLikes(),
+  4: () => setupDummyComments(),
+  9: () => process.exit(0),
+};
+
+// prompt
+prompt.start();
+console.log('What do you want:');
+console.log('1: Setup dummy users');
+console.log('2: Setup dummy posts');
+console.log('3: Setup dummy likes');
+console.log('4: Setup dummy comments');
+console.log('9: Exit');
+
+prompt.get(['choice'], (err, result) => {
+  actions[Number(result.choice)]();
+});

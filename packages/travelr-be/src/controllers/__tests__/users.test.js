@@ -3,6 +3,7 @@ const request = require('supertest');
 
 const app = require('../../index');
 const dbHelper = require('../../helper/db');
+
 const { db } = dbHelper;
 
 const {
@@ -128,7 +129,7 @@ describe('PUT /users/:userId', () => {
 
   test("returns 400 and message if url param doesn't match the authented user's id", async () => {
     const res = await request(app)
-      .put(`/users/someInvalidId`)
+      .put('/users/someInvalidId')
       .set('authorization', DUMMY_TOKEN)
       .send({ displayName: DUMMY_USER_DISPLAY_NAME });
 
@@ -157,7 +158,7 @@ describe('DELETE /users/:userId', () => {
 
   test("returns 400 and message if url param doesn't match the authented user's id", async () => {
     const res = await request(app)
-      .delete(`/users/someInvalidId`)
+      .delete('/users/someInvalidId')
       .set('authorization', DUMMY_TOKEN);
 
     expect(res.status).toBe(400);
@@ -180,7 +181,7 @@ describe('DELETE /users/:userId', () => {
 });
 
 describe('GET /users/token', () => {
-  const baseRequest = () => request(app).get(`/users/token`);
+  const baseRequest = () => request(app).get('/users/token');
 
   test('returns 401 if user is not authorized', async () => {
     const res = await baseRequest();
