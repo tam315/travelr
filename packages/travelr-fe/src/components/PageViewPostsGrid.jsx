@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import firebaseUtils from '../utils/firebaseUtils';
-import BottomScrollListener from './BottomScrollListener';
+import BottomScrollListener from 'react-bottom-scroll-listener';
 import StatusBadge from './StatusBadge';
 import type { Post } from '../config/types';
 
