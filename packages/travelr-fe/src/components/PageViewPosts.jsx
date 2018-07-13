@@ -62,8 +62,10 @@ export class PageViewPosts extends React.Component<Props, State> {
   }
 
   componentDidMount = () => {
-    const { fetchAllPosts } = this.props;
-    fetchAllPosts();
+    const { posts, fetchAllPosts } = this.props;
+    if (!posts.all.length) {
+      fetchAllPosts();
+    }
   };
 
   componentDidUpdate = prevProps => {
