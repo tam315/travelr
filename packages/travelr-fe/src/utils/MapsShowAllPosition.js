@@ -20,10 +20,12 @@ class MapsShowAllPosition {
 
   queuedPosts: ?Array<Post>; // pending tasks because map was not initialized
 
-  constructor(mapRef: HTMLElement) {
-    this.queuedPosts = null;
-
+  constructor(mapRef: HTMLElement, onPostClick: (postId: number) => void) {
     const mapInitializer = this.mapInitializerGenerator(mapRef);
+
+    window.mapsShowAllPositionOnPostClick = onPostClick;
+
+    this.queuedPosts = null;
 
     // load the API if it is not loaded.
     // pass the callback to initialize the map.
@@ -101,17 +103,27 @@ class MapsShowAllPosition {
         map: this.map,
       });
 
-      // infowindow for each post
-      // (attach to marker in order to remove memory allocation when marker is deleted)
-      marker.infowindow = new google.maps.InfoWindow({
-        content: `<img src="${post.oldImageUrl}" height="50" width="50" />`,
-      });
-
       // show the infowindow for each post when the marker is cliked
       marker.addListener('click', () => {
         this.closePreviousInfowindow();
+
         // preserve the info window for later closing
-        this.infowindow = marker.infowindow;
+        this.infowindow = new google.maps.InfoWindow();
+        this.infowindow.setContent(
+          `
+          <img src="${
+            post.oldImageUrl
+          }" height="96" width="96" onclick="window.mapsShowAllPositionOnPostClick(${
+            post.postId
+          })" />
+
+          <img src="${
+            post.newImageUrl
+          }" height="96" width="96" onclick="window.mapsShowAllPositionOnPostClick(${
+            post.postId
+          })" />
+          `,
+        );
         this.infowindow.open(this.map, marker);
       });
 

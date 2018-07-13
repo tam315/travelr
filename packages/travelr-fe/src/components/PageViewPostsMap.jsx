@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import MapsShowAllPosition from '../utils/MapsShowAllPosition';
 import type { Post } from '../config/types';
+import history from '../utils/history';
 
 type ReactObjRef<ElementType: React.ElementType> = {
   current: null | React.ElementRef<ElementType>,
@@ -38,8 +39,13 @@ class PageViewPostsMap extends React.Component<Props> {
 
   componentDidMount = () => {
     const { posts } = this.props;
+    const onPostClick = postId => history.push(`/post/${postId}`);
+
     if (this.mapRef.current) {
-      this.mapsShowAllPosition = new MapsShowAllPosition(this.mapRef.current);
+      this.mapsShowAllPosition = new MapsShowAllPosition(
+        this.mapRef.current,
+        onPostClick,
+      );
       this.mapsShowAllPosition.placePosts(posts);
     }
   };

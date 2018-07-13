@@ -10,9 +10,11 @@ const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
 
 describe('MapsShowAllPosition', () => {
   let mapRef;
+  let mockCallback;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCallback = jest.fn();
 
     document.body.innerHTML =
       '<div>' +
@@ -84,5 +86,13 @@ describe('MapsShowAllPosition', () => {
 
     // queue should be reset
     expect(mapsShowAllPosition.queuedPosts).toBe(null);
+  });
+
+  test('set callback as a global to call it from infowindow', () => {
+    // eslint-disable-next-line
+    const mapsShowAllPosition = new MapsShowAllPosition(mapRef, mockCallback);
+
+    // queue should be reset
+    expect(window.mapsShowAllPositionOnPostClick).toBe(mockCallback);
   });
 });
