@@ -208,6 +208,7 @@ export const DUMMY_APP_STORE: AppStore = {
 export const DUMMY_POSTS_STORE: PostsStore = {
   all: DUMMY_POSTS,
   allFilter: DUMMY_FILTER_CRITERION,
+  limitCountOfGrid: 21,
   myPosts: DUMMY_POSTS,
   myPostsSelected: [],
   currentPost: DUMMY_POSTS[0],

@@ -95,6 +95,7 @@ export type AppStore = {
 export type PostsStore = {
   all: Array<Post>,
   allFilter: any, // TODO specify this
+  limitCountOfGrid: number,
   myPosts: Array<Post>,
   myPostsSelected: Array<number>,
   currentPost: ?Post,

@@ -32,7 +32,7 @@ const pathTabnumberMapping = {
 
 type Props = {
   classes: any,
-  fetchAllPosts(criterion: FilterCriterion): any,
+  fetchAllPosts: (criterion?: FilterCriterion) => any,
   increaseLimitCountOfGrid: void => void,
   history: RouterHistory,
   location: Location,
@@ -68,7 +68,7 @@ export class PageViewPosts extends React.Component<Props, State> {
     }
   };
 
-  componentDidUpdate = prevProps => {
+  componentDidUpdate = (prevProps: Props) => {
     const {
       location: { pathname },
     } = this.props;

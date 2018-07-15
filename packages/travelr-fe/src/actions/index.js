@@ -396,7 +396,7 @@ actions.signOutUser = () => async (dispatch: Dispatch<any>) => {
   }
 };
 
-actions.fetchAllPosts = (criterion: FilterCriterion = {}) => async (
+actions.fetchAllPosts = (criterion?: FilterCriterion = {}) => async (
   dispatch: Dispatch<any>,
 ) => {
   const {
