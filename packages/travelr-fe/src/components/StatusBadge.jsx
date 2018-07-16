@@ -3,8 +3,8 @@ import Typography from '@material-ui/core/Typography';
 import IconComment from '@material-ui/icons/Comment';
 import IconView from '@material-ui/icons/Visibility';
 import React from 'react';
-import iconLike from '../icons/like.svg';
-import iconLikeFilled from '../icons/likeFilled.svg';
+import IconLike from '../icons/like.svg';
+import IconLikeFilled from '../icons/likeFilled.svg';
 
 type Props = {
   active?: boolean,
@@ -50,7 +50,6 @@ function StatusBadge(props: Props) {
     icon: {
       display: 'block',
       height: 8,
-      width: 8,
       marginRight: iconMargin,
     },
   };
@@ -81,15 +80,12 @@ function StatusBadge(props: Props) {
   switch (icon) {
     case 'like':
       iconElement = active ? (
-        <img
-          alt="filled like icon"
-          src={iconLikeFilled}
+        <IconLikeFilled
+          fill="#3F51B5"
           style={isNormalSize ? stylesNormalSize.icon : stylesSmallSize.icon}
         />
       ) : (
-        <img
-          alt="not filled like icon"
-          src={iconLike}
+        <IconLike
           style={isNormalSize ? stylesNormalSize.icon : stylesSmallSize.icon}
         />
       );
