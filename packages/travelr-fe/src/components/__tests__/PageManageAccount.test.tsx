@@ -32,7 +32,6 @@ describe('PageManageAccount component', () => {
         signOutUser={mock.actions.signOutUser}
         deleteUser={mock.actions.deleteUser}
         sendEmailVerification={mock.actions.sendEmailVerification}
-        // $FlowIgnore
         user={DUMMY_USER_STORE}
         classes={{}}
       />,

@@ -32,7 +32,6 @@ export const ProgressService = (props: Props) => {
         }}
         unmountOnExit
       >
-        {/* $FlowIgnore */}
         <LinearProgress color="secondary" />
       </Fade>
     </div>

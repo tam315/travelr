@@ -43,7 +43,6 @@ describe('PageViewPost component', () => {
     wrapper = shallow(
       <PageViewPost
         classes={{}}
-        // $FlowIgnore
         match={mockMatch}
         user={DUMMY_USER_STORE}
         posts={DUMMY_POSTS_STORE}

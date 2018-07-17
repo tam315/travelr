@@ -30,7 +30,6 @@ describe('PageCreatePost component', () => {
 
     wrapper = shallow(
       <PageCreatePost
-        // $FlowIgnore
         classes={{}}
         user={DUMMY_USER_STORE}
         createPost={mock.createPost}

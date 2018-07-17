@@ -1,4 +1,5 @@
 export const setGoogleMapsApiMock = () => {
+  // @ts-ignore
   google = {
     maps: {
       LatLng: jest.fn(),
@@ -15,11 +16,13 @@ export const setGoogleMapsApiMock = () => {
       InfoWindow: jest.fn(),
     },
   };
+  // @ts-ignore
   MarkerClusterer = jest.fn().mockImplementation(() => ({
     clearMarkers: jest.fn(),
   }));
 };
 
 export const deleteGoogleMapsApiMock = () => {
+  // @ts-ignore
   google = undefined;
 };
