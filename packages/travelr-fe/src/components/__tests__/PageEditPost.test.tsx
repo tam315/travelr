@@ -36,7 +36,6 @@ describe('PageEditPost component', () => {
     wrapper = shallow(
       <PageEditPost
         classes={{}}
-        // $FlowIgnore
         match={mockMatch}
         user={DUMMY_USER_STORE}
         posts={DUMMY_POSTS_STORE}
