@@ -35,7 +35,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', 'ts', 'tsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   // settings for webpack-serve
   serve: {
