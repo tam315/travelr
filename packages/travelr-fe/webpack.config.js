@@ -2,7 +2,7 @@ const history = require('connect-history-api-fallback');
 const convert = require('koa-connect');
 
 module.exports = {
-  entry: './src/index.jsx',
+  entry: './src/index.tsx',
   output: {
     filename: 'bundle.js',
   },

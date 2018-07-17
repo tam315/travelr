@@ -2,7 +2,7 @@ module.exports = {
   setupTestFrameworkScriptFile: '<rootDir>src/setupTests.ts',
   moduleNameMapper: {
     '^.*\\.(css|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
-      '<rootDir>/src/config/svgStub.js',
+      '<rootDir>/src/config/svgStub.ts',
   },
   globals: {
     google: true,

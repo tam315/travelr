@@ -1136,6 +1136,14 @@
   dependencies:
     "@types/node" "*"
 
+"@types/googlemaps@^3.30.11":
+  version "3.30.11"
+  resolved "https://registry.yarnpkg.com/@types/googlemaps/-/googlemaps-3.30.11.tgz#9a1e0d63120136047be2a7fdbfbd2e7061a50ee6"
+
+"@types/history@*":
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/@types/history/-/history-4.6.2.tgz#12cfaba693ba20f114ed5765467ff25fdf67ddb0"
+
 "@types/jest@^23.0.0":
   version "23.3.0"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.0.tgz#5dd70033b616a6228042244ebd992f6426808810"
@@ -1164,6 +1172,13 @@
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.0.6.tgz#f1a65a4e7be8ed5d123f8b3b9eacc913e35a1a3c"
   dependencies:
     "@types/node" "*"
+    "@types/react" "*"
+
+"@types/react-router@^4.0.29":
+  version "4.0.29"
+  resolved "https://registry.yarnpkg.com/@types/react-router/-/react-router-4.0.29.tgz#1a906dd99abf21297a5b7cf003d1fd36e7a92069"
+  dependencies:
+    "@types/history" "*"
     "@types/react" "*"
 
 "@types/react-transition-group@^2.0.8":
@@ -5793,7 +5808,7 @@ jest-worker@^23.2.0:
   dependencies:
     merge-stream "^1.0.1"
 
-jest@^23.4.0:
+jest@^23.4.0, jest@^23.4.1:
   version "23.4.1"
   resolved "https://registry.yarnpkg.com/jest/-/jest-23.4.1.tgz#39550c72f3237f63ae1b434d8d122cdf6fa007b6"
   dependencies:
