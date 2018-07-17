@@ -63,3 +63,7 @@ globals:
 
 plugins:
   - flowtype
+
+settings:
+  import/resolver:
+    "eslint-import-resolver-typescript": true
