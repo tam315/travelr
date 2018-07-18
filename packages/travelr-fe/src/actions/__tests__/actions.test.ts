@@ -862,7 +862,6 @@ describe('startProgress', () => {
     const action = actions.startProgress('signin');
     expect(action).toEqual({
       type: types.START_PROGRESS,
-      payload: 'signin',
     });
   });
 });
@@ -872,7 +871,6 @@ describe('finishProgress', () => {
     const action = actions.finishProgress('signin');
     expect(action).toEqual({
       type: types.FINISH_PROGRESS,
-      payload: 'signin',
     });
   });
 });

@@ -12,7 +12,6 @@ import {
   NewPost,
   NewUserInfo,
   Post,
-  TaskName,
   UserStore,
 } from '../config/types';
 import { Dispatch } from 'redux';
@@ -634,14 +633,12 @@ actions.addSnackbarQueue = (message: string) => ({
   payload: message,
 });
 
-actions.startProgress = (taskName: TaskName) => ({
+actions.startProgress = () => ({
   type: actionTypes.START_PROGRESS,
-  payload: taskName,
 });
 
-actions.finishProgress = (taskName: TaskName) => ({
+actions.finishProgress = () => ({
   type: actionTypes.FINISH_PROGRESS,
-  payload: taskName,
 });
 
 export default actions;
