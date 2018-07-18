@@ -1,5 +1,5 @@
-import { UserStore } from '../config/types';
 import actionTypes from '../actions/types';
+import { UserStore } from '../config/types';
 
 export const INITIAL_STATE: UserStore = {
   userId: '',

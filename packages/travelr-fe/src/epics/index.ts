@@ -1,6 +1,6 @@
 import { ActionsObservable, combineEpics, ofType } from 'redux-observable';
 import { from, of } from 'rxjs';
-import { catchError, filter, flatMap, map, mapTo } from 'rxjs/operators';
+import { catchError, flatMap, map, mapTo } from 'rxjs/operators';
 import types from '../actions/types';
 import config from '../config';
 import firebaseUtils from '../utils/firebaseUtils';

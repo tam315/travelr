@@ -1,5 +1,5 @@
-import MapsShowPosition from '../MapsShowPosition';
 import loadJS from '../loadJS';
+import MapsShowPosition from '../MapsShowPosition';
 import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
 
 jest.mock('../loadJS');

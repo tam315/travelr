@@ -5,8 +5,8 @@ import { applyMiddleware, createStore } from 'redux';
 import { createEpicMiddleware } from 'redux-observable';
 import reduxThunk from 'redux-thunk';
 import App from './containers/App';
-import reducer from './reducers/index';
 import rootEpic from './epics';
+import reducer from './reducers/index';
 
 const epicMiddleware = createEpicMiddleware();
 

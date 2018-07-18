@@ -3,9 +3,9 @@ import {
   Comment,
   FilterCriterion,
   NewPost,
-  PostToEdit,
   Post,
   PostsStore,
+  PostToEdit,
   UserStore,
 } from './types';
 

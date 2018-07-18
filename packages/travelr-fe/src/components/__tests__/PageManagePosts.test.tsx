@@ -6,8 +6,8 @@ import { shallow } from 'enzyme';
 import * as React from 'react';
 import {
   DUMMY_POSTS,
-  DUMMY_USER_STORE,
   DUMMY_POSTS_STORE,
+  DUMMY_USER_STORE,
 } from '../../config/dummies';
 import { PageManagePosts } from '../PageManagePosts';
 

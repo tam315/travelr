@@ -2,7 +2,6 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { DUMMY_POSTS } from '../../config/dummies';
-
 import MapsShowAllPosition from '../../utils/MapsShowAllPosition';
 import PageViewPostsMap from '../PageViewPostsMap';
 

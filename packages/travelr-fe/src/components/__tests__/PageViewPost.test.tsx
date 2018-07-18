@@ -4,9 +4,9 @@ import * as React from 'react';
 import ReactCompareImage from 'react-compare-image';
 import {
   DUMMY_POSTS,
+  DUMMY_POSTS_STORE,
   DUMMY_USER_STORE,
   DUMMY_USER_STORE_UNAUTHORIZED,
-  DUMMY_POSTS_STORE,
 } from '../../config/dummies';
 import { PageViewPost } from '../PageViewPost';
 import PageViewPostComments from '../PageViewPostComments';

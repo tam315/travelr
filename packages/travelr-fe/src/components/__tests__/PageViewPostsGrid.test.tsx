@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
 import { shallow } from 'enzyme';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { DUMMY_POSTS } from '../../config/dummies';
 import PageViewPostsGrid from '../PageViewPostsGrid';
 

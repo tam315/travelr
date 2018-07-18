@@ -1,20 +1,19 @@
 import * as firebase from 'firebase/app';
+import { Dispatch } from 'redux';
 import uuid from 'uuid/v4';
 import config from '../config';
-import firebaseUtils from '../utils/firebaseUtils';
-import history from '../utils/history';
-import actionTypes from './types';
 import {
   AuthSeed,
   Comment,
-  PostToEdit,
   FilterCriterion,
   NewPost,
   NewUserInfo,
   Post,
+  PostToEdit,
   UserStore,
 } from '../config/types';
-import { Dispatch } from 'redux';
+import firebaseUtils from '../utils/firebaseUtils';
+import actionTypes from './types';
 
 const { authRef } = firebaseUtils;
 

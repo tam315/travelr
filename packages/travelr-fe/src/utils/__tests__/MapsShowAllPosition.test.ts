@@ -1,6 +1,6 @@
-import MapsShowAllPosition from '../MapsShowAllPosition';
-import loadJS from '../loadJS';
 import { DUMMY_POSTS } from '../../config/dummies';
+import loadJS from '../loadJS';
+import MapsShowAllPosition from '../MapsShowAllPosition';
 import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
 
 jest.mock('../loadJS');

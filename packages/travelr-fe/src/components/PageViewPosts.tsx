@@ -1,8 +1,5 @@
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
+import { Button, Paper, Tab, Tabs } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
 import IconGrid from '@material-ui/icons/GridOn';
 import IconMap from '@material-ui/icons/Place';
 import IconSearch from '@material-ui/icons/Search';

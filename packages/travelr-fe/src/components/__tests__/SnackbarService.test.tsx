@@ -1,7 +1,7 @@
-import { shallow, mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import * as React from 'react';
-import { SnackbarService } from '../SnackbarService';
 import { DUMMY_APP_STORE } from '../../config/dummies';
+import { SnackbarService } from '../SnackbarService';
 
 describe('SnackbarService component', () => {
   let wrapper;

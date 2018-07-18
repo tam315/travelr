@@ -1,7 +1,7 @@
-import { PageAuth } from '../PageAuth';
+import { Button, Typography } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import * as React from 'react';
-import { Button, Typography } from '@material-ui/core';
+import { PageAuth } from '../PageAuth';
 
 jest.mock('../../utils/firebaseUtils');
 

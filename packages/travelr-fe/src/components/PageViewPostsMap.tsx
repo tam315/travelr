@@ -1,8 +1,8 @@
 import { withStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import MapsShowAllPosition from '../utils/MapsShowAllPosition';
 import { Post } from '../config/types';
 import history from '../utils/history';
+import MapsShowAllPosition from '../utils/MapsShowAllPosition';
 
 // header height is:
 //   64px if the window width is same or bigger than 600px

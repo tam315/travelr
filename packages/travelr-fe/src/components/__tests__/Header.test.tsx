@@ -3,11 +3,11 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import { shallow } from 'enzyme';
 import * as React from 'react';
-import Header from '../Header';
 import {
   DUMMY_USER_STORE,
   DUMMY_USER_STORE_UNAUTHORIZED,
 } from '../../config/dummies';
+import Header from '../Header';
 
 describe('Header component', () => {
   describe('if user is signed out', () => {

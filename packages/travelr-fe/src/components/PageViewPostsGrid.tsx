@@ -1,10 +1,10 @@
 import { withStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import firebaseUtils from '../utils/firebaseUtils';
 import BottomScrollListener from 'react-bottom-scroll-listener';
-import StatusBadge from './StatusBadge';
+import { Link } from 'react-router-dom';
 import { Post } from '../config/types';
+import firebaseUtils from '../utils/firebaseUtils';
+import StatusBadge from './StatusBadge';
 
 const MAX_WIDTH = 528;
 

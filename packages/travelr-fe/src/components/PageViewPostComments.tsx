@@ -1,8 +1,6 @@
-import { Button, Input, Menu, MenuItem } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import { Button, Input, Menu, MenuItem, Typography } from '@material-ui/core';
 import * as React from 'react';
-import { Comment, UserStore, Post } from '../config/types';
+import { Comment, Post, UserStore } from '../config/types';
 
 type Props = {
   user: UserStore;

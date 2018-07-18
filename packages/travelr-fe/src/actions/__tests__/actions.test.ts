@@ -10,7 +10,6 @@ import {
 } from '../../config/dummies';
 // @ts-ignore
 import firebaseUtils from '../../utils/firebaseUtils';
-import history from '../../utils/history';
 import actions from '../index';
 import types from '../types';
 

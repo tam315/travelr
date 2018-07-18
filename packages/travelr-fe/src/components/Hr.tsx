@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
+import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import * as React from 'react';
 
 const styles = theme => ({
   withInnerText: {

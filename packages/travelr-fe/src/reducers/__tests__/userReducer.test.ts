@@ -1,6 +1,6 @@
-import userReducer, { INITIAL_STATE } from '../userReducer';
 import actionTypes from '../../actions/types';
 import { DUMMY_USER_STORE } from '../../config/dummies';
+import userReducer, { INITIAL_STATE } from '../userReducer';
 
 describe('user reducer', () => {
   test('GET_OR_CREATE_USER_INFO_SUCCESS', () => {
