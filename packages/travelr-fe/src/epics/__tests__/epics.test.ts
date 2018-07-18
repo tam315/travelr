@@ -40,6 +40,10 @@ const epicTestUtil = (
   });
 };
 
+beforeEach(() => {
+  jest.resetAllMocks();
+});
+
 describe('initAuthEpic', () => {
   const assertionExecuted = jest.fn();
   const authSeed: AuthSeed = {
@@ -47,10 +51,6 @@ describe('initAuthEpic', () => {
     displayName: 'displayName',
     emailVerified: true,
   };
-
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
 
   test('if the user is redirected and has the credential', done => {
     firebaseUtils.getRedirectedUserAuthSeed = jest
@@ -169,10 +169,6 @@ describe('getOrCreateUserInfoEpic', () => {
     emailVerified: false,
   };
 
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
   test('if success', done => {
     fetch.mockResponse(JSON.stringify(DUMMY_RESPONSE));
 
@@ -249,56 +245,75 @@ describe('getOrCreateUserInfoEpic', () => {
   });
 });
 
-test('startProgressServiceEpic', () => {
-  const actions = {
-    marbles: '-a-',
-    values: {
-      a: { type: actionTypes.INIT_AUTH },
-    },
-  };
+test('startProgressServiceEpic', done => {
+  let assertionExecutedCount = 0;
 
-  const results = {
-    marbles: '-a-',
-    values: {
-      a: {
+  const incomingActions = [
+    { type: actionTypes.INIT_AUTH },
+    { type: actionTypes.GET_OR_CREATE_USER_INFO },
+    { type: actionTypes.SIGN_IN_WITH_EMAIL },
+    { type: actionTypes.SIGN_UP_WITH_EMAIL },
+    { type: actionTypes.SEND_EMAIL_VERIFICATION },
+    { type: actionTypes.SEND_PASSWORD_RESET_EMAIL },
+    { type: actionTypes.CREATE_POST },
+    { type: actionTypes.EDIT_POST },
+  ];
+
+  // @ts-ignore
+  startProgressServiceEpic(of(...incomingActions)).subscribe(
+    outcomingAction => {
+      expect(outcomingAction).toEqual({
         type: actionTypes.START_PROGRESS,
         payload: 'TODO_REMOVE_THIS',
-      },
+      });
+      assertionExecutedCount += 1;
     },
-  };
-
-  epicTestUtil(startProgressServiceEpic, actions, results);
+    null,
+    () => {
+      expect(assertionExecutedCount).toBe(incomingActions.length);
+      done();
+    },
+  );
 });
 
-test('stopProgressServiceEpic', () => {
-  const actions = {
-    marbles: '-a-b-c-',
-    values: {
-      a: { type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS },
-      b: { type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL },
-      c: { type: actionTypes.INIT_AUTH_USER_HAS_NO_CREDENTIAL },
-    },
-  };
+test('stopProgressServiceEpic', done => {
+  let assertionExecutedCount = 0;
 
-  const results = {
-    marbles: '-a-b-c-',
-    values: {
-      a: {
-        type: actionTypes.FINISH_PROGRESS,
-        payload: 'TODO_REMOVE_THIS',
-      },
-      b: {
-        type: actionTypes.FINISH_PROGRESS,
-        payload: 'TODO_REMOVE_THIS',
-      },
-      c: {
-        type: actionTypes.FINISH_PROGRESS,
-        payload: 'TODO_REMOVE_THIS',
-      },
-    },
-  };
+  const incomingActions = [
+    { type: actionTypes.INIT_AUTH_USER_HAS_CREDENTIAL },
+    { type: actionTypes.INIT_AUTH_USER_HAS_NO_CREDENTIAL },
+    { type: actionTypes.INIT_AUTH_FAIL },
+    { type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS },
+    { type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL },
+    { type: actionTypes.SIGN_IN_WITH_EMAIL_SUCCESS },
+    { type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL },
+    { type: actionTypes.SIGN_UP_WITH_EMAIL_SUCCESS },
+    { type: actionTypes.SIGN_UP_WITH_EMAIL_FAIL },
+    { type: actionTypes.SEND_EMAIL_VERIFICATION_SUCCESS },
+    { type: actionTypes.SEND_EMAIL_VERIFICATION_FAIL },
+    { type: actionTypes.SEND_PASSWORD_RESET_EMAIL_SUCCESS },
+    { type: actionTypes.SEND_PASSWORD_RESET_EMAIL_FAIL },
+    { type: actionTypes.CREATE_POST_SUCCESS },
+    { type: actionTypes.CREATE_POST_FAIL },
+    { type: actionTypes.EDIT_POST_SUCCESS },
+    { type: actionTypes.EDIT_POST_FAIL },
+  ];
 
-  epicTestUtil(stopProgressServiceEpic, actions, results);
+  // @ts-ignore
+  stopProgressServiceEpic(of(...incomingActions)).subscribe(
+    outcomingAction => {
+      expect(outcomingAction).toEqual({
+        type: actionTypes.FINISH_PROGRESS,
+        payload: 'TODO_REMOVE_THIS',
+      });
+      assertionExecutedCount += 1;
+    },
+    null,
+    () => {
+      expect(assertionExecutedCount).toBe(incomingActions.length);
+      done();
+    },
+  );
 });
 
 test('redirectorEpic', () => {
@@ -323,107 +338,30 @@ test('redirectorEpic', () => {
 });
 
 test('snackbarEpic', done => {
+  const mockSpecificErrorFromFirebaseSDK = {
+    code: 'auth/invalid-email',
+  };
+
   const incomingActions = [
     {
-      type: actionTypes.INIT_AUTH_FAIL,
-      expectedMessage: '認証情報の取得に失敗しました',
+      type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL,
+      payload: mockSpecificErrorFromFirebaseSDK,
     },
     {
-      type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
-      expectedMessage: 'ユーザ情報の作成または取得に失敗しました',
+      type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL,
     },
+  ];
+
+  const expectedActions = [
+    // show specific error if error from firebase sdk is provided
     {
-      type: actionTypes.UPDATE_USER_INFO_SUCCESS,
-      expectedMessage: 'ユーザ情報を更新しました',
+      type: actionTypes.ADD_SNACKBAR_QUEUE,
+      payload: 'メールアドレスの形式が正しくありません',
     },
+    // show general error message
     {
-      type: actionTypes.UPDATE_USER_INFO_FAIL,
-      expectedMessage: 'ユーザ情報の更新に失敗しました',
-    },
-    {
-      type: actionTypes.DELETE_USER_SUCCESS,
-      expectedMessage: 'アカウントを削除しました',
-    },
-    {
-      type: actionTypes.DELETE_USER_FAIL,
-      expectedMessage: 'アカウントの情報に失敗しました',
-    },
-    {
-      type: actionTypes.SIGN_UP_WITH_EMAIL_SUCCESS,
-      expectedMessage:
-        'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
-    },
-    {
-      type: actionTypes.SIGN_OUT_USER_SUCCESS,
-      expectedMessage: 'サインアウトしました',
-    },
-    {
-      type: actionTypes.SIGN_OUT_USER_FAIL,
-      expectedMessage: 'サインアウトに失敗しました',
-    },
-    {
-      type: actionTypes.FETCH_ALL_POSTS_FAIL,
-      expectedMessage: '投稿の取得に失敗しました',
-    },
-    {
-      type: actionTypes.FETCH_POST_FAIL,
-      expectedMessage: '投稿の取得に失敗しました',
-    },
-    {
-      type: actionTypes.CREATE_POST_SUCCESS,
-      expectedMessage: '投稿を作成しました',
-    },
-    {
-      type: actionTypes.CREATE_POST_FAIL,
-      expectedMessage: '投稿の作成に失敗しました',
-    },
-    {
-      type: actionTypes.EDIT_POST_SUCCESS,
-      expectedMessage: '投稿を編集しました',
-    },
-    {
-      type: actionTypes.EDIT_POST_FAIL,
-      expectedMessage: '投稿の編集に失敗しました',
-    },
-    {
-      type: actionTypes.FETCH_MY_POSTS_FAIL,
-      expectedMessage: '投稿の取得に失敗しました',
-    },
-    {
-      type: actionTypes.DELETE_POST_SUCCESS,
-      expectedMessage: '投稿を削除しました',
-    },
-    {
-      type: actionTypes.DELETE_POST_FAIL,
-      expectedMessage: '投稿の削除に失敗しました',
-    },
-    {
-      type: actionTypes.DELETE_POSTS_SUCCESS,
-      expectedMessage: '投稿を削除しました',
-    },
-    {
-      type: actionTypes.DELETE_POSTS_FAIL,
-      expectedMessage: '投稿の削除に失敗しました',
-    },
-    {
-      type: actionTypes.CREATE_COMMENT_SUCCESS,
-      expectedMessage: 'コメントを投稿しました',
-    },
-    {
-      type: actionTypes.CREATE_COMMENT_FAIL,
-      expectedMessage: 'コメントの投稿に失敗しました',
-    },
-    {
-      type: actionTypes.DELETE_COMMENT_SUCCESS,
-      expectedMessage: 'コメントを削除しました',
-    },
-    {
-      type: actionTypes.DELETE_COMMENT_FAIL,
-      expectedMessage: 'コメントの削除に失敗しました',
-    },
-    {
-      type: actionTypes.TOGGLE_LIKE_FAIL,
-      expectedMessage: 'いいねの変更に失敗しました',
+      type: actionTypes.ADD_SNACKBAR_QUEUE,
+      payload: 'サインインに失敗しました',
     },
   ];
 
@@ -432,10 +370,7 @@ test('snackbarEpic', done => {
   // @ts-ignore
   snackbarEpic(from(incomingActions)).subscribe(
     outcomingAction => {
-      expect(outcomingAction.type).toEqual(actionTypes.ADD_SNACKBAR_QUEUE);
-      expect(outcomingAction.payload).toEqual(
-        incomingActions[assertionExecutedCount].expectedMessage,
-      );
+      expect(outcomingAction).toEqual(expectedActions[assertionExecutedCount]);
       assertionExecutedCount += 1;
     },
     null,

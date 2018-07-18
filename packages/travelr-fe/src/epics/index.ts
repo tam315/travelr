@@ -1,14 +1,6 @@
-import { combineEpics, ofType, ActionsObservable } from 'redux-observable';
+import { ActionsObservable, combineEpics, ofType } from 'redux-observable';
 import { from, of } from 'rxjs';
-import {
-  catchError,
-  filter,
-  flatMap,
-  map,
-  mapTo,
-  tap,
-  switchMap,
-} from 'rxjs/operators';
+import { catchError, filter, flatMap, map, mapTo } from 'rxjs/operators';
 import types from '../actions/types';
 import config from '../config';
 import firebaseUtils from '../utils/firebaseUtils';
@@ -92,6 +84,10 @@ export const startProgressServiceEpic = (action$: ActionsObservable<any>) =>
       types.GET_OR_CREATE_USER_INFO,
       types.SIGN_IN_WITH_EMAIL,
       types.SIGN_UP_WITH_EMAIL,
+      types.SEND_EMAIL_VERIFICATION,
+      types.SEND_PASSWORD_RESET_EMAIL,
+      types.CREATE_POST,
+      types.EDIT_POST,
     ),
     mapTo({
       type: types.START_PROGRESS,
@@ -111,6 +107,14 @@ export const stopProgressServiceEpic = (action$: ActionsObservable<any>) =>
       types.SIGN_IN_WITH_EMAIL_FAIL,
       types.SIGN_UP_WITH_EMAIL_SUCCESS,
       types.SIGN_UP_WITH_EMAIL_FAIL,
+      types.SEND_EMAIL_VERIFICATION_SUCCESS,
+      types.SEND_EMAIL_VERIFICATION_FAIL,
+      types.SEND_PASSWORD_RESET_EMAIL_SUCCESS,
+      types.SEND_PASSWORD_RESET_EMAIL_FAIL,
+      types.CREATE_POST_SUCCESS,
+      types.CREATE_POST_FAIL,
+      types.EDIT_POST_SUCCESS,
+      types.EDIT_POST_FAIL,
     ),
     mapTo({
       type: types.FINISH_PROGRESS,
@@ -135,7 +139,23 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
     payload: message,
   });
 
-  const actionMessagePairs = {
+  const errCodeAndMessagePairs = {
+    'auth/account-exists-with-different-credential': s(
+      'このメールアドレスは別のログイン方法に紐づけされています',
+    ),
+    'auth/email-already-in-use': s('このメールアドレスは既に使用されています'),
+    'auth/invalid-email': s('メールアドレスの形式が正しくありません'),
+    'auth/user-not-found': s('このメールアドレスは登録されていません'),
+    'auth/weak-password': s('パスワードは6文字以上必要です'),
+    'auth/wrong-password': s(
+      'パスワードが間違っているか、メールアドレスがほかのログイン方法に紐付けされています。',
+    ),
+    'storage/unauthorized': s(
+      'メール認証が完了していません。アカウント管理画面からメール認証を行ってください。',
+    ),
+  };
+
+  const actionAndMessagePairs = {
     [types.INIT_AUTH_FAIL]: s('認証情報の取得に失敗しました'),
 
     [types.GET_OR_CREATE_USER_INFO_FAIL]: s(
@@ -148,8 +168,21 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
     [types.DELETE_USER_SUCCESS]: s('アカウントを削除しました'),
     [types.DELETE_USER_FAIL]: s('アカウントの情報に失敗しました'),
 
+    [types.SIGN_IN_WITH_EMAIL_FAIL]: s('サインインに失敗しました'),
+
     [types.SIGN_UP_WITH_EMAIL_SUCCESS]: s(
       'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
+    ),
+    [types.SIGN_UP_WITH_EMAIL_FAIL]: s('アカウントの作成に失敗しました'),
+
+    [types.SEND_EMAIL_VERIFICATION_SUCCESS]: s('認証メールを再送しました'),
+    [types.SEND_EMAIL_VERIFICATION_FAIL]: s('認証メールの再送に失敗しました'),
+
+    [types.SEND_PASSWORD_RESET_EMAIL_SUCCESS]: s(
+      'パスワードリセットのメールを送信しました',
+    ),
+    [types.SEND_PASSWORD_RESET_EMAIL_FAIL]: s(
+      'パスワードリセットのメール送信に失敗しました',
     ),
 
     [types.SIGN_OUT_USER_SUCCESS]: s('サインアウトしました'),
@@ -182,11 +215,19 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
     [types.TOGGLE_LIKE_FAIL]: s('いいねの変更に失敗しました'),
   };
 
-  const actionNameArray = Object.keys(actionMessagePairs);
+  const actionNameArray = Object.keys(actionAndMessagePairs);
 
   return action$.pipe(
     ofType(...actionNameArray),
-    map(action => actionMessagePairs[action.type]),
+    map(action => {
+      // display more specific error messages if 'err.code'(from firebase SDK) is provided
+      const err = action.payload;
+      if (err && err.code && errCodeAndMessagePairs[err.code]) {
+        return errCodeAndMessagePairs[err.code];
+      }
+
+      return actionAndMessagePairs[action.type];
+    }),
   );
 };
 

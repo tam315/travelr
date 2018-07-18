@@ -42,7 +42,7 @@ type Props = {
     password: string,
     displayName: string,
   ) => any;
-  resetPassword: (email: string) => void;
+  sendPasswordResetEmail: (email: string) => void;
 };
 
 type State = {
@@ -86,9 +86,9 @@ export class PageAuth extends React.Component<Props, State> {
   };
 
   resetPassword = () => {
-    const { resetPassword } = this.props;
+    const { sendPasswordResetEmail } = this.props;
     const { email } = this.state;
-    resetPassword(email);
+    sendPasswordResetEmail(email);
   };
 
   handleChange(e: any, stateKayName: string) {

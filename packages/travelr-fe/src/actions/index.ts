@@ -21,70 +21,6 @@ const { authRef } = firebaseUtils;
 
 const actions: any = {};
 
-export const errorNotifier = (err: any, dispatch: Dispatch<any>) => {
-  if (!err || !err.code) {
-    dispatch({
-      type: actionTypes.ADD_SNACKBAR_QUEUE,
-      payload: '不明なエラーが発生しました',
-    });
-    return;
-  }
-
-  switch (err.code) {
-    case 'auth/user-not-found':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'このメールアドレスは登録されていません',
-      });
-      break;
-    case 'auth/account-exists-with-different-credential':
-      // TODO: link account
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'このメールアドレスは別のログイン方法に紐づけされています',
-      });
-      break;
-    case 'auth/wrong-password':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload:
-          'パスワードが間違っているか、メールアドレスがほかのログイン方法に紐付けされています。',
-      });
-      break;
-    case 'auth/invalid-email':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'メールアドレスの形式が正しくありません',
-      });
-      break;
-    case 'auth/weak-password':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'パスワードは6文字以上必要です',
-      });
-      break;
-    case 'auth/email-already-in-use':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'このメールアドレスは既に使用されています',
-      });
-      break;
-    case 'storage/unauthorized':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload:
-          'メール認証が完了していません。アカウント管理画面からメール認証を行ってください。',
-      });
-      break;
-    default:
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: '不明なエラーが発生しました',
-      });
-      throw new Error(err);
-  }
-};
-
 actions.initAuth = () => ({
   type: actionTypes.INIT_AUTH,
 });
@@ -218,8 +154,10 @@ actions.signInWithEmail = (email: string, password: string) => async (
       payload: authSeed,
     });
   } catch (err) {
-    errorNotifier(err, dispatch);
-    dispatch({ type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL });
+    dispatch({
+      type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL,
+      payload: err,
+    });
   }
 };
 
@@ -248,49 +186,46 @@ actions.signUpWithEmail = (
       payload: authSeed,
     });
   } catch (err) {
-    errorNotifier(err, dispatch);
-    dispatch({ type: actionTypes.SIGN_UP_WITH_EMAIL_FAIL });
+    dispatch({
+      type: actionTypes.SIGN_UP_WITH_EMAIL_FAIL,
+      payload: err,
+    });
   }
 };
 
 actions.sendEmailVerification = () => async (dispatch: Dispatch<any>) => {
   dispatch({
-    type: actionTypes.START_PROGRESS,
-    payload: 'sendEmailVerification',
+    type: actionTypes.SEND_EMAIL_VERIFICATION,
   });
 
   try {
     await authRef.currentUser.sendEmailVerification();
     dispatch({
-      type: actionTypes.ADD_SNACKBAR_QUEUE,
-      payload: '認証メールを再送しました',
-    });
-    dispatch({
-      type: actionTypes.FINISH_PROGRESS,
-      payload: 'sendEmailVerification',
+      type: actionTypes.SEND_EMAIL_VERIFICATION_SUCCESS,
     });
   } catch (err) {
     dispatch({
-      type: actionTypes.FINISH_PROGRESS,
-      payload: 'sendEmailVerification',
+      type: actionTypes.SEND_EMAIL_VERIFICATION_FAIL,
+      payload: err,
     });
-    errorNotifier(err, dispatch);
   }
 };
 
-actions.resetPassword = (email: string) => async (dispatch: Dispatch<any>) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'resetPassword' });
+actions.sendPasswordResetEmail = (email: string) => async (
+  dispatch: Dispatch<any>,
+) => {
+  dispatch({ type: actionTypes.SEND_PASSWORD_RESET_EMAIL });
 
   try {
     await authRef.sendPasswordResetEmail(email);
     dispatch({
-      type: actionTypes.ADD_SNACKBAR_QUEUE,
-      payload: 'パスワードリセットのメールを送信しました',
+      type: actionTypes.SEND_PASSWORD_RESET_EMAIL_SUCCESS,
     });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'resetPassword' });
   } catch (err) {
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'resetPassword' });
-    errorNotifier(err, dispatch);
+    dispatch({
+      type: actionTypes.SEND_PASSWORD_RESET_EMAIL_FAIL,
+      payload: err,
+    });
   }
 };
 
@@ -419,7 +354,7 @@ actions.createPost = (user: UserStore, newPost: NewPost) => async (
     'image/png': '.png',
   };
 
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'createPost' });
+  dispatch({ type: actionTypes.CREATE_POST });
 
   try {
     const oldImageFileName = uuid() + extentionOf[oldImageFile.type];
@@ -450,7 +385,6 @@ actions.createPost = (user: UserStore, newPost: NewPost) => async (
       dispatch({
         type: actionTypes.CREATE_POST_FAIL,
       });
-      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'createPost' });
       return;
     }
 
@@ -459,21 +393,19 @@ actions.createPost = (user: UserStore, newPost: NewPost) => async (
       type: actionTypes.CREATE_POST_SUCCESS,
       payload: postId,
     });
-    history.push(`/post/${postId}`);
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'createPost' });
+    history.push(`/post/${postId}`); // TODO: remove this
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_POST_FAIL,
+      payload: err,
     });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'createPost' });
-    errorNotifier(err, dispatch);
   }
 };
 
 actions.editPost = (user: UserStore, postToEdit: PostToEdit) => async (
   dispatch: Dispatch<any>,
 ) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'editPost' });
+  dispatch({ type: actionTypes.EDIT_POST });
 
   try {
     const response = await fetch(`${config.apiUrl}posts/${postToEdit.postId}`, {
@@ -488,21 +420,18 @@ actions.editPost = (user: UserStore, postToEdit: PostToEdit) => async (
       dispatch({
         type: actionTypes.EDIT_POST_FAIL,
       });
-      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'editPost' });
       return;
     }
 
     dispatch({
       type: actionTypes.EDIT_POST_SUCCESS,
     });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'editPost' });
     history.push(`/post/${postToEdit.postId}`);
   } catch (err) {
     dispatch({
       type: actionTypes.EDIT_POST_FAIL,
+      payload: err,
     });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'editPost' });
-    errorNotifier(err, dispatch);
   }
 };
 
