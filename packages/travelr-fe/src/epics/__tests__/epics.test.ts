@@ -347,6 +347,12 @@ test('snackbarEpic', done => {
     },
     {
       type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL,
+      payload: {
+        code: 'unknown error code',
+      },
+    },
+    {
+      type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL,
     },
   ];
 
@@ -355,6 +361,10 @@ test('snackbarEpic', done => {
     {
       type: actionTypes.ADD_SNACKBAR_QUEUE,
       payload: 'メールアドレスの形式が正しくありません',
+    },
+    {
+      type: actionTypes.ADD_SNACKBAR_QUEUE,
+      payload: '不明なエラーが発生しました',
     },
     // show general error message
     {
