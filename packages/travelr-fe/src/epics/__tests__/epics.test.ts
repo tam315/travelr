@@ -1,27 +1,18 @@
+import { from, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import {
+  getOrCreateUserInfoEpic,
+  initAuthEpic,
+  redirectorEpic,
+  snackbarEpic,
   startProgressServiceEpic,
   stopProgressServiceEpic,
-  snackbarEpic,
-  redirectorEpic,
-  initAuthEpic,
-  getOrCreateUserInfoEpic,
 } from '../';
 import actionTypes from '../../actions/types';
-import history from '../../utils/history';
-import firebaseUtils from '../../utils/firebaseUtils';
-import {
-  DUMMY_COMMENTS,
-  DUMMY_FILTER_CRITERION,
-  DUMMY_NEW_POST,
-  DUMMY_POSTS,
-  DUMMY_POSTS_IDS,
-  DUMMY_POST_TO_EDIT,
-  DUMMY_USER_STORE,
-  DUMMY_USER_STORE_UNAUTHORIZED,
-} from '../../config/dummies';
+import { DUMMY_USER_STORE } from '../../config/dummies';
 import { AuthSeed } from '../../config/types';
-import { of, from } from 'rxjs';
+import firebaseUtils from '../../utils/firebaseUtils';
+import history from '../../utils/history';
 
 declare const fetch: any;
 
@@ -71,6 +62,7 @@ describe('initAuthEpic', () => {
       type: actionTypes.INIT_AUTH,
     };
 
+    // @ts-ignore
     initAuthEpic(of(incomingAction)).subscribe(
       outcomingAction => {
         expect(outcomingAction).toEqual({
@@ -97,6 +89,7 @@ describe('initAuthEpic', () => {
       type: actionTypes.INIT_AUTH,
     };
 
+    // @ts-ignore
     initAuthEpic(of(incomingAction)).subscribe(
       outcomingAction => {
         expect(outcomingAction).toEqual({
@@ -121,6 +114,7 @@ describe('initAuthEpic', () => {
       type: actionTypes.INIT_AUTH,
     };
 
+    // @ts-ignore
     initAuthEpic(of(incomingAction)).subscribe(
       outcomingAction => {
         expect(outcomingAction).toEqual({
@@ -144,6 +138,7 @@ describe('initAuthEpic', () => {
       type: actionTypes.INIT_AUTH,
     };
 
+    // @ts-ignore
     initAuthEpic(of(incomingAction)).subscribe(
       outcomingAction => {
         expect(outcomingAction).toEqual({
@@ -198,6 +193,7 @@ describe('getOrCreateUserInfoEpic', () => {
 
     let assertionExecutedCount = 0;
 
+    // @ts-ignore
     getOrCreateUserInfoEpic(from(incomingActions)).subscribe(
       outcomingAction => {
         const fetchUrl = fetch.mock.calls[assertionExecutedCount][0];
@@ -236,6 +232,7 @@ describe('getOrCreateUserInfoEpic', () => {
 
     let assertionExecutedCount = 0;
 
+    // @ts-ignore
     getOrCreateUserInfoEpic(of(incomingAction)).subscribe(
       outcomingAction => {
         expect(outcomingAction).toEqual({
@@ -344,6 +341,7 @@ test('snackbarEpic', done => {
 
   let assertionExecutedCount = 0;
 
+  // @ts-ignore
   snackbarEpic(from(incomingActions)).subscribe(
     outcomingAction => {
       expect(outcomingAction.type).toEqual(actionTypes.ADD_SNACKBAR_QUEUE);

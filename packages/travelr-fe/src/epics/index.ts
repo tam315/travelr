@@ -1,14 +1,22 @@
-import { combineEpics, ofType } from 'redux-observable';
+import { combineEpics, ofType, ActionsObservable } from 'redux-observable';
 import { from, of } from 'rxjs';
-import { catchError, filter, flatMap, map, mapTo } from 'rxjs/operators';
-import actionTypes from '../actions/types';
+import {
+  catchError,
+  filter,
+  flatMap,
+  map,
+  mapTo,
+  tap,
+  switchMap,
+} from 'rxjs/operators';
+import types from '../actions/types';
 import config from '../config';
 import firebaseUtils from '../utils/firebaseUtils';
 import history from '../utils/history';
 
-export const initAuthEpic = action$ =>
+export const initAuthEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
-    ofType(actionTypes.INIT_AUTH),
+    ofType(types.INIT_AUTH),
     // flatMap converts a Promise to the Observable
     flatMap(async () => {
       const redirectedUserAuthSeed = await firebaseUtils.getRedirectedUserAuthSeed();
@@ -17,7 +25,7 @@ export const initAuthEpic = action$ =>
       // if the user is redirected and has the credential
       if (redirectedUserAuthSeed) {
         return {
-          type: actionTypes.INIT_AUTH_USER_HAS_CREDENTIAL,
+          type: types.INIT_AUTH_USER_HAS_CREDENTIAL,
           payload: redirectedUserAuthSeed,
         };
       }
@@ -25,27 +33,27 @@ export const initAuthEpic = action$ =>
       // if the user already has the credential
       if (currentUserAuthSeed) {
         return {
-          type: actionTypes.INIT_AUTH_USER_HAS_CREDENTIAL,
+          type: types.INIT_AUTH_USER_HAS_CREDENTIAL,
           payload: currentUserAuthSeed,
         };
       }
 
       // if the user doesn't have token
-      return { type: actionTypes.INIT_AUTH_USER_HAS_NO_CREDENTIAL };
+      return { type: types.INIT_AUTH_USER_HAS_NO_CREDENTIAL };
     }),
     catchError(() =>
       of({
-        type: actionTypes.INIT_AUTH_FAIL,
+        type: types.INIT_AUTH_FAIL,
       }),
     ),
   );
 
-export const getOrCreateUserInfoEpic = action$ =>
+export const getOrCreateUserInfoEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
     ofType(
-      actionTypes.INIT_AUTH_USER_HAS_CREDENTIAL,
-      actionTypes.SIGN_IN_WITH_EMAIL_SUCCESS,
-      actionTypes.SIGN_UP_WITH_EMAIL_SUCCESS,
+      types.INIT_AUTH_USER_HAS_CREDENTIAL,
+      types.SIGN_IN_WITH_EMAIL_SUCCESS,
+      types.SIGN_UP_WITH_EMAIL_SUCCESS,
     ),
     flatMap(action => {
       // @ts-ignore
@@ -65,58 +73,58 @@ export const getOrCreateUserInfoEpic = action$ =>
           return res.json();
         }),
         map(userInfo => ({
-          type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS,
+          type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
           payload: { ...userInfo, token, emailVerified },
         })),
+        catchError(() => {
+          return of({
+            type: types.GET_OR_CREATE_USER_INFO_FAIL,
+          });
+        }),
       );
     }),
-    catchError(() => {
-      return of({
-        type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
-      });
-    }),
   );
 
-export const startProgressServiceEpic = action$ =>
+export const startProgressServiceEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
     ofType(
-      actionTypes.INIT_AUTH,
-      actionTypes.GET_OR_CREATE_USER_INFO,
-      actionTypes.SIGN_IN_WITH_EMAIL,
-      actionTypes.SIGN_UP_WITH_EMAIL,
+      types.INIT_AUTH,
+      types.GET_OR_CREATE_USER_INFO,
+      types.SIGN_IN_WITH_EMAIL,
+      types.SIGN_UP_WITH_EMAIL,
     ),
     mapTo({
-      type: actionTypes.START_PROGRESS,
+      type: types.START_PROGRESS,
       payload: 'TODO_REMOVE_THIS',
     }),
   );
 
-export const stopProgressServiceEpic = action$ =>
+export const stopProgressServiceEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
     ofType(
-      actionTypes.INIT_AUTH_USER_HAS_CREDENTIAL,
-      actionTypes.INIT_AUTH_USER_HAS_NO_CREDENTIAL,
-      actionTypes.INIT_AUTH_FAIL,
-      actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS,
-      actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
-      actionTypes.SIGN_IN_WITH_EMAIL_SUCCESS,
-      actionTypes.SIGN_IN_WITH_EMAIL_FAIL,
-      actionTypes.SIGN_UP_WITH_EMAIL_SUCCESS,
-      actionTypes.SIGN_UP_WITH_EMAIL_FAIL,
+      types.INIT_AUTH_USER_HAS_CREDENTIAL,
+      types.INIT_AUTH_USER_HAS_NO_CREDENTIAL,
+      types.INIT_AUTH_FAIL,
+      types.GET_OR_CREATE_USER_INFO_SUCCESS,
+      types.GET_OR_CREATE_USER_INFO_FAIL,
+      types.SIGN_IN_WITH_EMAIL_SUCCESS,
+      types.SIGN_IN_WITH_EMAIL_FAIL,
+      types.SIGN_UP_WITH_EMAIL_SUCCESS,
+      types.SIGN_UP_WITH_EMAIL_FAIL,
     ),
     mapTo({
-      type: actionTypes.FINISH_PROGRESS,
+      type: types.FINISH_PROGRESS,
       payload: 'TODO_REMOVE_THIS',
     }),
   );
 
-export const redirectorEpic = action$ =>
+export const redirectorEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
-    ofType(actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS),
+    ofType(types.GET_OR_CREATE_USER_INFO_SUCCESS),
     filter(() => history.location.pathname === '/auth'),
     map(() => {
       history.push('/all-map');
-      return { type: actionTypes.USER_REDIRECTED };
+      return { type: types.USER_REDIRECTED };
     }),
   );
 
