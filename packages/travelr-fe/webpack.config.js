@@ -37,6 +37,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
+  devtool: 'inline-source-map',
   // settings for webpack-serve
   serve: {
     content: [__dirname, 'public'], // serve this folder as '/'
