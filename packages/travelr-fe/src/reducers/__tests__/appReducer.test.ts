@@ -47,8 +47,6 @@ describe('appReducer', () => {
     };
 
     const actionNamesAndExpectedMessages = [
-      ['GET_OR_CREATE_USER_INFO_FAIL', 'サインインに失敗しました'],
-      ['FETCH_USER_INFO_FAIL', 'ユーザ情報の取得に失敗しました'],
       ['UPDATE_USER_INFO_SUCCESS', 'ユーザ情報を更新しました'],
       ['UPDATE_USER_INFO_FAIL', 'ユーザ情報の更新に失敗しました'],
       ['DELETE_USER_SUCCESS', 'アカウントを削除しました'],

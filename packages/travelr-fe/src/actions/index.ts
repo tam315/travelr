@@ -85,102 +85,14 @@ export const errorNotifier = (err: any, dispatch: Dispatch<any>) => {
   }
 };
 
-actions.initAuth = () => async (dispatch: Dispatch<any>) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+actions.initAuth = () => ({
+  type: actionTypes.INIT_AUTH,
+});
 
-  try {
-    const redirectedUserAuthSeed = await firebaseUtils.getRedirectedUserAuthSeed();
-    const currentUserAuthSeed = await firebaseUtils.getCurrentUserAuthSeed();
-
-    if (redirectedUserAuthSeed) {
-      // if the user is redirected
-      actions.getOrCreateUserInfo(redirectedUserAuthSeed)(dispatch);
-    } else if (currentUserAuthSeed) {
-      // if the user already has the token
-      actions.getOrCreateUserInfo(currentUserAuthSeed)(dispatch);
-    } else {
-      // if the user doesn't have token
-      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-    }
-    return true;
-  } catch (err) {
-    errorNotifier(err, dispatch);
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-    return true;
-  }
-};
-
-actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
-  dispatch: Dispatch<any>,
-) => {
-  const { token, displayName, emailVerified } = authSeed;
-  try {
-    const fetchOptions = {
-      method: 'POST',
-      headers: {
-        authorization: token,
-      },
-      body: displayName ? JSON.stringify({ displayName }) : '',
-    };
-    const response = await fetch(`${config.apiUrl}users`, fetchOptions);
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
-      });
-      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-      return true;
-    }
-
-    const userInfo = await response.json();
-    dispatch({
-      type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS,
-      payload: { ...userInfo, token, emailVerified },
-    });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-
-    if (history.location.pathname === '/auth') history.push('/all-map');
-
-    return true;
-  } catch (err) {
-    dispatch({
-      type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
-    });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-    errorNotifier(err, dispatch);
-    return true;
-  }
-};
-
-actions.fetchUserInfo = (user: UserStore) => async (
-  dispatch: Dispatch<any>,
-) => {
-  const { token } = user;
-  try {
-    const response = await fetch(`${config.apiUrl}users/token`, {
-      headers: {
-        authorization: token,
-      },
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.FETCH_USER_INFO_FAIL,
-      });
-      return;
-    }
-
-    const userInfo = await response.json();
-    dispatch({
-      type: actionTypes.FETCH_USER_INFO_SUCCESS,
-      payload: { ...userInfo, token },
-    });
-  } catch (err) {
-    dispatch({
-      type: actionTypes.FETCH_USER_INFO_FAIL,
-    });
-  }
-};
+actions.getOrCreateUserInfo = (authSeed: AuthSeed) => ({
+  type: actionTypes.GET_OR_CREATE_USER_INFO,
+  payload: authSeed,
+});
 
 actions.updateUserInfo = (user: UserStore, newUserInfo: NewUserInfo) => async (
   dispatch: Dispatch<any>,
@@ -287,7 +199,7 @@ actions.signInWithEmail = (email: string, password: string) => async (
   dispatch: Dispatch<any>,
 ) => {
   try {
-    dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+    dispatch({ type: actionTypes.SIGN_IN_WITH_EMAIL });
 
     await authRef.signInWithEmailAndPassword(email, password);
 
@@ -295,15 +207,19 @@ actions.signInWithEmail = (email: string, password: string) => async (
     const token = await user.getIdToken();
     const { emailVerified } = user;
 
-    // if sign in succeed
-    actions.getOrCreateUserInfo({
+    const authSeed: AuthSeed = {
       token,
       emailVerified,
       displayName: 'newuser',
-    })(dispatch);
+    };
+
+    dispatch({
+      type: actionTypes.SIGN_IN_WITH_EMAIL_SUCCESS,
+      payload: authSeed,
+    });
   } catch (err) {
     errorNotifier(err, dispatch);
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+    dispatch({ type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL });
   }
 };
 
@@ -313,7 +229,7 @@ actions.signUpWithEmail = (
   displayName: string,
 ) => async (dispatch: Dispatch<any>) => {
   try {
-    dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+    dispatch({ type: actionTypes.SIGN_UP_WITH_EMAIL });
 
     const result = await authRef.createUserWithEmailAndPassword(
       email,
@@ -325,17 +241,15 @@ actions.signUpWithEmail = (
     const token = await user.getIdToken();
     const { emailVerified } = user;
 
-    actions.getOrCreateUserInfo({ token, displayName, emailVerified })(
-      dispatch,
-    );
+    const authSeed: AuthSeed = { token, displayName, emailVerified };
+
     dispatch({
-      type: actionTypes.ADD_SNACKBAR_QUEUE,
-      payload:
-        'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
+      type: actionTypes.SIGN_UP_WITH_EMAIL_SUCCESS,
+      payload: authSeed,
     });
   } catch (err) {
     errorNotifier(err, dispatch);
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+    dispatch({ type: actionTypes.SIGN_UP_WITH_EMAIL_FAIL });
   }
 };
 

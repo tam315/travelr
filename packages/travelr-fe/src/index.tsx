@@ -6,15 +6,16 @@ import { createEpicMiddleware } from 'redux-observable';
 import reduxThunk from 'redux-thunk';
 import App from './containers/App';
 import reducer from './reducers/index';
+import rootEpic from './epics';
 
 const epicMiddleware = createEpicMiddleware();
 
-const enhancer = applyMiddleware(reduxThunk);
+const enhancer = applyMiddleware(reduxThunk, epicMiddleware);
 
 // don't write initial state here. write it in each reducer.
 const store = createStore(reducer, {}, enhancer);
 
-// epicMiddleware.run(rootEpic);
+epicMiddleware.run(rootEpic);
 
 ReactDOM.render(
   <Provider store={store}>

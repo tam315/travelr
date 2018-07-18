@@ -14,17 +14,6 @@ describe('user reducer', () => {
     expect(userReducer(INITIAL_STATE, action)).toEqual(expected);
   });
 
-  test('FETCH_USER_INFO_SUCCESS', () => {
-    const action = {
-      type: actionTypes.FETCH_USER_INFO_SUCCESS,
-      payload: DUMMY_USER_STORE,
-    };
-
-    const expected = { ...DUMMY_USER_STORE };
-
-    expect(userReducer(INITIAL_STATE, action)).toEqual(expected);
-  });
-
   test('UPDATE_USER_INFO_SUCCESS', () => {
     const action = {
       type: actionTypes.UPDATE_USER_INFO_SUCCESS,

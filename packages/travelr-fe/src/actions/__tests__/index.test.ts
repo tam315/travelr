@@ -45,152 +45,6 @@ describe('errorNotifier', () => {
   });
 });
 
-describe('initAuth', () => {
-  const mock = {
-    dispatch: jest.fn(),
-  };
-  const thunk = actions.initAuth();
-
-  test("if the user doesn't have token", async () => {
-    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue(null);
-    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue(null);
-    await thunk(mock.dispatch);
-
-    // getOrCreateUserInfo() will NOT be called
-    expect(fetch).toHaveBeenCalledTimes(0);
-  });
-
-  test('if the user is redirected', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
-    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue({
-      token: 'token',
-      displayName: 'displayName',
-      emailVerified: true,
-    });
-    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue(null);
-    await thunk(mock.dispatch);
-
-    // getOrCreateUserInfo() will be called
-    expect(fetch).toHaveBeenCalledTimes(1);
-  });
-
-  test('if the user already has the token', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
-    firebaseUtils.getRedirectedUserAuthSeed = jest.fn().mockResolvedValue(null);
-    firebaseUtils.getCurrentUserAuthSeed = jest.fn().mockResolvedValue({
-      token: 'token',
-      displayName: 'displayName',
-      emailVerified: true,
-    });
-    await thunk(mock.dispatch);
-
-    // getOrCreateUserInfo() will be called
-    expect(fetch).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('getOrCreateUserInfo', () => {
-  let mock;
-  let thunk;
-  const DUMMY_TOKEN = DUMMY_USER_STORE.token;
-  const DUMMY_DISPLAY_NAME = 'DUMMY_DISPLAY_NAME';
-
-  const DUMMY_RESPONSE = { ...DUMMY_USER_STORE };
-  delete DUMMY_RESPONSE.emailVerified;
-  delete DUMMY_RESPONSE.token;
-
-  beforeEach(() => {
-    mock = {
-      dispatch: jest.fn(),
-    };
-    thunk = actions.getOrCreateUserInfo({
-      token: DUMMY_TOKEN,
-      displayName: DUMMY_DISPLAY_NAME,
-      emailVerified: false,
-    });
-  });
-
-  test('generates correct url', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_RESPONSE));
-    await thunk(mock.dispatch);
-
-    const fetchUrl = fetch.mock.calls[0][0];
-    const fetchOption = fetch.mock.calls[0][1];
-    const body = JSON.parse(fetchOption.body);
-
-    expect(fetchUrl).toContain('/users');
-    expect(fetchOption.method).toContain('POST');
-    expect(body).toEqual({ displayName: DUMMY_DISPLAY_NAME });
-  });
-
-  test('makes correct action when success', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_RESPONSE));
-    history.location.pathname = '/auth';
-    await thunk(mock.dispatch);
-
-    expect(mock.dispatch.mock.calls[0][0]).toEqual({
-      type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
-      payload: {
-        ...DUMMY_USER_STORE,
-        token: DUMMY_TOKEN,
-        emailVerified: false,
-      },
-    });
-
-    // redirect if user intended sign in/up
-    expect(history.push).toBeCalledWith('/all-map');
-  });
-
-  test('makes correct action when fail', async () => {
-    fetch.mockReject();
-    await thunk(mock.dispatch);
-
-    expect(mock.dispatch.mock.calls[0][0]).toEqual({
-      type: types.GET_OR_CREATE_USER_INFO_FAIL,
-    });
-  });
-});
-
-describe('fetchUserInfo', () => {
-  test('generates correct url', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
-
-    const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    const fetchUrl = fetch.mock.calls[0][0];
-    const fetchOptions = fetch.mock.calls[0][1];
-    expect(fetchUrl).toContain('/users/token');
-    expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
-  });
-
-  test('makes correct action when success', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
-
-    const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(mockDispatch.mock.calls[0][0]).toEqual({
-      type: types.FETCH_USER_INFO_SUCCESS,
-      payload: DUMMY_USER_STORE,
-    });
-  });
-
-  test('makes correct action when fail', async () => {
-    fetch.mockReject();
-
-    const thunk = actions.fetchUserInfo(DUMMY_USER_STORE);
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(mockDispatch.mock.calls[0][0]).toEqual({
-      type: types.FETCH_USER_INFO_FAIL,
-    });
-  });
-});
-
 describe('updateUserInfo', () => {
   const DUMMY_NEW_USER_INFO = {
     displayName: 'dd',
@@ -299,18 +153,28 @@ describe('signInWithEmail', () => {
   };
   const thunk = actions.signInWithEmail('email', 'password');
 
-  test('get user info if signin succeed', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
+  test('make a correct action if success', async () => {
     firebaseUtils.authRef.signInWithEmailAndPassword = jest.fn();
-    firebaseUtils.authRef.currentUser.getIdToken = jest
-      .fn()
-      .mockResolvedValue({});
+    // @ts-ignore
+    firebaseUtils.authRef.currentUser = {
+      getIdToken: jest.fn().mockResolvedValue('dummy_token'),
+      emailVerified: false,
+    };
     await thunk(mock.dispatch);
 
     expect(firebaseUtils.authRef.signInWithEmailAndPassword).toBeCalled();
     expect(firebaseUtils.authRef.currentUser.getIdToken).toBeCalled();
-    // getOrCreateUserInfo() will be called
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(mock.dispatch).toHaveBeenCalledWith({
+      type: types.SIGN_IN_WITH_EMAIL,
+    });
+    expect(mock.dispatch).toHaveBeenCalledWith({
+      type: types.SIGN_IN_WITH_EMAIL_SUCCESS,
+      payload: {
+        displayName: 'newuser',
+        emailVerified: false,
+        token: 'dummy_token',
+      },
+    });
   });
 
   test('notify user the error if signin failed', async () => {
@@ -323,6 +187,10 @@ describe('signInWithEmail', () => {
       .mockResolvedValue({});
 
     await thunk(mock.dispatch);
+
+    expect(mock.dispatch).toHaveBeenCalledWith({
+      type: types.SIGN_IN_WITH_EMAIL,
+    });
 
     // errorNotifier() is called and generate following message
     // as in the test enviroment 'err' will be undefined
@@ -340,25 +208,30 @@ describe('signUpWithEmail', () => {
   const thunk = actions.signUpWithEmail('email', 'password', 'displayName');
 
   test('get user info if signup succeed', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_USER_STORE));
     firebaseUtils.authRef.createUserWithEmailAndPassword = jest.fn(() => ({
       user: {
         sendEmailVerification: jest.fn(),
       },
     }));
-    firebaseUtils.authRef.currentUser.getIdToken = jest
-      .fn()
-      .mockResolvedValue({});
+    // @ts-ignore
+    firebaseUtils.authRef.currentUser = {
+      getIdToken: jest.fn().mockResolvedValue('dummy_token'),
+      emailVerified: false,
+    };
     await thunk(mock.dispatch);
 
     expect(firebaseUtils.authRef.createUserWithEmailAndPassword).toBeCalled();
     expect(firebaseUtils.authRef.currentUser.getIdToken).toBeCalled();
-    // getOrCreateUserInfo() will be called
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(mock.dispatch).toHaveBeenCalledWith({
+      type: types.SIGN_UP_WITH_EMAIL,
+    });
     expect(mock.dispatch).toBeCalledWith({
-      type: types.ADD_SNACKBAR_QUEUE,
-      payload:
-        'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
+      type: types.SIGN_UP_WITH_EMAIL_SUCCESS,
+      payload: {
+        displayName: 'displayName',
+        emailVerified: false,
+        token: 'dummy_token',
+      },
     });
   });
 
@@ -368,6 +241,10 @@ describe('signUpWithEmail', () => {
       .mockRejectedValue({});
 
     await thunk(mock.dispatch);
+
+    expect(mock.dispatch).toHaveBeenCalledWith({
+      type: types.SIGN_UP_WITH_EMAIL,
+    });
 
     // errorNotifier() is called and generate following message
     // as in the test enviroment 'err' will be undefined

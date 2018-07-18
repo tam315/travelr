@@ -17,9 +17,6 @@ export default (state: UserStore = INITIAL_STATE, action: any): UserStore => {
     case actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS: {
       return { ...state, ...action.payload };
     }
-    case actionTypes.FETCH_USER_INFO_SUCCESS: {
-      return { ...state, ...action.payload };
-    }
     case actionTypes.UPDATE_USER_INFO_SUCCESS: {
       const { displayName } = action.payload;
 
