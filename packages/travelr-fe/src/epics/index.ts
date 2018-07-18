@@ -14,22 +14,24 @@ export const initAuthEpic = action$ =>
       const redirectedUserAuthSeed = await firebaseUtils.getRedirectedUserAuthSeed();
       const currentUserAuthSeed = await firebaseUtils.getCurrentUserAuthSeed();
 
+      // if the user is redirected and has the credential
       if (redirectedUserAuthSeed) {
-        // if the user is redirected and has the credential
         return {
           type: actionTypes.INIT_AUTH_USER_HAS_CREDENTIAL,
           payload: redirectedUserAuthSeed,
         };
-      } else if (currentUserAuthSeed) {
-        // if the user already has the credential
+      }
+
+      // if the user already has the credential
+      if (currentUserAuthSeed) {
         return {
           type: actionTypes.INIT_AUTH_USER_HAS_CREDENTIAL,
           payload: currentUserAuthSeed,
         };
-      } else {
-        // if the user doesn't have token
-        return { type: actionTypes.INIT_AUTH_USER_HAS_NO_CREDENTIAL };
       }
+
+      // if the user doesn't have token
+      return { type: actionTypes.INIT_AUTH_USER_HAS_NO_CREDENTIAL };
     }),
     catchError(() =>
       of({
