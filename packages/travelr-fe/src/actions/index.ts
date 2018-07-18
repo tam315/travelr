@@ -105,7 +105,6 @@ actions.deleteUser = (user: UserStore) => async (dispatch: Dispatch<any>) => {
     dispatch({
       type: actionTypes.DELETE_USER_SUCCESS,
     });
-    history.push('/');
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_USER_FAIL,
@@ -236,7 +235,6 @@ actions.signOutUser = () => async (dispatch: Dispatch<any>) => {
     dispatch({
       type: actionTypes.SIGN_OUT_USER_SUCCESS,
     });
-    history.push('/');
   } catch (err) {
     dispatch({
       type: actionTypes.SIGN_OUT_USER_FAIL,
@@ -393,7 +391,6 @@ actions.createPost = (user: UserStore, newPost: NewPost) => async (
       type: actionTypes.CREATE_POST_SUCCESS,
       payload: postId,
     });
-    history.push(`/post/${postId}`); // TODO: remove this
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_POST_FAIL,
@@ -425,8 +422,8 @@ actions.editPost = (user: UserStore, postToEdit: PostToEdit) => async (
 
     dispatch({
       type: actionTypes.EDIT_POST_SUCCESS,
+      payload: postToEdit.postId,
     });
-    history.push(`/post/${postToEdit.postId}`);
   } catch (err) {
     dispatch({
       type: actionTypes.EDIT_POST_FAIL,
@@ -456,7 +453,6 @@ actions.deletePost = (user: UserStore, postId: number) => async (
     dispatch({
       type: actionTypes.DELETE_POST_SUCCESS,
     });
-    history.push('/account/posts');
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_POST_FAIL,

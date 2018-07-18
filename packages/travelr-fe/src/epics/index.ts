@@ -124,10 +124,36 @@ export const stopProgressServiceEpic = (action$: ActionsObservable<any>) =>
 
 export const redirectorEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
-    ofType(types.GET_OR_CREATE_USER_INFO_SUCCESS),
-    filter(() => history.location.pathname === '/auth'),
-    map(() => {
-      history.push('/all-map');
+    ofType(
+      types.GET_OR_CREATE_USER_INFO_SUCCESS,
+      types.DELETE_USER_SUCCESS,
+      types.SIGN_OUT_USER_SUCCESS,
+      types.CREATE_POST_SUCCESS,
+      types.EDIT_POST_SUCCESS,
+      types.DELETE_POST_SUCCESS,
+    ),
+    map(action => {
+      switch (action.type) {
+        case types.GET_OR_CREATE_USER_INFO_SUCCESS:
+          if (history.location.pathname === '/auth') history.push('/all-map');
+          break;
+        case types.DELETE_USER_SUCCESS:
+          history.push('/');
+          break;
+        case types.SIGN_OUT_USER_SUCCESS:
+          history.push('/');
+          break;
+        case types.CREATE_POST_SUCCESS:
+          history.push(`/post/${action.payload}`);
+          break;
+        case types.EDIT_POST_SUCCESS:
+          history.push(`/post/${action.payload}`);
+          break;
+        case types.DELETE_POST_SUCCESS:
+          history.push('/account/posts');
+          break;
+      }
+
       return { type: types.USER_REDIRECTED };
     }),
   );

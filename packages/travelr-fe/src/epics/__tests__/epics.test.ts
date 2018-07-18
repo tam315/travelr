@@ -314,25 +314,34 @@ test('stopProgressServiceEpic', done => {
   );
 });
 
-test('redirectorEpic', () => {
+test('redirectorEpic', done => {
+  let assertionExecutedCount = 0;
   history.location.pathname = '/auth';
 
-  const actions = {
-    marbles: '-a-',
-    values: {
-      a: { type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS },
-    },
-  };
+  const incomingActions = [
+    { type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS },
+    { type: actionTypes.DELETE_USER_SUCCESS },
+    { type: actionTypes.SIGN_OUT_USER_SUCCESS },
+    { type: actionTypes.CREATE_POST_SUCCESS },
+    { type: actionTypes.EDIT_POST_SUCCESS },
+    { type: actionTypes.DELETE_POST_SUCCESS },
+  ];
 
-  const results = {
-    marbles: '-a-',
-    values: {
-      a: {
+  // @ts-ignore
+  redirectorEpic(of(...incomingActions)).subscribe(
+    outcomingAction => {
+      expect(outcomingAction).toEqual({
         type: actionTypes.USER_REDIRECTED,
-      },
+      });
+      assertionExecutedCount += 1;
     },
-  };
-  epicTestUtil(redirectorEpic, actions, results);
+    null,
+    () => {
+      expect(assertionExecutedCount).toBe(incomingActions.length);
+      expect(history.push).toHaveBeenCalledTimes(incomingActions.length);
+      done();
+    },
+  );
 });
 
 test('snackbarEpic', done => {

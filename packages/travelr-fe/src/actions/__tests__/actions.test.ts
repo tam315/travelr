@@ -107,9 +107,6 @@ describe('deleteUser', () => {
     expect(mockDispatch.mock.calls[0][0]).toEqual({
       type: types.DELETE_USER_SUCCESS,
     });
-
-    // navigate to the top page
-    expect(history.push).toBeCalledWith('/');
   });
 
   test('make a correct action if fail', async () => {
@@ -309,8 +306,6 @@ describe('signOutUser', () => {
     expect(mockDispatch.mock.calls[0][0]).toEqual({
       type: types.SIGN_OUT_USER_SUCCESS,
     });
-
-    expect(history.push).toBeCalledWith('/');
   });
 
   test('make a correct action if fail', async () => {
@@ -486,8 +481,6 @@ describe('createPost', () => {
       type: types.CREATE_POST_SUCCESS,
       payload: mockNewPostId,
     });
-
-    expect(history.push).toBeCalledWith(`/post/${mockNewPostId}`);
   });
 
   test('makes correct action when fail', async () => {
@@ -534,9 +527,8 @@ describe('editPost', () => {
     });
     expect(mock.dispatch).toBeCalledWith({
       type: types.EDIT_POST_SUCCESS,
+      payload: DUMMY_POST_TO_EDIT.postId,
     });
-
-    expect(history.push).toBeCalledWith(`/post/${DUMMY_POST_TO_EDIT.postId}`);
   });
 
   test('makes correct action when fail', async () => {
@@ -575,8 +567,6 @@ describe('deletePost', () => {
     expect(mockDispatch.mock.calls[0][0]).toEqual({
       type: types.DELETE_POST_SUCCESS,
     });
-
-    expect(history.push).toBeCalledWith('/account/posts');
   });
 
   test('make a correct action if test failed', async () => {
