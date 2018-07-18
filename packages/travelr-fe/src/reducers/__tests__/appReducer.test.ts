@@ -1,6 +1,5 @@
-import appReducer, { INITIAL_STATE } from '../appReducer';
 import types from '../../actions/types';
-import { TaskName } from '../../config/types';
+import appReducer, { INITIAL_STATE } from '../appReducer';
 
 describe('appReducer', () => {
   test('REDUCE_SNACKBAR_QUEUE', () => {
@@ -43,17 +42,16 @@ describe('appReducer', () => {
   test('START_PROGRESS', () => {
     const state = {
       ...INITIAL_STATE,
-      tasksInProgress: <TaskName[]>['fetch'],
+      showProgress: false,
     };
 
     const action = {
       type: types.START_PROGRESS,
-      payload: 'signin',
     };
 
     const expected = {
       ...INITIAL_STATE,
-      tasksInProgress: ['fetch', 'signin'],
+      showProgress: true,
     };
 
     expect(appReducer(state, action)).toEqual(expected);
@@ -62,17 +60,16 @@ describe('appReducer', () => {
   test('FINISH_PROGRESS', () => {
     const state = {
       ...INITIAL_STATE,
-      tasksInProgress: <TaskName[]>['fetch', 'signin'],
+      showProgress: true,
     };
 
     const action = {
       type: types.FINISH_PROGRESS,
-      payload: 'fetch',
     };
 
     const expected = {
       ...INITIAL_STATE,
-      tasksInProgress: ['signin'],
+      showProgress: false,
     };
 
     expect(appReducer(state, action)).toEqual(expected);

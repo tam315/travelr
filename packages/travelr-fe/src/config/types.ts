@@ -71,13 +71,6 @@ export type FilterCriterion = {
   limit?: number;
 };
 
-export type TaskName =
-  | 'fetch'
-  | 'signin'
-  | 'createPost'
-  | 'editPost'
-  | 'sendEmailVerification';
-
 // required info to authenticate with the main API
 export type AuthSeed = {
   token: string;
@@ -87,7 +80,7 @@ export type AuthSeed = {
 
 export type AppStore = {
   snackbarQueue: string[];
-  tasksInProgress: (TaskName)[];
+  showProgress: boolean;
 };
 
 export type PostsStore = {

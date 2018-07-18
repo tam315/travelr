@@ -264,7 +264,6 @@ test('startProgressServiceEpic', done => {
     outcomingAction => {
       expect(outcomingAction).toEqual({
         type: actionTypes.START_PROGRESS,
-        payload: 'TODO_REMOVE_THIS',
       });
       assertionExecutedCount += 1;
     },
@@ -304,7 +303,6 @@ test('stopProgressServiceEpic', done => {
     outcomingAction => {
       expect(outcomingAction).toEqual({
         type: actionTypes.FINISH_PROGRESS,
-        payload: 'TODO_REMOVE_THIS',
       });
       assertionExecutedCount += 1;
     },

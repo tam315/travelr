@@ -93,7 +93,6 @@ export const startProgressServiceEpic = (action$: ActionsObservable<any>) =>
     ),
     mapTo({
       type: types.START_PROGRESS,
-      payload: 'TODO_REMOVE_THIS',
     }),
   );
 
@@ -120,7 +119,6 @@ export const stopProgressServiceEpic = (action$: ActionsObservable<any>) =>
     ),
     mapTo({
       type: types.FINISH_PROGRESS,
-      payload: 'TODO_REMOVE_THIS',
     }),
   );
 

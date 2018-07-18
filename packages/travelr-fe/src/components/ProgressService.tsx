@@ -20,13 +20,13 @@ type Props = {
 export const ProgressService = (props: Props) => {
   const { classes } = props;
   const {
-    app: { tasksInProgress },
+    app: { showProgress },
   } = props;
 
   return (
     <div className={classes.root}>
       <Fade
-        in={!!tasksInProgress.length}
+        in={showProgress}
         style={{
           transitionDelay: '0ms',
         }}

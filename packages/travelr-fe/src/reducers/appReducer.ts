@@ -3,10 +3,10 @@ import { AppStore } from '../config/types';
 
 export const INITIAL_STATE: AppStore = {
   snackbarQueue: [],
-  tasksInProgress: [],
+  showProgress: false,
 };
 
-export default (state: AppStore = INITIAL_STATE, action: any) => {
+export default (state: AppStore = INITIAL_STATE, action: any): AppStore => {
   switch (action.type) {
     case actionTypes.REDUCE_SNACKBAR_QUEUE: {
       const newState = { ...state };
@@ -21,25 +21,15 @@ export default (state: AppStore = INITIAL_STATE, action: any) => {
       return newState;
     }
     case actionTypes.START_PROGRESS: {
-      const tasksInProgress = [...state.tasksInProgress];
-      const index = tasksInProgress.indexOf(action.payload);
-      if (index === -1) {
-        tasksInProgress.push(action.payload);
-      }
       return {
         ...state,
-        tasksInProgress,
+        showProgress: true,
       };
     }
     case actionTypes.FINISH_PROGRESS: {
-      const tasksInProgress = [...state.tasksInProgress];
-      const index = tasksInProgress.indexOf(action.payload);
-      if (index !== -1) {
-        tasksInProgress.splice(index, 1);
-      }
       return {
         ...state,
-        tasksInProgress,
+        showProgress: false,
       };
     }
     default:
