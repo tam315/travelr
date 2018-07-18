@@ -118,14 +118,14 @@ actions.increaseLimitCountOfGrid = () => ({
 });
 
 actions.signInWithGoogle = () => async (dispatch: Dispatch<any>) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+  dispatch({ type: actionTypes.SIGN_IN_WITH_GOOGLE });
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.addScope('email');
   await authRef.signInWithRedirect(provider);
 };
 
 actions.signInWithFacebook = () => async (dispatch: Dispatch<any>) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+  dispatch({ type: actionTypes.SIGN_IN_WITH_FACEBOOK });
   const provider = new firebase.auth.FacebookAuthProvider();
   provider.addScope('email');
   await authRef.signInWithRedirect(provider);

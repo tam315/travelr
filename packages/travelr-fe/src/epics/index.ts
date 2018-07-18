@@ -82,6 +82,8 @@ export const startProgressServiceEpic = (action$: ActionsObservable<any>) =>
     ofType(
       types.INIT_AUTH,
       types.GET_OR_CREATE_USER_INFO,
+      types.SIGN_IN_WITH_GOOGLE,
+      types.SIGN_IN_WITH_FACEBOOK,
       types.SIGN_IN_WITH_EMAIL,
       types.SIGN_UP_WITH_EMAIL,
       types.SEND_EMAIL_VERIFICATION,
