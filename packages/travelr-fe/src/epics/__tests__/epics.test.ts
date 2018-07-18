@@ -333,9 +333,97 @@ test('snackbarEpic', done => {
       expectedMessage: 'ユーザ情報の作成または取得に失敗しました',
     },
     {
+      type: actionTypes.UPDATE_USER_INFO_SUCCESS,
+      expectedMessage: 'ユーザ情報を更新しました',
+    },
+    {
+      type: actionTypes.UPDATE_USER_INFO_FAIL,
+      expectedMessage: 'ユーザ情報の更新に失敗しました',
+    },
+    {
+      type: actionTypes.DELETE_USER_SUCCESS,
+      expectedMessage: 'アカウントを削除しました',
+    },
+    {
+      type: actionTypes.DELETE_USER_FAIL,
+      expectedMessage: 'アカウントの情報に失敗しました',
+    },
+    {
       type: actionTypes.SIGN_UP_WITH_EMAIL_SUCCESS,
       expectedMessage:
         'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
+    },
+    {
+      type: actionTypes.SIGN_OUT_USER_SUCCESS,
+      expectedMessage: 'サインアウトしました',
+    },
+    {
+      type: actionTypes.SIGN_OUT_USER_FAIL,
+      expectedMessage: 'サインアウトに失敗しました',
+    },
+    {
+      type: actionTypes.FETCH_ALL_POSTS_FAIL,
+      expectedMessage: '投稿の取得に失敗しました',
+    },
+    {
+      type: actionTypes.FETCH_POST_FAIL,
+      expectedMessage: '投稿の取得に失敗しました',
+    },
+    {
+      type: actionTypes.CREATE_POST_SUCCESS,
+      expectedMessage: '投稿を作成しました',
+    },
+    {
+      type: actionTypes.CREATE_POST_FAIL,
+      expectedMessage: '投稿の作成に失敗しました',
+    },
+    {
+      type: actionTypes.EDIT_POST_SUCCESS,
+      expectedMessage: '投稿を編集しました',
+    },
+    {
+      type: actionTypes.EDIT_POST_FAIL,
+      expectedMessage: '投稿の編集に失敗しました',
+    },
+    {
+      type: actionTypes.FETCH_MY_POSTS_FAIL,
+      expectedMessage: '投稿の取得に失敗しました',
+    },
+    {
+      type: actionTypes.DELETE_POST_SUCCESS,
+      expectedMessage: '投稿を削除しました',
+    },
+    {
+      type: actionTypes.DELETE_POST_FAIL,
+      expectedMessage: '投稿の削除に失敗しました',
+    },
+    {
+      type: actionTypes.DELETE_POSTS_SUCCESS,
+      expectedMessage: '投稿を削除しました',
+    },
+    {
+      type: actionTypes.DELETE_POSTS_FAIL,
+      expectedMessage: '投稿の削除に失敗しました',
+    },
+    {
+      type: actionTypes.CREATE_COMMENT_SUCCESS,
+      expectedMessage: 'コメントを投稿しました',
+    },
+    {
+      type: actionTypes.CREATE_COMMENT_FAIL,
+      expectedMessage: 'コメントの投稿に失敗しました',
+    },
+    {
+      type: actionTypes.DELETE_COMMENT_SUCCESS,
+      expectedMessage: 'コメントを削除しました',
+    },
+    {
+      type: actionTypes.DELETE_COMMENT_FAIL,
+      expectedMessage: 'コメントの削除に失敗しました',
+    },
+    {
+      type: actionTypes.TOGGLE_LIKE_FAIL,
+      expectedMessage: 'いいねの変更に失敗しました',
     },
   ];
 
@@ -352,7 +440,7 @@ test('snackbarEpic', done => {
     },
     null,
     () => {
-      expect(assertionExecutedCount).toBe(3);
+      expect(assertionExecutedCount).toBe(incomingActions.length);
       done();
     },
   );

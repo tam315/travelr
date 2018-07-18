@@ -128,35 +128,67 @@ export const redirectorEpic = (action$: ActionsObservable<any>) =>
     }),
   );
 
-export const snackbarEpic = action$ =>
-  action$.pipe(
-    ofType(
-      actionTypes.INIT_AUTH_FAIL,
-      actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
-      actionTypes.SIGN_UP_WITH_EMAIL_SUCCESS,
+export const snackbarEpic = (action$: ActionsObservable<any>) => {
+  // helper to create actions to display snackbar
+  const s = message => ({
+    type: types.ADD_SNACKBAR_QUEUE,
+    payload: message,
+  });
+
+  const actionMessagePairs = {
+    [types.INIT_AUTH_FAIL]: s('認証情報の取得に失敗しました'),
+
+    [types.GET_OR_CREATE_USER_INFO_FAIL]: s(
+      'ユーザ情報の作成または取得に失敗しました',
     ),
-    map(action => {
-      // @ts-ignore
-      switch (action.type) {
-        case actionTypes.INIT_AUTH_FAIL:
-          return {
-            type: actionTypes.ADD_SNACKBAR_QUEUE,
-            payload: '認証情報の取得に失敗しました',
-          };
-        case actionTypes.GET_OR_CREATE_USER_INFO_FAIL:
-          return {
-            type: actionTypes.ADD_SNACKBAR_QUEUE,
-            payload: 'ユーザ情報の作成または取得に失敗しました',
-          };
-        case actionTypes.SIGN_UP_WITH_EMAIL_SUCCESS:
-          return {
-            type: actionTypes.ADD_SNACKBAR_QUEUE,
-            payload:
-              'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
-          };
-      }
-    }),
+
+    [types.UPDATE_USER_INFO_SUCCESS]: s('ユーザ情報を更新しました'),
+    [types.UPDATE_USER_INFO_FAIL]: s('ユーザ情報の更新に失敗しました'),
+
+    [types.DELETE_USER_SUCCESS]: s('アカウントを削除しました'),
+    [types.DELETE_USER_FAIL]: s('アカウントの情報に失敗しました'),
+
+    [types.SIGN_UP_WITH_EMAIL_SUCCESS]: s(
+      'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
+    ),
+
+    [types.SIGN_OUT_USER_SUCCESS]: s('サインアウトしました'),
+    [types.SIGN_OUT_USER_FAIL]: s('サインアウトに失敗しました'),
+
+    [types.FETCH_ALL_POSTS_FAIL]: s('投稿の取得に失敗しました'),
+
+    [types.FETCH_POST_FAIL]: s('投稿の取得に失敗しました'),
+
+    [types.CREATE_POST_SUCCESS]: s('投稿を作成しました'),
+    [types.CREATE_POST_FAIL]: s('投稿の作成に失敗しました'),
+
+    [types.EDIT_POST_SUCCESS]: s('投稿を編集しました'),
+    [types.EDIT_POST_FAIL]: s('投稿の編集に失敗しました'),
+
+    [types.FETCH_MY_POSTS_FAIL]: s('投稿の取得に失敗しました'),
+
+    [types.DELETE_POST_SUCCESS]: s('投稿を削除しました'),
+    [types.DELETE_POST_FAIL]: s('投稿の削除に失敗しました'),
+
+    [types.DELETE_POSTS_SUCCESS]: s('投稿を削除しました'),
+    [types.DELETE_POSTS_FAIL]: s('投稿の削除に失敗しました'),
+
+    [types.CREATE_COMMENT_SUCCESS]: s('コメントを投稿しました'),
+    [types.CREATE_COMMENT_FAIL]: s('コメントの投稿に失敗しました'),
+
+    [types.DELETE_COMMENT_SUCCESS]: s('コメントを削除しました'),
+    [types.DELETE_COMMENT_FAIL]: s('コメントの削除に失敗しました'),
+
+    [types.TOGGLE_LIKE_FAIL]: s('いいねの変更に失敗しました'),
+  };
+
+  const actionNameArray = Object.keys(actionMessagePairs);
+
+  return action$.pipe(
+    ofType(...actionNameArray),
+    map(action => actionMessagePairs[action.type]),
   );
+};
 
 export default combineEpics(
   getOrCreateUserInfoEpic,
