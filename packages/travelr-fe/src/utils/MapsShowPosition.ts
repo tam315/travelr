@@ -1,5 +1,5 @@
 import config from '../config';
-import loadJS from './loadJS';
+import { loadJS } from './general';
 
 type Position = {
   lng: number;

@@ -1,6 +1,6 @@
 import config from '../config';
 import { LatLng } from '../config/types';
-import loadJS from './loadJS';
+import { loadJS } from './general';
 
 declare var google: any;
 declare var MarkerClusterer: any;

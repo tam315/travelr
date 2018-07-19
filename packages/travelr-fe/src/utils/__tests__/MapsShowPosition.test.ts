@@ -1,8 +1,8 @@
-import loadJS from '../loadJS';
+import { loadJS } from '../general';
 import MapsShowPosition from '../MapsShowPosition';
 import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
 
-jest.mock('../loadJS');
+jest.mock('../general');
 
 const DUMMY_POSITION = { lng: 135.0, lat: 35.0 };
 
