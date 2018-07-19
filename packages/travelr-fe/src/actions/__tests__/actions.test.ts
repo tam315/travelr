@@ -486,9 +486,8 @@ describe('createPost', () => {
     fetch.mockReject();
     await thunk(mock.dispatch);
 
-    expect(mock.dispatch.mock.calls[1][0]).toEqual({
-      type: types.CREATE_POST_FAIL,
-    });
+    expect(mock.dispatch.mock.calls[1][0].type).toBe(types.CREATE_POST_FAIL);
+    expect(typeof mock.dispatch.mock.calls[1][0].payload).toBe('object');
   });
 });
 
@@ -534,9 +533,8 @@ describe('editPost', () => {
     fetch.mockReject();
     await thunk(mock.dispatch);
 
-    expect(mock.dispatch.mock.calls[1][0]).toEqual({
-      type: types.EDIT_POST_FAIL,
-    });
+    expect(mock.dispatch.mock.calls[1][0].type).toBe(types.EDIT_POST_FAIL);
+    expect(typeof mock.dispatch.mock.calls[1][0].payload).toBe('object');
   });
 });
 
@@ -575,9 +573,8 @@ describe('deletePost', () => {
     await thunk(mockDispatch);
 
     // make a correct action
-    expect(mockDispatch.mock.calls[0][0]).toEqual({
-      type: types.DELETE_POST_FAIL,
-    });
+    expect(mockDispatch.mock.calls[0][0].type).toBe(types.DELETE_POST_FAIL);
+    expect(typeof mockDispatch.mock.calls[0][0].payload).toBe('object');
   });
 });
 

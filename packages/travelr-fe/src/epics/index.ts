@@ -1,6 +1,7 @@
 import { ActionsObservable, combineEpics, ofType } from 'redux-observable';
 import { from, of } from 'rxjs';
 import { catchError, flatMap, map, mapTo } from 'rxjs/operators';
+import wretch from 'wretch';
 import types from '../actions/types';
 import config from '../config';
 import firebaseUtils from '../utils/firebaseUtils';
@@ -51,19 +52,12 @@ export const getOrCreateUserInfoEpic = (action$: ActionsObservable<any>) =>
       // @ts-ignore
       const { token, displayName, emailVerified } = action.payload;
 
-      const fetchOptions = {
-        method: 'POST',
-        headers: {
-          authorization: token,
-        },
-        body: displayName ? JSON.stringify({ displayName }) : '',
-      };
+      const request = wretch(`${config.apiUrl}users`)
+        .headers({ authorization: token })
+        .post({ displayName })
+        .json();
 
-      return from(fetch(`${config.apiUrl}users`, fetchOptions)).pipe(
-        flatMap(res => {
-          if (!res.ok) throw 'response is not ok';
-          return res.json();
-        }),
+      return from(request).pipe(
         map(userInfo => ({
           type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
           payload: { ...userInfo, token, emailVerified },

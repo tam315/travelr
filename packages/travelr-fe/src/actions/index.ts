@@ -1,6 +1,7 @@
 import * as firebase from 'firebase/app';
 import { Dispatch } from 'redux';
 import uuid from 'uuid/v4';
+import wretch from 'wretch';
 import config from '../config';
 import {
   AuthSeed,
@@ -34,20 +35,10 @@ actions.updateUserInfo = (user: UserStore, newUserInfo: NewUserInfo) => async (
   const { userId, token } = user;
   const { displayName } = newUserInfo;
   try {
-    const response = await fetch(`${config.apiUrl}users/${userId}`, {
-      method: 'PUT',
-      headers: {
-        authorization: token,
-      },
-      body: JSON.stringify({ displayName }),
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.UPDATE_USER_INFO_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}users/${userId}`)
+      .headers({ authorization: token })
+      .put({ displayName })
+      .res();
 
     dispatch({
       type: actionTypes.UPDATE_USER_INFO_SUCCESS,
@@ -84,19 +75,10 @@ actions.deleteUser = (user: UserStore) => async (dispatch: Dispatch<any>) => {
       return;
     }
 
-    const response = await fetch(`${config.apiUrl}users/${userId}`, {
-      method: 'DELETE',
-      headers: {
-        authorization: token,
-      },
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.DELETE_USER_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}users/${userId}`)
+      .headers({ authorization: token })
+      .delete()
+      .res();
 
     await authRef.currentUser.delete();
 
@@ -283,8 +265,10 @@ actions.fetchAllPosts = (criterion: FilterCriterion | null = {}) => async (
   if (params.length) queryParams = `?${params.join('&')}`;
 
   try {
-    const response = await fetch(`${config.apiUrl}posts${queryParams}`);
-    const posts = await response.json();
+    const posts = await wretch(`${config.apiUrl}posts${queryParams}`)
+      .get()
+      .json();
+
     dispatch({
       type: actionTypes.FETCH_ALL_POSTS_SUCCESS,
       payload: posts,
@@ -312,16 +296,9 @@ actions.fetchPost = (postId: number, user: UserStore) => async (
       url = `${config.apiUrl}posts/${postId}`;
     }
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.FETCH_POST_FAIL,
-      });
-      return;
-    }
-
-    const post = await response.json();
+    const post = await wretch(url)
+      .get()
+      .json();
 
     dispatch({
       type: actionTypes.FETCH_POST_SUCCESS,
@@ -369,22 +346,11 @@ actions.createPost = (user: UserStore, newPost: NewPost) => async (
       description: description || '',
     };
 
-    const response = await fetch(`${config.apiUrl}posts`, {
-      method: 'POST',
-      headers: {
-        authorization: user.token,
-      },
-      body: JSON.stringify(newPostForApi),
-    });
+    const { postId } = await wretch(`${config.apiUrl}posts`)
+      .headers({ authorization: user.token })
+      .post(newPostForApi)
+      .json();
 
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.CREATE_POST_FAIL,
-      });
-      return;
-    }
-
-    const { postId } = await response.json();
     dispatch({
       type: actionTypes.CREATE_POST_SUCCESS,
       payload: postId,
@@ -403,20 +369,10 @@ actions.editPost = (user: UserStore, postToEdit: PostToEdit) => async (
   dispatch({ type: actionTypes.EDIT_POST });
 
   try {
-    const response = await fetch(`${config.apiUrl}posts/${postToEdit.postId}`, {
-      method: 'PUT',
-      headers: {
-        authorization: user.token,
-      },
-      body: JSON.stringify(postToEdit),
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.EDIT_POST_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/${postToEdit.postId}`)
+      .headers({ authorization: user.token })
+      .put(postToEdit)
+      .res();
 
     dispatch({
       type: actionTypes.EDIT_POST_SUCCESS,
@@ -436,17 +392,10 @@ actions.deletePost = (user: UserStore, postId: number) => async (
   const { token } = user;
 
   try {
-    const response = await fetch(`${config.apiUrl}posts/${postId}`, {
-      method: 'DELETE',
-      headers: { authorization: token },
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.DELETE_POST_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/${postId}`)
+      .headers({ authorization: token })
+      .delete()
+      .res();
 
     dispatch({
       type: actionTypes.DELETE_POST_SUCCESS,
@@ -454,6 +403,7 @@ actions.deletePost = (user: UserStore, postId: number) => async (
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_POST_FAIL,
+      payload: err,
     });
   }
 };
@@ -493,15 +443,10 @@ actions.fetchMyPosts = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   const { userId } = user;
   if (!userId) return;
   try {
-    const response = await fetch(`${config.apiUrl}posts?user_id=${userId}`);
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.FETCH_MY_POSTS_FAIL,
-      });
-      return;
-    }
+    const myPosts = await wretch(`${config.apiUrl}posts?user_id=${userId}`)
+      .get()
+      .json();
 
-    const myPosts = await response.json();
     dispatch({
       type: actionTypes.FETCH_MY_POSTS_SUCCESS,
       payload: myPosts,
@@ -532,18 +477,10 @@ actions.createComment = (
   comment: string,
 ) => async (dispatch: Dispatch<any>) => {
   try {
-    const response = await fetch(`${config.apiUrl}posts/${postId}/comments`, {
-      method: 'POST',
-      headers: { authorization: user.token },
-      body: JSON.stringify({ comment }),
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.CREATE_COMMENT_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/${postId}/comments`)
+      .headers({ authorization: user.token })
+      .post({ comment })
+      .res();
 
     dispatch({
       type: actionTypes.CREATE_COMMENT_SUCCESS,
@@ -562,20 +499,10 @@ actions.deleteComment = (user: UserStore, comment: Comment) => async (
 ) => {
   const { postId, commentId } = comment;
   try {
-    const response = await fetch(
-      `${config.apiUrl}posts/comments/${commentId}`,
-      {
-        method: 'DELETE',
-        headers: { authorization: user.token },
-      },
-    );
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.DELETE_COMMENT_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/comments/${commentId}`)
+      .headers({ authorization: user.token })
+      .delete()
+      .res();
 
     dispatch({
       type: actionTypes.DELETE_COMMENT_SUCCESS,
@@ -596,20 +523,10 @@ actions.toggleLike = (user: UserStore, post: Post) => async (
   const { postId } = post;
 
   try {
-    const response = await fetch(
-      `${config.apiUrl}posts/${postId}/like/toggle`,
-      {
-        method: 'POST',
-        headers: { authorization: token },
-      },
-    );
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.TOGGLE_LIKE_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/${postId}/like/toggle`)
+      .headers({ authorization: token })
+      .post()
+      .res();
 
     dispatch({
       type: actionTypes.TOGGLE_LIKE_SUCCESS,
