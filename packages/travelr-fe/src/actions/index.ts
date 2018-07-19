@@ -414,18 +414,11 @@ actions.deletePosts = (user: UserStore, postIds: number[]) => async (
   const { token } = user;
 
   try {
-    const response = await fetch(`${config.apiUrl}posts`, {
-      method: 'DELETE',
-      headers: { authorization: token },
-      body: JSON.stringify(postIds),
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.DELETE_POSTS_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts`)
+      .headers({ authorization: token })
+      .json(postIds)
+      .delete()
+      .res();
 
     dispatch({
       type: actionTypes.DELETE_POSTS_SUCCESS,
