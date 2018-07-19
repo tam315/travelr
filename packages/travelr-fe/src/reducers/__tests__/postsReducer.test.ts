@@ -1,6 +1,6 @@
-import postsReducer, { INITIAL_STATE } from '../postsReducer';
 import types from '../../actions/types';
 import { DUMMY_POSTS, DUMMY_POSTS_IDS } from '../../config/dummies';
+import postsReducer, { INITIAL_STATE } from '../postsReducer';
 
 describe('posts reducer', () => {
   test('FETCH_ALL_POSTS_SUCCESS', () => {

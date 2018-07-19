@@ -1,4 +1,4 @@
-import Typography from '@material-ui/core/Typography';
+import { Typography } from '@material-ui/core';
 import IconComment from '@material-ui/icons/Comment';
 import IconView from '@material-ui/icons/Visibility';
 import * as React from 'react';

@@ -2,7 +2,6 @@ import Button from '@material-ui/core/Button';
 import { shallow } from 'enzyme';
 import * as React from 'react';
 import { DUMMY_USER_STORE } from '../../config/dummies';
-import firebaseUtils from '../../utils/firebaseUtils';
 import MapsPickPosition from '../../utils/MapsPickPosition';
 import { PageCreatePost } from '../PageCreatePost';
 

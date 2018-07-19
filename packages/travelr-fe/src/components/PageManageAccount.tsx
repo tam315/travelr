@@ -1,11 +1,10 @@
-import Input from '@material-ui/core/Input';
+import { Input, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import IconDone from '@material-ui/icons/Done';
 import IconEdit from '@material-ui/icons/Edit';
 import * as React from 'react';
+import { NewUserInfo, UserStore } from '../config/types';
 import StatusBadge from './StatusBadge';
-import { UserStore, NewUserInfo } from '../config/types';
 
 const styles = theme => ({
   root: {

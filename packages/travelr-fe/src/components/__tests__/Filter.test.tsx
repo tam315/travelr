@@ -1,9 +1,9 @@
 import Button from '@material-ui/core/Button';
+import ListItemText from '@material-ui/core/ListItemText';
+import TextField from '@material-ui/core/TextField';
 import { shallow } from 'enzyme';
 import * as React from 'react';
 import { Filter } from '../Filter';
-import TextField from '@material-ui/core/TextField';
-import ListItemText from '@material-ui/core/ListItemText';
 
 describe('Filter component', () => {
   let mockCallback;

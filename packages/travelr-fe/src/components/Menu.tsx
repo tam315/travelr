@@ -1,9 +1,11 @@
-import Divider from '@material-ui/core/Divider';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  SwipeableDrawer,
+} from '@material-ui/core';
 import IconAccountCircle from '@material-ui/icons/AccountCircle';
 import IconAddPhoto from '@material-ui/icons/AddAPhoto';
 import IconPhotoLibrary from '@material-ui/icons/PhotoLibrary';

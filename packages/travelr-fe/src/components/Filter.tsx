@@ -1,19 +1,21 @@
 import Button from '@material-ui/core/Button';
-import Collapse from '@material-ui/core/Collapse';
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import {
+  Collapse,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import IconExpandLess from '@material-ui/icons/ExpandLess';
 import IconExpandMore from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
 import InputRange from 'react-input-range';
-import '../css/reactInputRange.css';
 import { FilterCriterion } from '../config/types';
+import '../css/reactInputRange.css';
 
 const styles = {
   paper: {

@@ -1,186 +1,33 @@
 import * as firebase from 'firebase/app';
+import { Dispatch } from 'redux';
 import uuid from 'uuid/v4';
+import wretch from 'wretch';
 import config from '../config';
-import firebaseUtils from '../utils/firebaseUtils';
-import history from '../utils/history';
-import actionTypes from './types';
 import {
   AuthSeed,
   Comment,
-  PostToEdit,
   FilterCriterion,
   NewPost,
   NewUserInfo,
   Post,
-  TaskName,
+  PostToEdit,
   UserStore,
 } from '../config/types';
-import { Dispatch } from 'redux';
+import firebaseUtils from '../utils/firebaseUtils';
+import actionTypes from './types';
 
 const { authRef } = firebaseUtils;
 
 const actions: any = {};
 
-export const errorNotifier = (err: any, dispatch: Dispatch<any>) => {
-  if (!err || !err.code) {
-    dispatch({
-      type: actionTypes.ADD_SNACKBAR_QUEUE,
-      payload: '不明なエラーが発生しました',
-    });
-    return;
-  }
+actions.initAuth = () => ({
+  type: actionTypes.INIT_AUTH,
+});
 
-  switch (err.code) {
-    case 'auth/user-not-found':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'このメールアドレスは登録されていません',
-      });
-      break;
-    case 'auth/account-exists-with-different-credential':
-      // TODO: link account
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'このメールアドレスは別のログイン方法に紐づけされています',
-      });
-      break;
-    case 'auth/wrong-password':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload:
-          'パスワードが間違っているか、メールアドレスがほかのログイン方法に紐付けされています。',
-      });
-      break;
-    case 'auth/invalid-email':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'メールアドレスの形式が正しくありません',
-      });
-      break;
-    case 'auth/weak-password':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'パスワードは6文字以上必要です',
-      });
-      break;
-    case 'auth/email-already-in-use':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: 'このメールアドレスは既に使用されています',
-      });
-      break;
-    case 'storage/unauthorized':
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload:
-          'メール認証が完了していません。アカウント管理画面からメール認証を行ってください。',
-      });
-      break;
-    default:
-      dispatch({
-        type: actionTypes.ADD_SNACKBAR_QUEUE,
-        payload: '不明なエラーが発生しました',
-      });
-      throw new Error(err);
-  }
-};
-
-actions.initAuth = () => async (dispatch: Dispatch<any>) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
-
-  try {
-    const redirectedUserAuthSeed = await firebaseUtils.getRedirectedUserAuthSeed();
-    const currentUserAuthSeed = await firebaseUtils.getCurrentUserAuthSeed();
-
-    if (redirectedUserAuthSeed) {
-      // if the user is redirected
-      actions.getOrCreateUserInfo(redirectedUserAuthSeed)(dispatch);
-    } else if (currentUserAuthSeed) {
-      // if the user already has the token
-      actions.getOrCreateUserInfo(currentUserAuthSeed)(dispatch);
-    } else {
-      // if the user doesn't have token
-      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-    }
-    return true;
-  } catch (err) {
-    errorNotifier(err, dispatch);
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-    return true;
-  }
-};
-
-actions.getOrCreateUserInfo = (authSeed: AuthSeed) => async (
-  dispatch: Dispatch<any>,
-) => {
-  const { token, displayName, emailVerified } = authSeed;
-  try {
-    const fetchOptions = {
-      method: 'POST',
-      headers: {
-        authorization: token,
-      },
-      body: displayName ? JSON.stringify({ displayName }) : '',
-    };
-    const response = await fetch(`${config.apiUrl}users`, fetchOptions);
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
-      });
-      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-      return true;
-    }
-
-    const userInfo = await response.json();
-    dispatch({
-      type: actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS,
-      payload: { ...userInfo, token, emailVerified },
-    });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-
-    if (history.location.pathname === '/auth') history.push('/all-map');
-
-    return true;
-  } catch (err) {
-    dispatch({
-      type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
-    });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
-    errorNotifier(err, dispatch);
-    return true;
-  }
-};
-
-actions.fetchUserInfo = (user: UserStore) => async (
-  dispatch: Dispatch<any>,
-) => {
-  const { token } = user;
-  try {
-    const response = await fetch(`${config.apiUrl}users/token`, {
-      headers: {
-        authorization: token,
-      },
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.FETCH_USER_INFO_FAIL,
-      });
-      return;
-    }
-
-    const userInfo = await response.json();
-    dispatch({
-      type: actionTypes.FETCH_USER_INFO_SUCCESS,
-      payload: { ...userInfo, token },
-    });
-  } catch (err) {
-    dispatch({
-      type: actionTypes.FETCH_USER_INFO_FAIL,
-    });
-  }
-};
+actions.getOrCreateUserInfo = (authSeed: AuthSeed) => ({
+  type: actionTypes.GET_OR_CREATE_USER_INFO,
+  payload: authSeed,
+});
 
 actions.updateUserInfo = (user: UserStore, newUserInfo: NewUserInfo) => async (
   dispatch: Dispatch<any>,
@@ -188,20 +35,10 @@ actions.updateUserInfo = (user: UserStore, newUserInfo: NewUserInfo) => async (
   const { userId, token } = user;
   const { displayName } = newUserInfo;
   try {
-    const response = await fetch(`${config.apiUrl}users/${userId}`, {
-      method: 'PUT',
-      headers: {
-        authorization: token,
-      },
-      body: JSON.stringify({ displayName }),
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.UPDATE_USER_INFO_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}users/${userId}`)
+      .headers({ authorization: token })
+      .put({ displayName })
+      .res();
 
     dispatch({
       type: actionTypes.UPDATE_USER_INFO_SUCCESS,
@@ -238,26 +75,16 @@ actions.deleteUser = (user: UserStore) => async (dispatch: Dispatch<any>) => {
       return;
     }
 
-    const response = await fetch(`${config.apiUrl}users/${userId}`, {
-      method: 'DELETE',
-      headers: {
-        authorization: token,
-      },
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.DELETE_USER_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}users/${userId}`)
+      .headers({ authorization: token })
+      .delete()
+      .res();
 
     await authRef.currentUser.delete();
 
     dispatch({
       type: actionTypes.DELETE_USER_SUCCESS,
     });
-    history.push('/');
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_USER_FAIL,
@@ -270,14 +97,14 @@ actions.increaseLimitCountOfGrid = () => ({
 });
 
 actions.signInWithGoogle = () => async (dispatch: Dispatch<any>) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+  dispatch({ type: actionTypes.SIGN_IN_WITH_GOOGLE });
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.addScope('email');
   await authRef.signInWithRedirect(provider);
 };
 
 actions.signInWithFacebook = () => async (dispatch: Dispatch<any>) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+  dispatch({ type: actionTypes.SIGN_IN_WITH_FACEBOOK });
   const provider = new firebase.auth.FacebookAuthProvider();
   provider.addScope('email');
   await authRef.signInWithRedirect(provider);
@@ -287,7 +114,7 @@ actions.signInWithEmail = (email: string, password: string) => async (
   dispatch: Dispatch<any>,
 ) => {
   try {
-    dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+    dispatch({ type: actionTypes.SIGN_IN_WITH_EMAIL });
 
     await authRef.signInWithEmailAndPassword(email, password);
 
@@ -295,15 +122,21 @@ actions.signInWithEmail = (email: string, password: string) => async (
     const token = await user.getIdToken();
     const { emailVerified } = user;
 
-    // if sign in succeed
-    actions.getOrCreateUserInfo({
+    const authSeed: AuthSeed = {
       token,
       emailVerified,
       displayName: 'newuser',
-    })(dispatch);
+    };
+
+    dispatch({
+      type: actionTypes.SIGN_IN_WITH_EMAIL_SUCCESS,
+      payload: authSeed,
+    });
   } catch (err) {
-    errorNotifier(err, dispatch);
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+    dispatch({
+      type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL,
+      payload: err,
+    });
   }
 };
 
@@ -313,7 +146,7 @@ actions.signUpWithEmail = (
   displayName: string,
 ) => async (dispatch: Dispatch<any>) => {
   try {
-    dispatch({ type: actionTypes.START_PROGRESS, payload: 'signin' });
+    dispatch({ type: actionTypes.SIGN_UP_WITH_EMAIL });
 
     const result = await authRef.createUserWithEmailAndPassword(
       email,
@@ -325,58 +158,53 @@ actions.signUpWithEmail = (
     const token = await user.getIdToken();
     const { emailVerified } = user;
 
-    actions.getOrCreateUserInfo({ token, displayName, emailVerified })(
-      dispatch,
-    );
+    const authSeed: AuthSeed = { token, displayName, emailVerified };
+
     dispatch({
-      type: actionTypes.ADD_SNACKBAR_QUEUE,
-      payload:
-        'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
+      type: actionTypes.SIGN_UP_WITH_EMAIL_SUCCESS,
+      payload: authSeed,
     });
   } catch (err) {
-    errorNotifier(err, dispatch);
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'signin' });
+    dispatch({
+      type: actionTypes.SIGN_UP_WITH_EMAIL_FAIL,
+      payload: err,
+    });
   }
 };
 
 actions.sendEmailVerification = () => async (dispatch: Dispatch<any>) => {
   dispatch({
-    type: actionTypes.START_PROGRESS,
-    payload: 'sendEmailVerification',
+    type: actionTypes.SEND_EMAIL_VERIFICATION,
   });
 
   try {
     await authRef.currentUser.sendEmailVerification();
     dispatch({
-      type: actionTypes.ADD_SNACKBAR_QUEUE,
-      payload: '認証メールを再送しました',
-    });
-    dispatch({
-      type: actionTypes.FINISH_PROGRESS,
-      payload: 'sendEmailVerification',
+      type: actionTypes.SEND_EMAIL_VERIFICATION_SUCCESS,
     });
   } catch (err) {
     dispatch({
-      type: actionTypes.FINISH_PROGRESS,
-      payload: 'sendEmailVerification',
+      type: actionTypes.SEND_EMAIL_VERIFICATION_FAIL,
+      payload: err,
     });
-    errorNotifier(err, dispatch);
   }
 };
 
-actions.resetPassword = (email: string) => async (dispatch: Dispatch<any>) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'resetPassword' });
+actions.sendPasswordResetEmail = (email: string) => async (
+  dispatch: Dispatch<any>,
+) => {
+  dispatch({ type: actionTypes.SEND_PASSWORD_RESET_EMAIL });
 
   try {
     await authRef.sendPasswordResetEmail(email);
     dispatch({
-      type: actionTypes.ADD_SNACKBAR_QUEUE,
-      payload: 'パスワードリセットのメールを送信しました',
+      type: actionTypes.SEND_PASSWORD_RESET_EMAIL_SUCCESS,
     });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'resetPassword' });
   } catch (err) {
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'resetPassword' });
-    errorNotifier(err, dispatch);
+    dispatch({
+      type: actionTypes.SEND_PASSWORD_RESET_EMAIL_FAIL,
+      payload: err,
+    });
   }
 };
 
@@ -387,7 +215,6 @@ actions.signOutUser = () => async (dispatch: Dispatch<any>) => {
     dispatch({
       type: actionTypes.SIGN_OUT_USER_SUCCESS,
     });
-    history.push('/');
   } catch (err) {
     dispatch({
       type: actionTypes.SIGN_OUT_USER_FAIL,
@@ -438,8 +265,10 @@ actions.fetchAllPosts = (criterion: FilterCriterion | null = {}) => async (
   if (params.length) queryParams = `?${params.join('&')}`;
 
   try {
-    const response = await fetch(`${config.apiUrl}posts${queryParams}`);
-    const posts = await response.json();
+    const posts = await wretch(`${config.apiUrl}posts${queryParams}`)
+      .get()
+      .json();
+
     dispatch({
       type: actionTypes.FETCH_ALL_POSTS_SUCCESS,
       payload: posts,
@@ -467,16 +296,9 @@ actions.fetchPost = (postId: number, user: UserStore) => async (
       url = `${config.apiUrl}posts/${postId}`;
     }
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.FETCH_POST_FAIL,
-      });
-      return;
-    }
-
-    const post = await response.json();
+    const post = await wretch(url)
+      .get()
+      .json();
 
     dispatch({
       type: actionTypes.FETCH_POST_SUCCESS,
@@ -505,7 +327,7 @@ actions.createPost = (user: UserStore, newPost: NewPost) => async (
     'image/png': '.png',
   };
 
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'createPost' });
+  dispatch({ type: actionTypes.CREATE_POST });
 
   try {
     const oldImageFileName = uuid() + extentionOf[oldImageFile.type];
@@ -524,71 +346,43 @@ actions.createPost = (user: UserStore, newPost: NewPost) => async (
       description: description || '',
     };
 
-    const response = await fetch(`${config.apiUrl}posts`, {
-      method: 'POST',
-      headers: {
-        authorization: user.token,
-      },
-      body: JSON.stringify(newPostForApi),
-    });
+    const { postId } = await wretch(`${config.apiUrl}posts`)
+      .headers({ authorization: user.token })
+      .post(newPostForApi)
+      .json();
 
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.CREATE_POST_FAIL,
-      });
-      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'createPost' });
-      return;
-    }
-
-    const { postId } = await response.json();
     dispatch({
       type: actionTypes.CREATE_POST_SUCCESS,
       payload: postId,
     });
-    history.push(`/post/${postId}`);
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'createPost' });
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_POST_FAIL,
+      payload: err,
     });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'createPost' });
-    errorNotifier(err, dispatch);
   }
 };
 
 actions.editPost = (user: UserStore, postToEdit: PostToEdit) => async (
   dispatch: Dispatch<any>,
 ) => {
-  dispatch({ type: actionTypes.START_PROGRESS, payload: 'editPost' });
+  dispatch({ type: actionTypes.EDIT_POST });
 
   try {
-    const response = await fetch(`${config.apiUrl}posts/${postToEdit.postId}`, {
-      method: 'PUT',
-      headers: {
-        authorization: user.token,
-      },
-      body: JSON.stringify(postToEdit),
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.EDIT_POST_FAIL,
-      });
-      dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'editPost' });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/${postToEdit.postId}`)
+      .headers({ authorization: user.token })
+      .put(postToEdit)
+      .res();
 
     dispatch({
       type: actionTypes.EDIT_POST_SUCCESS,
+      payload: postToEdit.postId,
     });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'editPost' });
-    history.push(`/post/${postToEdit.postId}`);
   } catch (err) {
     dispatch({
       type: actionTypes.EDIT_POST_FAIL,
+      payload: err,
     });
-    dispatch({ type: actionTypes.FINISH_PROGRESS, payload: 'editPost' });
-    errorNotifier(err, dispatch);
   }
 };
 
@@ -598,25 +392,18 @@ actions.deletePost = (user: UserStore, postId: number) => async (
   const { token } = user;
 
   try {
-    const response = await fetch(`${config.apiUrl}posts/${postId}`, {
-      method: 'DELETE',
-      headers: { authorization: token },
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.DELETE_POST_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/${postId}`)
+      .headers({ authorization: token })
+      .delete()
+      .res();
 
     dispatch({
       type: actionTypes.DELETE_POST_SUCCESS,
     });
-    history.push('/account/posts');
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_POST_FAIL,
+      payload: err,
     });
   }
 };
@@ -656,15 +443,10 @@ actions.fetchMyPosts = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   const { userId } = user;
   if (!userId) return;
   try {
-    const response = await fetch(`${config.apiUrl}posts?user_id=${userId}`);
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.FETCH_MY_POSTS_FAIL,
-      });
-      return;
-    }
+    const myPosts = await wretch(`${config.apiUrl}posts?user_id=${userId}`)
+      .get()
+      .json();
 
-    const myPosts = await response.json();
     dispatch({
       type: actionTypes.FETCH_MY_POSTS_SUCCESS,
       payload: myPosts,
@@ -695,18 +477,10 @@ actions.createComment = (
   comment: string,
 ) => async (dispatch: Dispatch<any>) => {
   try {
-    const response = await fetch(`${config.apiUrl}posts/${postId}/comments`, {
-      method: 'POST',
-      headers: { authorization: user.token },
-      body: JSON.stringify({ comment }),
-    });
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.CREATE_COMMENT_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/${postId}/comments`)
+      .headers({ authorization: user.token })
+      .post({ comment })
+      .res();
 
     dispatch({
       type: actionTypes.CREATE_COMMENT_SUCCESS,
@@ -725,20 +499,10 @@ actions.deleteComment = (user: UserStore, comment: Comment) => async (
 ) => {
   const { postId, commentId } = comment;
   try {
-    const response = await fetch(
-      `${config.apiUrl}posts/comments/${commentId}`,
-      {
-        method: 'DELETE',
-        headers: { authorization: user.token },
-      },
-    );
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.DELETE_COMMENT_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/comments/${commentId}`)
+      .headers({ authorization: user.token })
+      .delete()
+      .res();
 
     dispatch({
       type: actionTypes.DELETE_COMMENT_SUCCESS,
@@ -759,20 +523,10 @@ actions.toggleLike = (user: UserStore, post: Post) => async (
   const { postId } = post;
 
   try {
-    const response = await fetch(
-      `${config.apiUrl}posts/${postId}/like/toggle`,
-      {
-        method: 'POST',
-        headers: { authorization: token },
-      },
-    );
-
-    if (!response.ok) {
-      dispatch({
-        type: actionTypes.TOGGLE_LIKE_FAIL,
-      });
-      return;
-    }
+    await wretch(`${config.apiUrl}posts/${postId}/like/toggle`)
+      .headers({ authorization: token })
+      .post()
+      .res();
 
     dispatch({
       type: actionTypes.TOGGLE_LIKE_SUCCESS,
@@ -795,14 +549,12 @@ actions.addSnackbarQueue = (message: string) => ({
   payload: message,
 });
 
-actions.startProgress = (taskName: TaskName) => ({
+actions.startProgress = () => ({
   type: actionTypes.START_PROGRESS,
-  payload: taskName,
 });
 
-actions.finishProgress = (taskName: TaskName) => ({
+actions.finishProgress = () => ({
   type: actionTypes.FINISH_PROGRESS,
-  payload: taskName,
 });
 
 export default actions;

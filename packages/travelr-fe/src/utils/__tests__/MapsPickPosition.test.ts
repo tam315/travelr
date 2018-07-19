@@ -1,5 +1,5 @@
-import MapsPickPosition from '../MapsPickPosition';
 import loadJS from '../loadJS';
+import MapsPickPosition from '../MapsPickPosition';
 import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
 
 jest.mock('../loadJS');

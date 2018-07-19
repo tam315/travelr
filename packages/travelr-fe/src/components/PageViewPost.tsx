@@ -3,13 +3,13 @@ import { withStyles } from '@material-ui/core/styles';
 import IconEdit from '@material-ui/icons/Edit';
 import * as React from 'react';
 import ReactCompareImage from 'react-compare-image';
+import { match } from 'react-router';
 import { Link } from 'react-router-dom';
+import { Post, PostsStore, UserStore } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';
+import MapsShowPosition from '../utils/MapsShowPosition';
 import PageViewPostComments from './PageViewPostComments';
 import StatusBadge from './StatusBadge';
-import { PostsStore, UserStore, Post } from '../config/types';
-import { match } from 'react-router';
-import MapsShowPosition from '../utils/MapsShowPosition';
 
 const styles = theme => ({
   root: {

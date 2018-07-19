@@ -1,6 +1,6 @@
 import config from '../config';
-import loadJS from './loadJS';
 import { Post } from '../config/types';
+import loadJS from './loadJS';
 
 declare var MarkerClusterer: any;
 

@@ -3,9 +3,9 @@ import {
   Comment,
   FilterCriterion,
   NewPost,
-  PostToEdit,
   Post,
   PostsStore,
+  PostToEdit,
   UserStore,
 } from './types';
 
@@ -199,7 +199,7 @@ export const DUMMY_FILTER_CRITERION: FilterCriterion = {
 
 export const DUMMY_APP_STORE: AppStore = {
   snackbarQueue: [],
-  tasksInProgress: [],
+  showProgress: false,
 };
 
 export const DUMMY_POSTS_STORE: PostsStore = {

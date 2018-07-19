@@ -1,23 +1,25 @@
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import Divider from '@material-ui/core/Divider';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import {
+  Button,
+  Checkbox,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Typography,
+} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import IconCancel from '@material-ui/icons/Cancel';
 import IconDelete from '@material-ui/icons/Delete';
 import IconSelectAll from '@material-ui/icons/SelectAll';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { PostsStore, UserStore } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';
 import StatusBadge from './StatusBadge';
-import { UserStore, PostsStore } from '../config/types';
 
 const styles = theme => ({
   root: {

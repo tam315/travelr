@@ -1,5 +1,5 @@
-import { UserStore } from '../config/types';
 import actionTypes from '../actions/types';
+import { UserStore } from '../config/types';
 
 export const INITIAL_STATE: UserStore = {
   userId: '',
@@ -15,9 +15,6 @@ export const INITIAL_STATE: UserStore = {
 export default (state: UserStore = INITIAL_STATE, action: any): UserStore => {
   switch (action.type) {
     case actionTypes.GET_OR_CREATE_USER_INFO_SUCCESS: {
-      return { ...state, ...action.payload };
-    }
-    case actionTypes.FETCH_USER_INFO_SUCCESS: {
       return { ...state, ...action.payload };
     }
     case actionTypes.UPDATE_USER_INFO_SUCCESS: {

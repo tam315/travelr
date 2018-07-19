@@ -1,8 +1,8 @@
 import {
   AppBar,
   Button,
-  IconButton,
   Hidden,
+  IconButton,
   Toolbar,
   Typography,
 } from '@material-ui/core';
@@ -11,8 +11,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import Menu from './Menu';
 import { UserStore } from '../config/types';
+import Menu from './Menu';
 
 const styles = theme => ({
   title: {

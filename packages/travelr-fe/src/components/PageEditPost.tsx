@@ -1,14 +1,16 @@
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import Input from '@material-ui/core/Input';
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
-import MapsPickPosition from '../utils/MapsPickPosition';
-import { LatLng, PostsStore, PostToEdit, UserStore } from '../config/types';
 import { match } from 'react-router';
+import { LatLng, PostsStore, PostToEdit, UserStore } from '../config/types';
+import MapsPickPosition from '../utils/MapsPickPosition';
 
 const styles = theme => ({
   root: {

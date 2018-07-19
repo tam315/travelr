@@ -1,7 +1,7 @@
-import { PageAuth } from '../PageAuth';
+import { Button, Typography } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import * as React from 'react';
-import { Button, Typography } from '@material-ui/core';
+import { PageAuth } from '../PageAuth';
 
 jest.mock('../../utils/firebaseUtils');
 
@@ -15,7 +15,7 @@ describe('', () => {
         signInWithFacebook: jest.fn(),
         signInWithEmail: jest.fn(),
         signUpWithEmail: jest.fn(),
-        resetPassword: jest.fn(),
+        sendPasswordResetEmail: jest.fn(),
       },
       signInWithRedirect: jest.fn(),
     };
@@ -29,7 +29,7 @@ describe('', () => {
         signInWithFacebook={mock.actions.signInWithFacebook}
         signInWithEmail={mock.actions.signInWithEmail}
         signUpWithEmail={mock.actions.signUpWithEmail}
-        resetPassword={mock.actions.resetPassword}
+        sendPasswordResetEmail={mock.actions.sendPasswordResetEmail}
       />,
     );
 
@@ -49,7 +49,7 @@ describe('', () => {
         signInWithFacebook={mock.actions.signInWithFacebook}
         signInWithEmail={mock.actions.signInWithEmail}
         signUpWithEmail={mock.actions.signUpWithEmail}
-        resetPassword={mock.actions.resetPassword}
+        sendPasswordResetEmail={mock.actions.sendPasswordResetEmail}
       />,
     );
 
@@ -69,7 +69,7 @@ describe('', () => {
         signInWithFacebook={mock.actions.signInWithFacebook}
         signInWithEmail={mock.actions.signInWithEmail}
         signUpWithEmail={mock.actions.signUpWithEmail}
-        resetPassword={mock.actions.resetPassword}
+        sendPasswordResetEmail={mock.actions.sendPasswordResetEmail}
       />,
     );
 
@@ -89,7 +89,7 @@ describe('', () => {
         signInWithFacebook={mock.actions.signInWithFacebook}
         signInWithEmail={mock.actions.signInWithEmail}
         signUpWithEmail={mock.actions.signUpWithEmail}
-        resetPassword={mock.actions.resetPassword}
+        sendPasswordResetEmail={mock.actions.sendPasswordResetEmail}
       />,
     );
 
@@ -106,7 +106,7 @@ describe('', () => {
     expect(mock.actions.signInWithEmail).toBeCalled();
   });
 
-  test('resetPassword is called when a button is clicked', () => {
+  test('sendPasswordResetEmail is called when a button is clicked', () => {
     const wrapper = shallow(
       <PageAuth
         classes={{}}
@@ -114,7 +114,7 @@ describe('', () => {
         signInWithFacebook={mock.actions.signInWithFacebook}
         signInWithEmail={mock.actions.signInWithEmail}
         signUpWithEmail={mock.actions.signUpWithEmail}
-        resetPassword={mock.actions.resetPassword}
+        sendPasswordResetEmail={mock.actions.sendPasswordResetEmail}
       />,
     );
 
@@ -128,6 +128,6 @@ describe('', () => {
       .last()
       .simulate('click');
 
-    expect(mock.actions.resetPassword).toBeCalled();
+    expect(mock.actions.sendPasswordResetEmail).toBeCalled();
   });
 });

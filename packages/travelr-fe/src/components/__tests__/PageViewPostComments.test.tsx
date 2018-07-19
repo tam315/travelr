@@ -1,7 +1,7 @@
 import { Button, MenuItem } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import * as React from 'react';
-import { DUMMY_USER_STORE, DUMMY_POSTS } from '../../config/dummies';
+import { DUMMY_POSTS, DUMMY_USER_STORE } from '../../config/dummies';
 import { PageViewPostComments } from '../PageViewPostComments';
 
 declare const fetch: any;

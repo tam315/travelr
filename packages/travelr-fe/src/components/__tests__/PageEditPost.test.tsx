@@ -1,13 +1,13 @@
 import { Button, Typography } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import * as React from 'react';
-import { PageEditPost } from '../PageEditPost';
 import {
-  DUMMY_USER_STORE,
-  DUMMY_POST_TO_EDIT,
   DUMMY_POSTS_STORE,
+  DUMMY_POST_TO_EDIT,
+  DUMMY_USER_STORE,
 } from '../../config/dummies';
 import MapsPickPosition from '../../utils/MapsPickPosition';
+import { PageEditPost } from '../PageEditPost';
 
 jest.mock('../../utils/MapsPickPosition');
 

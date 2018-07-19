@@ -17,13 +17,13 @@ import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
 import ProgressService from '../components/ProgressService';
 import SnackbarService from '../components/SnackbarService';
-import { AppStore, TaskName, UserStore } from '../config/types';
+import { AppStore, UserStore } from '../config/types';
 import history from '../utils/history';
 
 type Props = {
   initAuth: () => any;
-  startProgress: (taskName: TaskName) => void;
-  finishProgress: (taskName: TaskName) => void;
+  startProgress: () => void;
+  finishProgress: () => void;
   app: AppStore;
   user: UserStore;
 };
@@ -36,22 +36,22 @@ export class App extends React.Component<Props> {
     // display progress bar for every fetch request
     fetchIntercept.register({
       request: (url, config) => {
-        startProgress('fetch');
+        startProgress();
         return [url, config];
       },
 
       requestError: error => {
-        finishProgress('fetch');
+        finishProgress();
         return Promise.reject(error);
       },
 
       response: response => {
-        finishProgress('fetch');
+        finishProgress();
         return response;
       },
 
       responseError: error => {
-        finishProgress('fetch');
+        finishProgress();
         return Promise.reject(error);
       },
     });

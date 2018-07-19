@@ -1,11 +1,10 @@
 import Button from '@material-ui/core/Button';
 import { shallow } from 'enzyme';
 import * as React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { DUMMY_POSTS_STORE } from '../../config/dummies';
 import { PageViewPosts } from '../PageViewPosts';
 import PageViewPostsGrid from '../PageViewPostsGrid';
 import PageViewPostsMap from '../PageViewPostsMap';
-import { DUMMY_POSTS_STORE } from '../../config/dummies';
 
 describe('PageViewPosts component', () => {
   test('fetch all posts when componentDidMount', () => {
