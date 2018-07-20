@@ -16,6 +16,7 @@ import {
 } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';
 import { difference } from '../utils/general';
+import { getPositionFromPlaceName } from '../utils/mapsUtils';
 import actionTypes from './types';
 
 const { authRef } = firebaseUtils;
@@ -230,7 +231,7 @@ actions.fetchAllPosts = (criterion: FilterCriterionReduced = {}) => async (
     displayName,
     description,
     shootDate,
-    // placeName,
+    placeName,
     radius,
     viewCount,
     likedCount,
@@ -239,6 +240,8 @@ actions.fetchAllPosts = (criterion: FilterCriterionReduced = {}) => async (
 
   let minDate;
   let maxDate;
+  let lng;
+  let lat;
   let minViewCount;
   let maxViewCount;
   let minLikedCount;
@@ -249,6 +252,11 @@ actions.fetchAllPosts = (criterion: FilterCriterionReduced = {}) => async (
   if (shootDate) {
     minDate = shootDate.min;
     maxDate = shootDate.max;
+  }
+  if (placeName) {
+    const position = await getPositionFromPlaceName(placeName);
+    lng = position.lng;
+    lat = position.lat;
   }
   if (viewCount) {
     minViewCount = viewCount.min;
@@ -269,6 +277,8 @@ actions.fetchAllPosts = (criterion: FilterCriterionReduced = {}) => async (
   if (description) params.push(`description=${description}`);
   if (minDate) params.push(`min_date=${minDate}-01-01`);
   if (maxDate) params.push(`max_date=${maxDate}-12-31`);
+  if (lng) params.push(`lng=${lng}`);
+  if (lat) params.push(`lat=${lat}`);
   if (radius) params.push(`radius=${radius}`);
   if (minViewCount) params.push(`min_view_count=${minViewCount}`);
   if (maxViewCount) params.push(`max_view_count=${maxViewCount}`);
@@ -292,6 +302,7 @@ actions.fetchAllPosts = (criterion: FilterCriterionReduced = {}) => async (
   } catch (err) {
     dispatch({
       type: actionTypes.FETCH_ALL_POSTS_FAIL,
+      payload: err,
     });
   }
 };

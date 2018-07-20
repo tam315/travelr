@@ -12,9 +12,11 @@ import {
 import firebaseUtils from '../../utils/firebaseUtils';
 import actions from '..';
 import types from '../types';
+import { getPositionFromPlaceName } from '../../utils/mapsUtils';
 
 jest.mock('../../utils/firebaseUtils');
 jest.mock('../../utils/history');
+jest.mock('../../utils/mapsUtils');
 
 declare const fetch: any;
 
@@ -323,7 +325,9 @@ describe('signOutUser', () => {
 describe('fetchAllPosts', () => {
   test('generates correct url', async () => {
     const criterion = DUMMY_FILTER_CRITERION;
-
+    const DUMMY_LAT_LNG = { lat: 1, lng: 2 };
+    // @ts-ignore
+    getPositionFromPlaceName.mockResolvedValue(DUMMY_LAT_LNG);
     const thunk = actions.fetchAllPosts(criterion);
     const mockDispatch = jest.fn();
     await thunk(mockDispatch);
@@ -334,6 +338,8 @@ describe('fetchAllPosts', () => {
         `&description=${DUMMY_FILTER_CRITERION.description}` +
         `&min_date=${DUMMY_FILTER_CRITERION.shootDate.min}-01-01` +
         `&max_date=${DUMMY_FILTER_CRITERION.shootDate.max}-12-31` +
+        `&lng=${DUMMY_LAT_LNG.lng}` +
+        `&lat=${DUMMY_LAT_LNG.lat}` +
         `&radius=${DUMMY_FILTER_CRITERION.radius}` +
         `&min_view_count=${DUMMY_FILTER_CRITERION.viewCount.min}` +
         `&max_view_count=${DUMMY_FILTER_CRITERION.viewCount.max}` +
@@ -372,9 +378,10 @@ describe('fetchAllPosts', () => {
     const mockDispatch = jest.fn();
     await thunk(mockDispatch);
 
-    expect(mockDispatch.mock.calls[1][0]).toEqual({
-      type: types.FETCH_ALL_POSTS_FAIL,
-    });
+    expect(mockDispatch.mock.calls[1][0].type).toEqual(
+      types.FETCH_ALL_POSTS_FAIL,
+    );
+    expect(typeof mockDispatch.mock.calls[1][0].payload).toBe('object');
   });
 });
 
