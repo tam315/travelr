@@ -7,7 +7,7 @@ import {
   snackbarEpic,
   startProgressServiceEpic,
   stopProgressServiceEpic,
-} from '../';
+} from '..';
 import actionTypes from '../../actions/types';
 import { DUMMY_USER_STORE } from '../../config/dummies';
 import { AuthSeed } from '../../config/types';

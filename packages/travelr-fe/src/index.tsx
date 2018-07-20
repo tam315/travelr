@@ -6,7 +6,7 @@ import { createEpicMiddleware } from 'redux-observable';
 import reduxThunk from 'redux-thunk';
 import App from './containers/App';
 import rootEpic from './epics';
-import reducer from './reducers/index';
+import reducer from './reducers';
 
 const epicMiddleware = createEpicMiddleware();
 

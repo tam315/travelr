@@ -10,7 +10,7 @@ import {
 } from '../../config/dummies';
 // @ts-ignore
 import firebaseUtils from '../../utils/firebaseUtils';
-import actions from '../index';
+import actions from '..';
 import types from '../types';
 
 jest.mock('../../utils/firebaseUtils');
