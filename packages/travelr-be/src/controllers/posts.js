@@ -211,6 +211,26 @@ exports.deletePosts = async (req, res) => {
   }
 };
 
+exports.stats = async (req, res) => {
+  const selects = [];
+
+  selects.push('max(view_count) as max_view_count');
+  selects.push('max(liked_count) as max_liked_count');
+  selects.push('max(comments_count) as max_comments_count');
+
+  try {
+    const stats = await db.one(`SELECT ${selects.join(',')} FROM get_posts`);
+    const response = {
+      maxViewCount: +stats.max_view_count,
+      maxLikedCount: +stats.max_liked_count,
+      maxCommentsCount: +stats.max_comments_count,
+    };
+    return res.status(200).json(response);
+  } catch (err) {
+    return res.status(400).send(err.message);
+  }
+};
+
 exports.getPost = async (req, res) => {
   const { postId } = req.params;
   const { user_id } = req.query;

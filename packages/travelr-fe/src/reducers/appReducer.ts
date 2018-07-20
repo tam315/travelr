@@ -4,6 +4,9 @@ import { AppStore } from '../config/types';
 export const INITIAL_STATE: AppStore = {
   snackbarQueue: [],
   showProgress: false,
+  mapLat: 0,
+  mapLng: 0,
+  mapZoomLevel: 0,
 };
 
 export default (state: AppStore = INITIAL_STATE, action: any): AppStore => {

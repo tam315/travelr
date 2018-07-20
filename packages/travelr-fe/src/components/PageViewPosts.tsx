@@ -5,7 +5,7 @@ import IconMap from '@material-ui/icons/Place';
 import IconSearch from '@material-ui/icons/Search';
 import { History, Location } from 'history';
 import * as React from 'react';
-import { FilterCriterion, PostsStore } from '../config/types';
+import { FilterCriterion, FilterStore, PostsStore } from '../config/types';
 import Filter from './Filter';
 import PageViewPostsGrid from './PageViewPostsGrid';
 import PageViewPostsMap from './PageViewPostsMap';
@@ -30,9 +30,15 @@ type Props = {
   classes: any;
   fetchAllPosts: (criterion?: FilterCriterion) => any;
   increaseLimitCountOfGrid: () => void;
+  getFilterSelectorRange: () => void;
+  updateFilterCriterion: (
+    criterion: FilterCriterion,
+    criterionUntouched: FilterCriterion,
+  ) => void;
   history: History;
   location: Location;
   posts: PostsStore;
+  filter: FilterStore;
 };
 
 type State = {
@@ -59,10 +65,11 @@ export class PageViewPosts extends React.Component<Props, State> {
 
   // @ts-ignore
   componentDidMount = () => {
-    const { posts, fetchAllPosts } = this.props;
+    const { posts, fetchAllPosts, getFilterSelectorRange } = this.props;
     if (!posts.all.length) {
       fetchAllPosts();
     }
+    getFilterSelectorRange();
   };
 
   // @ts-ignore
@@ -93,12 +100,20 @@ export class PageViewPosts extends React.Component<Props, State> {
     if (redirectTo) history.push(redirectTo);
   };
 
+  handleFilter = (
+    criterion: FilterCriterion,
+    initialCriterion: FilterCriterion,
+  ) => {
+    const { updateFilterCriterion } = this.props;
+    updateFilterCriterion(criterion, initialCriterion);
+  };
+
+  handleFilterClose = () => {
+    this.setState({ isFilterOpen: false });
+  };
+
   render() {
-    const {
-      classes,
-      posts: { all, limitCountOfGrid },
-      increaseLimitCountOfGrid,
-    } = this.props;
+    const { classes, posts, filter, increaseLimitCountOfGrid } = this.props;
 
     const { tabNumber, isFilterOpen } = this.state;
 
@@ -124,25 +139,22 @@ export class PageViewPosts extends React.Component<Props, State> {
         {tabNumber === 0 && (
           <div>
             <PageViewPostsGrid
-              posts={all}
-              limitCountOfGrid={limitCountOfGrid}
+              posts={posts.all}
+              limitCountOfGrid={posts.limitCountOfGrid}
               increaseLimitCountOfGrid={increaseLimitCountOfGrid}
             />
           </div>
         )}
 
         {/* map view */}
-        {tabNumber === 1 && <PageViewPostsMap posts={all} />}
+        {tabNumber === 1 && <PageViewPostsMap posts={posts.all} />}
 
         {/* filter */}
         <Filter
           isOpen={isFilterOpen}
-          onClose={(criterion: FilterCriterion) => {
-            this.setState({ isFilterOpen: false });
-            // TODO: call fetchAllPosts
-            // eslint-disable-next-line
-            console.log(criterion);
-          }}
+          onClose={this.handleFilterClose}
+          onFilter={this.handleFilter}
+          filter={filter}
         />
 
         {/* filter button */}

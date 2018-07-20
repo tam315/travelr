@@ -1,4 +1,4 @@
-import Button from '@material-ui/core/Button';
+import { Button } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import * as React from 'react';
 import { DUMMY_POSTS_STORE } from '../../config/dummies';
@@ -7,11 +7,27 @@ import PageViewPostsGrid from '../PageViewPostsGrid';
 import PageViewPostsMap from '../PageViewPostsMap';
 
 describe('PageViewPosts component', () => {
-  test('fetch all posts when componentDidMount', () => {
-    const mockCallback = jest.fn();
-    const wrapper = shallow(
+  let mock;
+  let wrapper;
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+
+    mock = {
+      actions: {
+        fetchAllPosts: jest.fn(),
+        increaseLimitCountOfGrid: jest.fn(),
+        getFilterSelectorRange: jest.fn(),
+        updateFilterCriterion: jest.fn(),
+      },
+    };
+
+    wrapper = shallow(
       <PageViewPosts
-        fetchAllPosts={mockCallback}
+        fetchAllPosts={mock.actions.fetchAllPosts}
+        increaseLimitCountOfGrid={mock.actions.increaseLimitCountOfGrid}
+        getFilterSelectorRange={mock.actions.getFilterSelectorRange}
+        updateFilterCriterion={mock.actions.updateFilterCriterion}
         classes={{}}
         // @ts-ignore
         location={{}}
@@ -20,14 +36,20 @@ describe('PageViewPosts component', () => {
         posts={{ ...DUMMY_POSTS_STORE, all: [] }}
       />,
     );
-    expect(mockCallback.mock.calls.length).toBe(1);
+  });
+
+  test('inital setup is excuted when componentDidMount', () => {
+    expect(mock.actions.fetchAllPosts).toHaveBeenCalledTimes(1);
+    expect(mock.actions.getFilterSelectorRange).toHaveBeenCalledTimes(1);
   });
 
   test('shows grid when pathname is /all-grid', () => {
-    const mockCallback = jest.fn();
     const wrapper = shallow(
       <PageViewPosts
-        fetchAllPosts={mockCallback}
+        fetchAllPosts={mock.actions.fetchAllPosts}
+        increaseLimitCountOfGrid={mock.actions.increaseLimitCountOfGrid}
+        getFilterSelectorRange={mock.actions.getFilterSelectorRange}
+        updateFilterCriterion={mock.actions.updateFilterCriterion}
         classes={{}}
         // @ts-ignore
         location={{ pathname: '/all-grid' }}
@@ -43,7 +65,10 @@ describe('PageViewPosts component', () => {
     const mockCallback = jest.fn();
     const wrapper = shallow(
       <PageViewPosts
-        fetchAllPosts={mockCallback}
+        fetchAllPosts={mock.actions.fetchAllPosts}
+        increaseLimitCountOfGrid={mock.actions.increaseLimitCountOfGrid}
+        getFilterSelectorRange={mock.actions.getFilterSelectorRange}
+        updateFilterCriterion={mock.actions.updateFilterCriterion}
         classes={{}}
         // @ts-ignore
         location={{ pathname: '/all-map' }}
@@ -56,19 +81,6 @@ describe('PageViewPosts component', () => {
   });
 
   test('show filter button when the filter menu is not displayed', () => {
-    const mockCallback = jest.fn();
-    const wrapper = shallow(
-      <PageViewPosts
-        fetchAllPosts={mockCallback}
-        classes={{}}
-        // @ts-ignore
-        location={{ pathname: '/all-map' }}
-        // @ts-ignore
-        history={{}}
-        posts={{ ...DUMMY_POSTS_STORE, all: [] }}
-      />,
-    );
-
     // button is enabled initially
     expect(wrapper.find(Button).props().disabled).toBe(false);
 
@@ -76,5 +88,10 @@ describe('PageViewPosts component', () => {
     wrapper.setState({ isFilterOpen: true });
     wrapper.update();
     expect(wrapper.find(Button).props().disabled).toBe(true);
+  });
+
+  test('updateFilterCriterion() is called when user did filter', () => {
+    wrapper.instance().handleFilter();
+    expect(mock.actions.updateFilterCriterion).toBeCalled();
   });
 });

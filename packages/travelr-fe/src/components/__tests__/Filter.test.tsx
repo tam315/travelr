@@ -3,15 +3,31 @@ import ListItemText from '@material-ui/core/ListItemText';
 import TextField from '@material-ui/core/TextField';
 import { shallow } from 'enzyme';
 import * as React from 'react';
+import { DUMMY_FILTER_CRITERION } from '../../config/dummies';
+import { INITIAL_STATE as filterInitialState } from '../../reducers/filterReducer';
 import { Filter } from '../Filter';
 
+jest.mock('react-input-range');
+
 describe('Filter component', () => {
-  let mockCallback;
+  let mock;
   let wrapper;
 
   beforeEach(() => {
-    mockCallback = jest.fn();
-    wrapper = shallow(<Filter isOpen onClose={mockCallback} classes={{}} />);
+    jest.resetAllMocks();
+    mock = {
+      onClose: jest.fn(),
+      onFilter: jest.fn(),
+    };
+    wrapper = shallow(
+      <Filter
+        isOpen
+        onClose={mock.onClose}
+        onFilter={mock.onFilter}
+        classes={{}}
+        filter={filterInitialState}
+      />,
+    );
   });
 
   test('render items', () => {
@@ -43,52 +59,40 @@ describe('Filter component', () => {
     });
   });
 
-  test('onClose should be called when the "filter" button pressed', () => {
-    // console.log(wrapper.find(TextField).debug());
-
-    // wrapper.find(TextField).forEach(textField => {
-    //   textField.simulate('change', { target: { value: 'Changed' } });
-    //   // textField.setProps({ value: 'a' });
-    //   console.log(textField.debug());
-    // });
-    // wrapper.update();
+  test('onFilter should be called when the "filter" button pressed', () => {
     wrapper.setState({
-      displayName: 'dummy',
-      description: 'dummy',
-      shootDate: {
-        min: 10,
-        max: 10,
-      },
-      radius: 10,
-      likedCount: {
-        min: 10,
-        max: 10,
-      },
-      commentsCount: {
-        min: 10,
-        max: 10,
-      },
-      viewCount: {
-        min: 10,
-        max: 10,
+      criterion: DUMMY_FILTER_CRITERION,
+    });
+    wrapper.find(Button).simulate('click');
+
+    expect(mock.onFilter).toBeCalledWith(
+      DUMMY_FILTER_CRITERION,
+      filterInitialState.criterion,
+    );
+  });
+
+  test("update criterion of component state if store's criterion change", () => {
+    // simulation of GET_FILTER_SELECTOR_RANGE_SUCCESS
+    // simulation of user did filtered
+    wrapper.setProps({
+      filter: {
+        criterion: DUMMY_FILTER_CRITERION,
+        criterionUntouched: filterInitialState.criterionUntouched,
+        rangeSetupDone: true,
       },
     });
 
-    wrapper.find(Button).simulate('click');
+    expect(wrapper.state('criterion')).toEqual(DUMMY_FILTER_CRITERION);
+  });
 
-    expect(mockCallback).toBeCalled();
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('displayName');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('description');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('minDate');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('maxDate');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('lat');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('lng');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('radius');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('minViewCount');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('maxViewCount');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('minLikedCount');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('maxLikedCount');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('minCommentsCount');
-    expect(mockCallback.mock.calls[0][0]).toHaveProperty('maxCommentsCount');
+  test('criterion of component is reset if user just closed the filter', () => {
+    // simulate user input
+    wrapper.setState({
+      criterion: DUMMY_FILTER_CRITERION,
+    });
+
+    expect(wrapper.state('criterion')).toEqual(DUMMY_FILTER_CRITERION);
+    wrapper.instance().handleClose();
+    expect(wrapper.state('criterion')).toEqual(filterInitialState.criterion);
   });
 });

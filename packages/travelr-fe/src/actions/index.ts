@@ -7,6 +7,7 @@ import {
   AuthSeed,
   Comment,
   FilterCriterion,
+  FilterCriterionReduced,
   NewPost,
   NewUserInfo,
   Post,
@@ -14,6 +15,7 @@ import {
   UserStore,
 } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';
+import { difference } from '../utils/general';
 import actionTypes from './types';
 
 const { authRef } = firebaseUtils;
@@ -222,36 +224,52 @@ actions.signOutUser = () => async (dispatch: Dispatch<any>) => {
   }
 };
 
-actions.fetchAllPosts = (criterion: FilterCriterion | null = {}) => async (
+actions.fetchAllPosts = (criterion: FilterCriterionReduced = {}) => async (
   dispatch: Dispatch<any>,
 ) => {
   const {
-    userId,
     displayName,
     description,
-    minDate,
-    maxDate,
-    lng,
-    lat,
+    shootDate,
+    // placeName,
     radius,
-    minViewCount,
-    maxViewCount,
-    minLikedCount,
-    maxLikedCount,
-    minCommentsCount,
-    maxCommentsCount,
-    limit,
+    viewCount,
+    likedCount,
+    commentsCount,
   } = criterion;
+
+  let minDate;
+  let maxDate;
+  let minViewCount;
+  let maxViewCount;
+  let minLikedCount;
+  let maxLikedCount;
+  let minCommentsCount;
+  let maxCommentsCount;
+
+  if (shootDate) {
+    minDate = shootDate.min;
+    maxDate = shootDate.max;
+  }
+  if (viewCount) {
+    minViewCount = viewCount.min;
+    maxViewCount = viewCount.max;
+  }
+  if (likedCount) {
+    minLikedCount = likedCount.min;
+    maxLikedCount = likedCount.max;
+  }
+  if (commentsCount) {
+    minCommentsCount = commentsCount.min;
+    maxCommentsCount = commentsCount.max;
+  }
 
   const params = [];
 
-  if (userId) params.push(`user_id=${userId}`);
   if (displayName) params.push(`display_name=${displayName}`);
   if (description) params.push(`description=${description}`);
-  if (minDate) params.push(`min_date=${minDate}`);
-  if (maxDate) params.push(`max_date=${maxDate}`);
-  if (lng) params.push(`lng=${lng}`);
-  if (lat) params.push(`lat=${lat}`);
+  if (minDate) params.push(`min_date=${minDate}-01-01`);
+  if (maxDate) params.push(`max_date=${maxDate}-12-31`);
   if (radius) params.push(`radius=${radius}`);
   if (minViewCount) params.push(`min_view_count=${minViewCount}`);
   if (maxViewCount) params.push(`max_view_count=${maxViewCount}`);
@@ -259,7 +277,6 @@ actions.fetchAllPosts = (criterion: FilterCriterion | null = {}) => async (
   if (maxLikedCount) params.push(`max_liked_count=${maxLikedCount}`);
   if (minCommentsCount) params.push(`min_comments_count=${minCommentsCount}`);
   if (maxCommentsCount) params.push(`max_comments_count=${maxCommentsCount}`);
-  if (limit) params.push(`limit=${limit}`);
 
   let queryParams = '';
   if (params.length) queryParams = `?${params.join('&')}`;
@@ -276,6 +293,38 @@ actions.fetchAllPosts = (criterion: FilterCriterion | null = {}) => async (
   } catch (err) {
     dispatch({
       type: actionTypes.FETCH_ALL_POSTS_FAIL,
+    });
+  }
+};
+
+actions.updateFilterCriterion = (
+  criterion: FilterCriterion,
+  criterionUntouched: FilterCriterion,
+) => async (dispatch: Dispatch<any>) => {
+  // extract criteria actually changed by the user
+  const criterionReduced: any = difference(criterion, criterionUntouched);
+
+  // save the current criterion in the store
+  dispatch({
+    type: actionTypes.CHANGE_FILTER_CRITERION_SUCCESS,
+    payload: { criterion, criterionReduced },
+  });
+  actions.fetchAllPosts(criterionReduced)(dispatch);
+};
+
+actions.getFilterSelectorRange = () => async (dispatch: Dispatch<any>) => {
+  try {
+    const stats = await wretch(`${config.apiUrl}posts/stats`)
+      .get()
+      .json();
+    dispatch({
+      type: actionTypes.GET_FILTER_SELECTOR_RANGE_SUCCESS,
+      payload: stats,
+    });
+  } catch (err) {
+    dispatch({
+      type: actionTypes.GET_FILTER_SELECTOR_RANGE_FAIL,
+      payload: err,
     });
   }
 };

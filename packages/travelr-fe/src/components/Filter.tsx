@@ -1,4 +1,3 @@
-import Button from '@material-ui/core/Button';
 import {
   Collapse,
   Divider,
@@ -9,12 +8,13 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import IconExpandLess from '@material-ui/icons/ExpandLess';
 import IconExpandMore from '@material-ui/icons/ExpandMore';
 import * as React from 'react';
 import InputRange from 'react-input-range';
-import { FilterCriterion } from '../config/types';
+import { FilterCriterion, FilterStore } from '../config/types';
 import '../css/reactInputRange.css';
 
 const styles = {
@@ -31,7 +31,7 @@ const styles = {
   },
   rangeSelector: {
     flex: '4 0 0',
-    paddingRight: 50,
+    paddingRight: 20,
   },
   spacer: {
     marginTop: 16,
@@ -44,96 +44,85 @@ const styles = {
 
 type Props = {
   isOpen: boolean;
-  onClose: (filterCriterion: FilterCriterion) => void;
+  onClose: () => void;
+  onFilter: (
+    criterion: FilterCriterion,
+    criterionUntouched: FilterCriterion,
+  ) => void;
   classes: any;
+  filter: FilterStore;
 };
 
 type State = {
-  shootDate: {
-    min: number;
-    max: number;
-  };
-  likedCount: {
-    min: number;
-    max: number;
-  };
-  commentsCount: {
-    min: number;
-    max: number;
-  };
-  viewCount: {
-    min: number;
-    max: number;
-  };
-  placeName: string;
-  radius: string;
-  displayName: string;
-  description: string;
+  criterion: FilterCriterion;
   isListGroup1Open: boolean; // 「場所で探す」
   isListGroup2Open: boolean; // 「その他の条件で探す」
 };
 
 export class Filter extends React.Component<Props, State> {
-  state = {
-    shootDate: {
-      min: 0,
-      max: 100,
-    },
-    likedCount: {
-      min: 0,
-      max: 100,
-    },
-    commentsCount: {
-      min: 0,
-      max: 100,
-    },
-    viewCount: {
-      min: 0,
-      max: 100,
-    },
-    placeName: '',
-    radius: '',
-    displayName: '',
-    description: '',
-    isListGroup1Open: false,
-    isListGroup2Open: false,
+  constructor(props) {
+    super(props);
+
+    const { filter } = this.props;
+
+    this.state = {
+      criterion: filter.criterion,
+      isListGroup1Open: false,
+      isListGroup2Open: false,
+    };
+  }
+
+  // @ts-ignore
+  componentDidUpdate = (prevProps: Props) => {
+    // update component's criterion:
+    // - when user updated the criterion (did filter)
+    // - when GET_FILTER_SELECTOR_RANGE_SUCCESS
+    const newCriterion = JSON.stringify(this.props.filter.criterion);
+    const oldCriterion = JSON.stringify(prevProps.filter.criterion);
+    if (newCriterion !== oldCriterion) {
+      this.setState({
+        criterion: this.props.filter.criterion,
+      });
+    }
   };
 
   handleChange(e: React.ChangeEvent<HTMLInputElement>, stateKeyName: string) {
-    // @ts-ignore
-    this.setState({ [stateKeyName]: e.target.value });
+    this.setState({
+      criterion: {
+        ...this.state.criterion,
+        [stateKeyName]: e.target.value,
+      },
+    });
   }
 
-  callbackWithCriterion = () => {
-    const { onClose } = this.props;
-    const criterion: FilterCriterion = {};
+  handleSliderChange = (stateKeyName: string, value: number) => {
+    this.setState({
+      criterion: {
+        ...this.state.criterion,
+        [stateKeyName]: value,
+      },
+    });
+  };
 
-    const {
-      displayName,
-      description,
-      shootDate,
-      radius,
-      viewCount,
-      likedCount,
-      commentsCount,
-    } = this.state;
+  handleFilter = () => {
+    const { onClose, onFilter, filter } = this.props;
+    const { criterion } = this.state;
 
-    if (displayName) criterion.displayName = displayName;
-    if (description) criterion.description = description;
-    if (shootDate.min) criterion.minDate = String(shootDate.min); // TODO 日付に変換
-    if (shootDate.max) criterion.maxDate = String(shootDate.max); // TODO 日付に変換
-    if (radius) criterion.radius = Number(radius);
-    if (viewCount.min) criterion.minViewCount = viewCount.min;
-    if (viewCount.max) criterion.maxViewCount = viewCount.max;
-    if (likedCount.min) criterion.minLikedCount = likedCount.min;
-    if (likedCount.max) criterion.maxLikedCount = likedCount.max;
-    if (commentsCount.min) criterion.minCommentsCount = commentsCount.min;
-    if (commentsCount.max) criterion.maxCommentsCount = commentsCount.max;
-    criterion.lat = 40;
-    criterion.lng = 140;
-    // TODO: lat lng radius
+    onFilter(criterion, filter.criterionUntouched);
+    onClose();
+  };
 
-    onClose(criterion);
+  handleClose = () => {
+    const { onClose, filter } = this.props;
+
+    // reset criterions to the store state if the user just closed the filter
+    this.setState({
+      criterion: {
+        ...filter.criterion,
+      },
+    });
+
+    onClose();
   };
 
   renderListItem = (item: {
@@ -151,6 +140,7 @@ export class Filter extends React.Component<Props, State> {
       formatLabel = null,
     } = item;
     const { classes } = this.props;
+
     return (
       <ListItem>
         <ListItemText
@@ -162,11 +152,9 @@ export class Filter extends React.Component<Props, State> {
           <InputRange
             maxValue={max}
             minValue={min}
-            // eslint-disable-next-line
-            value={this.state[stateKeyName]}
-            onChange={
-              // @ts-ignore
-              value => this.setState({ [stateKeyName]: value })
+            value={this.state.criterion[stateKeyName]}
+            onChange={(value: number) =>
+              this.handleSliderChange(stateKeyName, value)
             }
             formatLabel={formatLabel}
           />
@@ -176,12 +164,9 @@ export class Filter extends React.Component<Props, State> {
   };
 
   render() {
-    const { isOpen, classes } = this.props;
+    const { isOpen, classes, filter } = this.props;
     const {
-      placeName,
-      radius,
-      displayName,
-      description,
+      criterion,
       isListGroup1Open,
       isListGroup2Open,
     } = this.state;
@@ -203,19 +188,33 @@ export class Filter extends React.Component<Props, State> {
           {this.renderListItem({
             title: '撮影日',
             stateKeyName: 'shootDate',
-            min: 0,
-            max: 1529789723000,
-            formatLabel: value => new Date(value).toISOString().substr(0, 7),
+            min: 1900,
+            max: 2018,
           })}
+
           <div className={classes.spacer} />
-          {this.renderListItem({ title: 'いいね', stateKeyName: 'likedCount' })}
+          {this.renderListItem({
+            title: 'いいね',
+            stateKeyName: 'likedCount',
+            min: 0,
+            max: filter.criterionUntouched.likedCount.max,
+          })}
+
           <div className={classes.spacer} />
           {this.renderListItem({
             title: 'コメント',
             stateKeyName: 'commentsCount',
+            min: 0,
+            max: filter.criterionUntouched.commentsCount.max,
           })}
+
           <div className={classes.spacer} />
-          {this.renderListItem({ title: '閲覧数', stateKeyName: 'viewCount' })}
+          {this.renderListItem({
+            title: '閲覧数',
+            stateKeyName: 'viewCount',
+            min: 0,
+            max: filter.criterionUntouched.viewCount.max,
+          })}
         </List>
 
         <Divider />
@@ -233,7 +232,7 @@ export class Filter extends React.Component<Props, State> {
               <TextField
                 placeholder="市町村名・建物名"
                 onChange={e => this.handleChange(e, 'placeName')}
-                value={placeName}
+                value={criterion.placeName}
               />
               <Typography variant="body1">から</Typography>
             </ListItem>
@@ -241,7 +240,7 @@ export class Filter extends React.Component<Props, State> {
               <TextField
                 placeholder="半径"
                 onChange={e => this.handleChange(e, 'radius')}
-                value={radius}
+                value={criterion.radius}
               />
               <Typography variant="body1">km以内</Typography>
             </ListItem>
@@ -263,14 +262,14 @@ export class Filter extends React.Component<Props, State> {
               <TextField
                 placeholder="ユーザ名で探す"
                 onChange={e => this.handleChange(e, 'displayName')}
-                value={displayName}
+                value={criterion.displayName}
               />
             </ListItem>
             <ListItem>
               <TextField
                 placeholder="説明文で探す"
                 onChange={e => this.handleChange(e, 'description')}
-                value={description}
+                value={criterion.description}
               />
             </ListItem>
           </List>
@@ -284,7 +283,7 @@ export class Filter extends React.Component<Props, State> {
             size="large"
             variant="contained"
             className={classes.button}
-            onClick={this.callbackWithCriterion}
+            onClick={this.handleFilter}
           >
             フィルタする
           </Button>
@@ -293,16 +292,14 @@ export class Filter extends React.Component<Props, State> {
     );
 
     return (
-      <React.Fragment>
-        <Drawer
-          anchor="right"
-          open={isOpen}
-          onClose={this.callbackWithCriterion}
-          classes={{ paper: classes.paper }}
-        >
-          {menu}
-        </Drawer>
-      </React.Fragment>
+      <Drawer
+        anchor="right"
+        open={isOpen}
+        onClose={this.handleClose}
+        classes={{ paper: classes.paper }}
+      >
+        {menu}
+      </Drawer>
     );
   }
 }

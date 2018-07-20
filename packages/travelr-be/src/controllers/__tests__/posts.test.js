@@ -267,6 +267,18 @@ describe('DELETE /posts', async () => {
   });
 });
 
+describe('GET /posts/stats', async () => {
+  const baseRequest = () => request(app).get('/posts/stats');
+
+  test('returns 200 and post id if success', async () => {
+    const res = await baseRequest();
+    expect(res.status).toBe(200);
+    expect(typeof res.body.maxViewCount).toBe('number');
+    expect(typeof res.body.maxLikedCount).toBe('number');
+    expect(typeof res.body.maxCommentsCount).toBe('number');
+  });
+});
+
 describe('GET /posts/:postId', async () => {
   test('returns 400 and message if post not found', async () => {
     const invalidPostId = 1234567890;

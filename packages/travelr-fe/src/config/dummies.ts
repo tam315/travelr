@@ -9,6 +9,29 @@ import {
   UserStore,
 } from './types';
 
+export const DUMMY_FILTER_CRITERION: FilterCriterion = {
+  shootDate: {
+    min: 1999,
+    max: 2012,
+  },
+  likedCount: {
+    min: 1,
+    max: 10,
+  },
+  commentsCount: {
+    min: 10,
+    max: 20,
+  },
+  viewCount: {
+    min: 20,
+    max: 30,
+  },
+  placeName: 'dummy_place',
+  radius: '50',
+  displayName: 'dummy_user',
+  description: 'dummy_description',
+};
+
 export const DUMMY_COMMENTS: Comment[] = [
   {
     commentId: 701,
@@ -179,32 +202,16 @@ export const DUMMY_POST_TO_EDIT: PostToEdit = {
   lat: 35.0,
 };
 
-export const DUMMY_FILTER_CRITERION: FilterCriterion = {
-  userId: 'dummy_userId',
-  displayName: 'dummy_displayName',
-  description: 'dummy_description',
-  minDate: '1990-01-01',
-  maxDate: '1999-12-31',
-  lng: 1,
-  lat: 2,
-  radius: 3,
-  minViewCount: 4,
-  maxViewCount: 5,
-  minLikedCount: 6,
-  maxLikedCount: 7,
-  minCommentsCount: 8,
-  maxCommentsCount: 9,
-  limit: 10,
-};
-
 export const DUMMY_APP_STORE: AppStore = {
   snackbarQueue: [],
   showProgress: false,
+  mapLat: 0, // TODO
+  mapLng: 0, // TODO
+  mapZoomLevel: 0, // TODO
 };
 
 export const DUMMY_POSTS_STORE: PostsStore = {
   all: DUMMY_POSTS,
-  allFilter: DUMMY_FILTER_CRITERION,
   limitCountOfGrid: 21,
   myPosts: DUMMY_POSTS,
   myPostsSelected: [],

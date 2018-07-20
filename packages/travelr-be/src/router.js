@@ -16,6 +16,7 @@ module.exports = app => {
   app.get('/posts', PostsController.getPosts);
   app.post('/posts', checkToken, PostsController.createPost);
   app.delete('/posts', checkToken, PostsController.deletePosts);
+  app.get('/posts/stats', PostsController.stats);
 
   // posts - for specific post
   app.get('/posts/:postId', PostsController.getPost);

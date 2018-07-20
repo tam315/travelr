@@ -329,22 +329,18 @@ describe('fetchAllPosts', () => {
     await thunk(mockDispatch);
 
     expect(fetch.mock.calls[0][0]).toContain(
-      'posts?' +
-        'user_id=dummy_userId' +
-        '&display_name=dummy_displayName' +
-        '&description=dummy_description' +
-        '&min_date=1990-01-01' +
-        '&max_date=1999-12-31' +
-        '&lng=1' +
-        '&lat=2' +
-        '&radius=3' +
-        '&min_view_count=4' +
-        '&max_view_count=5' +
-        '&min_liked_count=6' +
-        '&max_liked_count=7' +
-        '&min_comments_count=8' +
-        '&max_comments_count=9' +
-        '&limit=10',
+      `posts?` +
+        `display_name=${DUMMY_FILTER_CRITERION.displayName}` +
+        `&description=${DUMMY_FILTER_CRITERION.description}` +
+        `&min_date=${DUMMY_FILTER_CRITERION.shootDate.min}-01-01` +
+        `&max_date=${DUMMY_FILTER_CRITERION.shootDate.max}-12-31` +
+        `&radius=${DUMMY_FILTER_CRITERION.radius}` +
+        `&min_view_count=${DUMMY_FILTER_CRITERION.viewCount.min}` +
+        `&max_view_count=${DUMMY_FILTER_CRITERION.viewCount.max}` +
+        `&min_liked_count=${DUMMY_FILTER_CRITERION.likedCount.min}` +
+        `&max_liked_count=${DUMMY_FILTER_CRITERION.likedCount.max}` +
+        `&min_comments_count=${DUMMY_FILTER_CRITERION.commentsCount.min}` +
+        `&max_comments_count=${DUMMY_FILTER_CRITERION.commentsCount.max}`,
     );
   });
 
@@ -378,6 +374,43 @@ describe('fetchAllPosts', () => {
 
     expect(mockDispatch.mock.calls[0][0]).toEqual({
       type: types.FETCH_ALL_POSTS_FAIL,
+    });
+  });
+});
+
+describe('updateFilterCriterion', () => {
+  test('makes correct action when success', async () => {
+    const dummyCriterion = { a: 1, b: 0, c: 0 };
+    const dummyCriterionUntouched = { a: 0, b: 0, c: 0 };
+
+    const thunk = actions.updateFilterCriterion(
+      dummyCriterion,
+      dummyCriterionUntouched,
+    );
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(mockDispatch).toBeCalledWith({
+      type: types.CHANGE_FILTER_CRITERION_SUCCESS,
+      payload: {
+        criterion: dummyCriterion,
+        criterionReduced: { a: 1 },
+      },
+    });
+  });
+});
+
+describe('getFilterSelectorRange', () => {
+  test('makes correct action when success', async () => {
+    const dummyResponse = { a: 1 };
+    fetch.mockResponse(JSON.stringify(dummyResponse));
+    const thunk = actions.getFilterSelectorRange();
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(mockDispatch).toBeCalledWith({
+      type: types.GET_FILTER_SELECTOR_RANGE_SUCCESS,
+      payload: dummyResponse,
     });
   });
 });

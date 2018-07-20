@@ -1,3 +1,42 @@
+export type Store = {
+  app: AppStore;
+  user: UserStore;
+  posts: PostsStore;
+};
+
+export type AppStore = {
+  snackbarQueue: string[];
+  showProgress: boolean;
+  mapLat: number; // TODO
+  mapLng: number; // TODO
+  mapZoomLevel: number; // TODO
+};
+
+export type UserStore = {
+  userId: string;
+  token: string; // from firebase
+  displayName: string;
+  isAdmin: boolean;
+  emailVerified: boolean; // from firebase
+  earnedLikes: number;
+  earnedComments: number;
+  earnedViews: number;
+};
+
+export type PostsStore = {
+  all: Post[];
+  limitCountOfGrid: number;
+  myPosts: Post[];
+  myPostsSelected: number[]; // postIds
+  currentPost: Post | null;
+};
+
+export type FilterStore = {
+  criterion: FilterCriterion;
+  criterionUntouched: FilterCriterion;
+  rangeSetupDone: boolean;
+};
+
 export type Action<T> = {
   type: string;
   payload: T;
@@ -54,21 +93,49 @@ export type NewUserInfo = {
 };
 
 export type FilterCriterion = {
-  userId?: string;
+  shootDate: {
+    min: number; // only A.D.
+    max: number; // only A.D.
+  };
+  likedCount: {
+    min: number;
+    max: number;
+  };
+  commentsCount: {
+    min: number;
+    max: number;
+  };
+  viewCount: {
+    min: number;
+    max: number;
+  };
+  placeName: string;
+  radius: string;
+  displayName: string;
+  description: string;
+};
+
+export type FilterCriterionReduced = {
+  shootDate?: {
+    min?: number; // only A.D.
+    max?: number; // only A.D.
+  };
+  likedCount?: {
+    min?: number;
+    max?: number;
+  };
+  commentsCount?: {
+    min?: number;
+    max?: number;
+  };
+  viewCount?: {
+    min?: number;
+    max?: number;
+  };
+  placeName?: string;
+  radius?: string;
   displayName?: string;
   description?: string;
-  minDate?: string;
-  maxDate?: string;
-  lng?: number;
-  lat?: number;
-  radius?: number;
-  minViewCount?: number;
-  maxViewCount?: number;
-  minLikedCount?: number;
-  maxLikedCount?: number;
-  minCommentsCount?: number;
-  maxCommentsCount?: number;
-  limit?: number;
 };
 
 // required info to authenticate with the main API
@@ -76,31 +143,6 @@ export type AuthSeed = {
   token: string;
   displayName: string;
   emailVerified: boolean;
-};
-
-export type AppStore = {
-  snackbarQueue: string[];
-  showProgress: boolean;
-};
-
-export type PostsStore = {
-  all: Post[];
-  allFilter: any; // TODO specify this
-  limitCountOfGrid: number;
-  myPosts: Post[];
-  myPostsSelected: number[];
-  currentPost: Post | null;
-};
-
-export type UserStore = {
-  userId: string;
-  token: string;
-  displayName: string;
-  isAdmin: boolean;
-  emailVerified: boolean;
-  earnedLikes: number;
-  earnedComments: number;
-  earnedViews: number;
 };
 
 export type LatLng = {
