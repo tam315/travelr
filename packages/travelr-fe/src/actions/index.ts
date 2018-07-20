@@ -26,11 +26,6 @@ actions.initAuth = () => ({
   type: actionTypes.INIT_AUTH,
 });
 
-actions.getOrCreateUserInfo = (authSeed: AuthSeed) => ({
-  type: actionTypes.GET_OR_CREATE_USER_INFO,
-  payload: authSeed,
-});
-
 actions.updateUserInfo = (user: UserStore, newUserInfo: NewUserInfo) => async (
   dispatch: Dispatch<any>,
 ) => {
