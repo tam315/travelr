@@ -1,8 +1,5 @@
-import { loadJS } from '../general';
 import MapsShowPosition from '../MapsShowPosition';
 import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
-
-jest.mock('../general');
 
 const DUMMY_POSITION = { lng: 135.0, lat: 35.0 };
 
@@ -25,15 +22,6 @@ describe('MapsShowPosition', () => {
 
   afterEach(() => {
     deleteGoogleMapsApiMock();
-  });
-
-  test("loads API file if it's not ready", () => {
-    // eslint-disable-next-line
-    const mapsShowPosition = new MapsShowPosition(mapRef, DUMMY_POSITION);
-
-    expect(loadJS).toHaveBeenCalledTimes(1);
-    // @ts-ignore
-    expect(loadJS.mock.calls[0][0]).toContain('maps.googleapis.com/maps/api/');
   });
 
   test('initialize the maps if the API is already available', () => {

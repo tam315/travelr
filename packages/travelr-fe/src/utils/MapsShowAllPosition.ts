@@ -1,6 +1,4 @@
-import config from '../config';
 import { Post } from '../config/types';
-import { loadJS } from './general';
 
 declare var MarkerClusterer: any;
 
@@ -25,17 +23,10 @@ class MapsShowAllPosition {
 
     this.queuedPosts = null;
 
-    // load the API if it is not loaded.
-    // pass the callback to initialize the map.
+    // if API is not ready yet, pend tasks and exit constructor
     if (typeof google !== 'object') {
       // @ts-ignore
       window.mapInitializer = mapInitializer;
-      loadJS(
-        `https://maps.googleapis.com/maps/api/js?key=${
-          config.googleMapApiKey
-        }&libraries=visualization&callback=mapInitializer`,
-      );
-      // exit constructor
       return;
     }
 

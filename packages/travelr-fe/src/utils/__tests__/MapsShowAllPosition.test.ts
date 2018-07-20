@@ -1,9 +1,6 @@
 import { DUMMY_POSTS } from '../../config/dummies';
-import { loadJS } from '../general';
 import MapsShowAllPosition from '../MapsShowAllPosition';
 import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
-
-jest.mock('../general');
 
 const DUMMY_POSTS_ORIGINAL = DUMMY_POSTS.slice(0, -2);
 const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
@@ -29,15 +26,6 @@ describe('MapsShowAllPosition', () => {
 
   afterEach(() => {
     deleteGoogleMapsApiMock();
-  });
-
-  test("loads API file if it's not ready", () => {
-    //  eslint-disable-next-line
-    const mapsShowAllPosition = new MapsShowAllPosition(mapRef, mockCallback);
-
-    expect(loadJS).toHaveBeenCalledTimes(1);
-    // @ts-ignore
-    expect(loadJS.mock.calls[0][0]).toContain('maps.googleapis.com/maps/api/');
   });
 
   test('initialize the maps if the API is already available', () => {

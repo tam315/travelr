@@ -1,6 +1,3 @@
-import config from '../config';
-import { loadJS } from './general';
-
 type Position = {
   lng: number;
   lat: number;
@@ -20,16 +17,10 @@ class MapsShowPosition {
   constructor(mapRef: HTMLElement, position: Position) {
     const mapInitializer = this.mapInitializerGenerator(mapRef, position);
 
-    // load the API if it is not loaded.
-    // pass the callback to initialize the map.
+    // if API is not ready yet, pend tasks and exit constructor
     if (typeof google !== 'object') {
+      // @ts-ignore
       window.mapInitializer = mapInitializer;
-      loadJS(
-        `https://maps.googleapis.com/maps/api/js?key=${
-          config.googleMapApiKey
-        }&libraries=visualization&callback=mapInitializer`,
-      );
-      // exit constructor
       return;
     }
 
