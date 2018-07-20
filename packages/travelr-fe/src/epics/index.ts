@@ -240,13 +240,23 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
   return action$.pipe(
     ofType(...actionNameArray),
     map(action => {
-      // display more specific error messages if 'err.code'(from firebase SDK) is provided
       const err = action.payload;
+
+      // display more specific error messages if 'err.code'(from firebase SDK) is provided
       if (err && err.code) {
         return (
           errCodeAndMessagePairs[err.code] || {
             type: types.ADD_SNACKBAR_QUEUE,
             payload: '不明なエラーが発生しました',
+          }
+        );
+      }
+      // display more specific error messages if 'err.message' is provided
+      if (err && err.message) {
+        return (
+          errCodeAndMessagePairs[err.code] || {
+            type: types.ADD_SNACKBAR_QUEUE,
+            payload: err.message,
           }
         );
       }
