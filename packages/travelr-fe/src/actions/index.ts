@@ -227,70 +227,70 @@ actions.fetchAllPosts = (criterion: FilterCriterionReduced = {}) => async (
     type: actionTypes.FETCH_ALL_POSTS,
   });
 
-  const {
-    displayName,
-    description,
-    shootDate,
-    placeName,
-    radius,
-    viewCount,
-    likedCount,
-    commentsCount,
-  } = criterion;
-
-  let minDate;
-  let maxDate;
-  let lng;
-  let lat;
-  let minViewCount;
-  let maxViewCount;
-  let minLikedCount;
-  let maxLikedCount;
-  let minCommentsCount;
-  let maxCommentsCount;
-
-  if (shootDate) {
-    minDate = shootDate.min;
-    maxDate = shootDate.max;
-  }
-  if (placeName) {
-    const position = await getPositionFromPlaceName(placeName);
-    lng = position.lng;
-    lat = position.lat;
-  }
-  if (viewCount) {
-    minViewCount = viewCount.min;
-    maxViewCount = viewCount.max;
-  }
-  if (likedCount) {
-    minLikedCount = likedCount.min;
-    maxLikedCount = likedCount.max;
-  }
-  if (commentsCount) {
-    minCommentsCount = commentsCount.min;
-    maxCommentsCount = commentsCount.max;
-  }
-
-  const params = [];
-
-  if (displayName) params.push(`display_name=${displayName}`);
-  if (description) params.push(`description=${description}`);
-  if (minDate) params.push(`min_date=${minDate}-01-01`);
-  if (maxDate) params.push(`max_date=${maxDate}-12-31`);
-  if (lng) params.push(`lng=${lng}`);
-  if (lat) params.push(`lat=${lat}`);
-  if (radius) params.push(`radius=${radius}`);
-  if (minViewCount) params.push(`min_view_count=${minViewCount}`);
-  if (maxViewCount) params.push(`max_view_count=${maxViewCount}`);
-  if (minLikedCount) params.push(`min_liked_count=${minLikedCount}`);
-  if (maxLikedCount) params.push(`max_liked_count=${maxLikedCount}`);
-  if (minCommentsCount) params.push(`min_comments_count=${minCommentsCount}`);
-  if (maxCommentsCount) params.push(`max_comments_count=${maxCommentsCount}`);
-
-  let queryParams = '';
-  if (params.length) queryParams = `?${params.join('&')}`;
-
   try {
+    const {
+      displayName,
+      description,
+      shootDate,
+      placeName,
+      radius,
+      viewCount,
+      likedCount,
+      commentsCount,
+    } = criterion;
+
+    let minDate;
+    let maxDate;
+    let lng;
+    let lat;
+    let minViewCount;
+    let maxViewCount;
+    let minLikedCount;
+    let maxLikedCount;
+    let minCommentsCount;
+    let maxCommentsCount;
+
+    if (shootDate) {
+      minDate = shootDate.min;
+      maxDate = shootDate.max;
+    }
+    if (placeName) {
+      const position = await getPositionFromPlaceName(placeName);
+      lng = position.lng;
+      lat = position.lat;
+    }
+    if (viewCount) {
+      minViewCount = viewCount.min;
+      maxViewCount = viewCount.max;
+    }
+    if (likedCount) {
+      minLikedCount = likedCount.min;
+      maxLikedCount = likedCount.max;
+    }
+    if (commentsCount) {
+      minCommentsCount = commentsCount.min;
+      maxCommentsCount = commentsCount.max;
+    }
+
+    const params = [];
+
+    if (displayName) params.push(`display_name=${displayName}`);
+    if (description) params.push(`description=${description}`);
+    if (minDate) params.push(`min_date=${minDate}-01-01`);
+    if (maxDate) params.push(`max_date=${maxDate}-12-31`);
+    if (lng) params.push(`lng=${lng}`);
+    if (lat) params.push(`lat=${lat}`);
+    if (radius) params.push(`radius=${radius}`);
+    if (minViewCount) params.push(`min_view_count=${minViewCount}`);
+    if (maxViewCount) params.push(`max_view_count=${maxViewCount}`);
+    if (minLikedCount) params.push(`min_liked_count=${minLikedCount}`);
+    if (maxLikedCount) params.push(`max_liked_count=${maxLikedCount}`);
+    if (minCommentsCount) params.push(`min_comments_count=${minCommentsCount}`);
+    if (maxCommentsCount) params.push(`max_comments_count=${maxCommentsCount}`);
+
+    let queryParams = '';
+    if (params.length) queryParams = `?${params.join('&')}`;
+
     const posts = await wretch(`${config.apiUrl}posts${queryParams}`)
       .get()
       .json();
