@@ -62,12 +62,12 @@ export const getOrCreateUserInfoEpic = (action$: ActionsObservable<any>) =>
           type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
           payload: { ...userInfo, token, emailVerified },
         })),
-        catchError(() => {
-          return of({
-            type: types.GET_OR_CREATE_USER_INFO_FAIL,
-          });
-        }),
       );
+    }),
+    catchError(() => {
+      return of({
+        type: types.GET_OR_CREATE_USER_INFO_FAIL,
+      });
     }),
   );
 
