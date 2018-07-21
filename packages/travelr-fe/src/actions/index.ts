@@ -222,6 +222,10 @@ actions.signOutUser = () => async (dispatch: Dispatch<any>) => {
 actions.fetchAllPosts = (criterion: FilterCriterionReduced = {}) => async (
   dispatch: Dispatch<any>,
 ) => {
+  dispatch({
+    type: actionTypes.FETCH_ALL_POSTS,
+  });
+
   const {
     displayName,
     description,
