@@ -192,28 +192,21 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
     payload: message,
   });
 
+  // prettier-ignore
   const errCodeAndMessagePairs = {
-    'auth/account-exists-with-different-credential': s(
-      'このメールアドレスは別のログイン方法に紐づけされています',
-    ),
+    'auth/account-exists-with-different-credential': s('このメールアドレスは別のログイン方法に紐づけされています'),
     'auth/email-already-in-use': s('このメールアドレスは既に使用されています'),
     'auth/invalid-email': s('メールアドレスの形式が正しくありません'),
     'auth/user-not-found': s('このメールアドレスは登録されていません'),
     'auth/weak-password': s('パスワードは6文字以上必要です'),
-    'auth/wrong-password': s(
-      'パスワードが間違っているか、メールアドレスがほかのログイン方法に紐付けされています。',
-    ),
-    'storage/unauthorized': s(
-      'メール認証が完了していません。アカウント管理画面からメール認証を行ってください。',
-    ),
+    'auth/wrong-password': s('パスワードが間違っているか、メールアドレスがほかのログイン方法に紐付けされています。'),
+    'storage/unauthorized': s('メール認証が完了していません。アカウント管理画面からメール認証を行ってください。'),
   };
 
+  // prettier-ignore
   const actionAndMessagePairs = {
     [types.INIT_AUTH_FAIL]: s('認証情報の取得に失敗しました'),
-
-    [types.GET_OR_CREATE_USER_INFO_FAIL]: s(
-      'ユーザ情報の作成または取得に失敗しました',
-    ),
+    [types.GET_OR_CREATE_USER_INFO_FAIL]: s('ユーザ情報の作成または取得に失敗しました'),
 
     [types.UPDATE_USER_INFO_SUCCESS]: s('ユーザ情報を更新しました'),
     [types.UPDATE_USER_INFO_FAIL]: s('ユーザ情報の更新に失敗しました'),
@@ -223,20 +216,14 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
 
     [types.SIGN_IN_WITH_EMAIL_FAIL]: s('サインインに失敗しました'),
 
-    [types.SIGN_UP_WITH_EMAIL_SUCCESS]: s(
-      'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
-    ),
+    [types.SIGN_UP_WITH_EMAIL_SUCCESS]: s('アカウントを作成しました。メールボックスを確認して、認証を完了させてください。'),
     [types.SIGN_UP_WITH_EMAIL_FAIL]: s('アカウントの作成に失敗しました'),
 
     [types.SEND_EMAIL_VERIFICATION_SUCCESS]: s('認証メールを再送しました'),
     [types.SEND_EMAIL_VERIFICATION_FAIL]: s('認証メールの再送に失敗しました'),
 
-    [types.SEND_PASSWORD_RESET_EMAIL_SUCCESS]: s(
-      'パスワードリセットのメールを送信しました',
-    ),
-    [types.SEND_PASSWORD_RESET_EMAIL_FAIL]: s(
-      'パスワードリセットのメール送信に失敗しました',
-    ),
+    [types.SEND_PASSWORD_RESET_EMAIL_SUCCESS]: s('パスワードリセットのメールを送信しました'),
+    [types.SEND_PASSWORD_RESET_EMAIL_FAIL]: s('パスワードリセットのメール送信に失敗しました'),
 
     [types.SIGN_OUT_USER_SUCCESS]: s('サインアウトしました'),
     [types.SIGN_OUT_USER_FAIL]: s('サインアウトに失敗しました'),
