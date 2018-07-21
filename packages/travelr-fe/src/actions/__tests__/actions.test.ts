@@ -416,59 +416,13 @@ describe('getFilterSelectorRange', () => {
 });
 
 describe('fetchPost', () => {
-  const DUMMY_POST_ID = 123;
+  test('make correct action', () => {
+    const DUMMY_POST_ID = 123;
+    const action = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
 
-  test('generates correct url (if user is NOT authenticated)', async () => {
-    const thunk = actions.fetchPost(
-      DUMMY_POST_ID,
-      DUMMY_USER_STORE_UNAUTHORIZED,
-    );
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch.mock.calls[0][0]).toContain(`/posts/${DUMMY_POST_ID}`);
-  });
-
-  test('generates correct url (if user IS authenticated)', async () => {
-    const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch.mock.calls[0][0]).toContain(
-      `/posts/${DUMMY_POST_ID}?user_id=${DUMMY_USER_STORE.userId}`,
-    );
-  });
-
-  test('makes correct action when success', async () => {
-    fetch.mockResponseOnce(JSON.stringify(DUMMY_POSTS[0]));
-    const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(mockDispatch.mock.calls[0][0]).toEqual({
-      type: types.FETCH_POST_START,
-      payload: DUMMY_POST_ID,
-    });
-    expect(mockDispatch.mock.calls[1][0]).toEqual({
-      type: types.FETCH_POST_SUCCESS,
-      payload: DUMMY_POSTS[0],
-    });
-  });
-
-  test('makes correct action when fail', async () => {
-    fetch.mockReject();
-    const thunk = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(mockDispatch.mock.calls[0][0]).toEqual({
-      type: types.FETCH_POST_START,
-      payload: DUMMY_POST_ID,
-    });
-    expect(mockDispatch.mock.calls[1][0]).toEqual({
-      type: types.FETCH_POST_FAIL,
+    expect(action).toEqual({
+      type: types.FETCH_POST,
+      payload: { postId: DUMMY_POST_ID, user: DUMMY_USER_STORE },
     });
   });
 });
@@ -772,8 +726,8 @@ describe('createComment', () => {
 
     expect(mock.dispatch.mock.calls[0][0]).toEqual({
       type: types.CREATE_COMMENT_SUCCESS,
+      payload: { postId: DUMMY_POST_ID, user: DUMMY_USER_STORE },
     });
-    expect(actions.fetchPost).toBeCalled();
   });
 
   test('makes correct action when fail', async () => {
@@ -814,6 +768,7 @@ describe('deleteComment', () => {
 
     expect(mock.dispatch.mock.calls[0][0]).toEqual({
       type: types.DELETE_COMMENT_SUCCESS,
+      payload: { postId: DUMMY_COMMENT.postId, user: DUMMY_USER_STORE },
     });
   });
 
@@ -854,6 +809,7 @@ describe('toggleLike', () => {
 
     expect(mock.dispatch.mock.calls[0][0]).toEqual({
       type: types.TOGGLE_LIKE_SUCCESS,
+      payload: { postId: DUMMY_POSTS[0].postId, user: DUMMY_USER_STORE },
     });
   });
 

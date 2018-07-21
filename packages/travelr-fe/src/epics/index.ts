@@ -71,6 +71,39 @@ export const getOrCreateUserInfoEpic = (action$: ActionsObservable<any>) =>
     }),
   );
 
+export const fetchPostEpic = (action$: ActionsObservable<any>) =>
+  action$.pipe(
+    ofType(
+      types.FETCH_POST,
+      types.CREATE_COMMENT_SUCCESS,
+      types.DELETE_COMMENT_SUCCESS,
+      types.TOGGLE_LIKE_SUCCESS,
+    ),
+    flatMap(action => {
+      const { postId, user } = action.payload;
+      let url;
+      if (user && user.userId) {
+        url = `${config.apiUrl}posts/${postId}?user_id=${user.userId}`;
+      } else {
+        url = `${config.apiUrl}posts/${postId}`;
+      }
+
+      return wretch(url)
+        .get()
+        .json();
+    }),
+    map(post => ({
+      type: types.FETCH_POST_SUCCESS,
+      payload: post,
+    })),
+    catchError(err =>
+      of({
+        type: types.FETCH_POST_FAIL,
+        payload: err,
+      }),
+    ),
+  );
+
 export const startProgressServiceEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
     ofType(
@@ -269,6 +302,7 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
 export default combineEpics(
   getOrCreateUserInfoEpic,
   initAuthEpic,
+  fetchPostEpic,
   startProgressServiceEpic,
   stopProgressServiceEpic,
   redirectorEpic,

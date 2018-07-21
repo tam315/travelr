@@ -2,6 +2,7 @@ import { from, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import {
   getOrCreateUserInfoEpic,
+  fetchPostEpic,
   initAuthEpic,
   redirectorEpic,
   snackbarEpic,
@@ -9,7 +10,11 @@ import {
   stopProgressServiceEpic,
 } from '..';
 import actionTypes from '../../actions/types';
-import { DUMMY_USER_STORE } from '../../config/dummies';
+import {
+  DUMMY_USER_STORE,
+  DUMMY_POSTS,
+  DUMMY_USER_STORE_UNAUTHORIZED,
+} from '../../config/dummies';
 import { AuthSeed } from '../../config/types';
 import firebaseUtils from '../../utils/firebaseUtils';
 import history from '../../utils/history';
@@ -41,6 +46,7 @@ const epicTestUtil = (
 };
 
 beforeEach(() => {
+  fetch.resetMocks();
   jest.resetAllMocks();
 });
 
@@ -239,6 +245,138 @@ describe('getOrCreateUserInfoEpic', () => {
       null,
       () => {
         expect(assertionExecutedCount).toBe(1);
+        done();
+      },
+    );
+  });
+});
+
+describe('fetchPostEpic', () => {
+  test('if success (if user is NOT authenticated)', done => {
+    const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
+    const DUMMY_PAYLOAD = {
+      postId: DUMMY_POST_ID,
+      user: DUMMY_USER_STORE_UNAUTHORIZED,
+    };
+
+    fetch.mockResponse(JSON.stringify(DUMMY_POSTS[0]));
+
+    const incomingActions = [
+      {
+        type: actionTypes.FETCH_POST,
+        payload: DUMMY_PAYLOAD,
+      },
+      {
+        type: actionTypes.CREATE_COMMENT_SUCCESS,
+        payload: DUMMY_PAYLOAD,
+      },
+      {
+        type: actionTypes.DELETE_COMMENT_SUCCESS,
+        payload: DUMMY_PAYLOAD,
+      },
+      {
+        type: actionTypes.TOGGLE_LIKE_SUCCESS,
+        payload: DUMMY_PAYLOAD,
+      },
+    ];
+
+    let assertionExecutedCount = 0;
+
+    // @ts-ignore
+    fetchPostEpic(from(incomingActions)).subscribe(
+      outcomingAction => {
+        expect(fetch.mock.calls[assertionExecutedCount][0]).toContain(
+          `/posts/${DUMMY_POST_ID}`,
+        );
+        expect(fetch.mock.calls[assertionExecutedCount][0]).not.toContain(
+          `?user_id=${DUMMY_USER_STORE.userId}`,
+        );
+        expect(outcomingAction).toEqual({
+          type: actionTypes.FETCH_POST_SUCCESS,
+          payload: DUMMY_POSTS[0],
+        });
+        assertionExecutedCount += 1;
+      },
+      null,
+      () => {
+        expect(assertionExecutedCount).toBe(incomingActions.length);
+        done();
+      },
+    );
+  });
+
+  test('if success (if user IS authenticated)', done => {
+    const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
+    const DUMMY_PAYLOAD = { postId: DUMMY_POST_ID, user: DUMMY_USER_STORE };
+
+    fetch.mockResponse(JSON.stringify(DUMMY_POSTS[0]));
+
+    const incomingActions = [
+      {
+        type: actionTypes.FETCH_POST,
+        payload: DUMMY_PAYLOAD,
+      },
+      {
+        type: actionTypes.CREATE_COMMENT_SUCCESS,
+        payload: DUMMY_PAYLOAD,
+      },
+      {
+        type: actionTypes.DELETE_COMMENT_SUCCESS,
+        payload: DUMMY_PAYLOAD,
+      },
+      {
+        type: actionTypes.TOGGLE_LIKE_SUCCESS,
+        payload: DUMMY_PAYLOAD,
+      },
+    ];
+
+    let assertionExecutedCount = 0;
+
+    // @ts-ignore
+    fetchPostEpic(from(incomingActions)).subscribe(
+      outcomingAction => {
+        expect(fetch.mock.calls[assertionExecutedCount][0]).toContain(
+          `/posts/${DUMMY_POST_ID}?user_id=${DUMMY_USER_STORE.userId}`,
+        );
+        expect(outcomingAction).toEqual({
+          type: actionTypes.FETCH_POST_SUCCESS,
+          payload: DUMMY_POSTS[0],
+        });
+        assertionExecutedCount += 1;
+      },
+      null,
+      () => {
+        expect(assertionExecutedCount).toBe(incomingActions.length);
+        done();
+      },
+    );
+  });
+
+  test('if fail', done => {
+    const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
+    const DUMMY_PAYLOAD = { postId: DUMMY_POST_ID, user: DUMMY_USER_STORE };
+
+    fetch.mockReject(JSON.stringify(DUMMY_POSTS[0]));
+
+    const incomingActions = [
+      {
+        type: actionTypes.FETCH_POST,
+        payload: DUMMY_PAYLOAD,
+      },
+    ];
+
+    let assertionExecutedCount = 0;
+
+    // @ts-ignore
+    fetchPostEpic(from(incomingActions)).subscribe(
+      outcomingAction => {
+        expect(outcomingAction.type).toBe(actionTypes.FETCH_POST_FAIL);
+        expect(outcomingAction.payload).toBeTruthy();
+        assertionExecutedCount += 1;
+      },
+      null,
+      () => {
+        expect(assertionExecutedCount).toBe(incomingActions.length);
         done();
       },
     );

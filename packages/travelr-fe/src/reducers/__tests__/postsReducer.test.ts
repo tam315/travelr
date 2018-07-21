@@ -1,5 +1,9 @@
 import types from '../../actions/types';
-import { DUMMY_POSTS, DUMMY_POSTS_IDS } from '../../config/dummies';
+import {
+  DUMMY_POSTS,
+  DUMMY_POSTS_IDS,
+  DUMMY_USER_STORE,
+} from '../../config/dummies';
 import postsReducer, { INITIAL_STATE } from '../postsReducer';
 
 describe('posts reducer', () => {
@@ -17,15 +21,15 @@ describe('posts reducer', () => {
     expect(postsReducer(INITIAL_STATE, action)).toEqual(expected);
   });
 
-  test('FETCH_POST_START', () => {
+  test('FETCH_POST', () => {
     const stateHavingCurrentPost = {
       ...INITIAL_STATE,
       currentPost: DUMMY_POSTS[0],
     };
 
     let action = {
-      type: types.FETCH_POST_START,
-      payload: DUMMY_POSTS[0].postId,
+      type: types.FETCH_POST,
+      payload: { postId: DUMMY_POSTS[0].postId, user: DUMMY_USER_STORE },
     };
 
     // do nothing if the post to fetch is the same with the current post
@@ -34,8 +38,8 @@ describe('posts reducer', () => {
     );
 
     action = {
-      type: types.FETCH_POST_START,
-      payload: 99,
+      type: types.FETCH_POST,
+      payload: { postId: 99, user: DUMMY_USER_STORE },
     };
 
     const expected = {

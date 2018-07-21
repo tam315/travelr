@@ -324,36 +324,10 @@ actions.getFilterSelectorRange = () => async (dispatch: Dispatch<any>) => {
   }
 };
 
-actions.fetchPost = (postId: number, user: UserStore) => async (
-  dispatch: Dispatch<any>,
-) => {
-  dispatch({
-    type: actionTypes.FETCH_POST_START,
-    payload: postId,
-  });
-
-  try {
-    let url;
-    if (user && user.userId) {
-      url = `${config.apiUrl}posts/${postId}?user_id=${user.userId}`;
-    } else {
-      url = `${config.apiUrl}posts/${postId}`;
-    }
-
-    const post = await wretch(url)
-      .get()
-      .json();
-
-    dispatch({
-      type: actionTypes.FETCH_POST_SUCCESS,
-      payload: post,
-    });
-  } catch (err) {
-    dispatch({
-      type: actionTypes.FETCH_POST_FAIL,
-    });
-  }
-};
+actions.fetchPost = (postId: number, user: UserStore) => ({
+  type: actionTypes.FETCH_POST,
+  payload: { postId, user },
+});
 
 actions.createPost = (user: UserStore, newPost: NewPost) => async (
   dispatch: Dispatch<any>,
@@ -521,9 +495,8 @@ actions.createComment = (
 
     dispatch({
       type: actionTypes.CREATE_COMMENT_SUCCESS,
+      payload: { postId, user },
     });
-
-    await actions.fetchPost(postId, user)(dispatch);
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_COMMENT_FAIL,
@@ -543,9 +516,8 @@ actions.deleteComment = (user: UserStore, comment: Comment) => async (
 
     dispatch({
       type: actionTypes.DELETE_COMMENT_SUCCESS,
+      payload: { postId, user },
     });
-
-    await actions.fetchPost(postId, user)(dispatch);
   } catch (err) {
     dispatch({
       type: actionTypes.DELETE_COMMENT_FAIL,
@@ -567,9 +539,8 @@ actions.toggleLike = (user: UserStore, post: Post) => async (
 
     dispatch({
       type: actionTypes.TOGGLE_LIKE_SUCCESS,
+      payload: { postId, user },
     });
-
-    await actions.fetchPost(postId, user)(dispatch);
   } catch (err) {
     dispatch({
       type: actionTypes.TOGGLE_LIKE_FAIL,
