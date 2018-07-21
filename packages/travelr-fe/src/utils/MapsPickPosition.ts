@@ -1,9 +1,5 @@
 import { LatLng } from '../config/types';
 
-declare var google: any;
-declare var MarkerClusterer: any;
-type Marker = { setMap: any; setPosition: any; addListener: any };
-
 class MapsPickPosition {
   callback: (position: LatLng) => any; // called when the pin position is changed
 
@@ -13,9 +9,9 @@ class MapsPickPosition {
 
   handleMarkerDragend: any;
 
-  map: any; // reference to map instance
+  map: google.maps.Map; // reference to map instance
 
-  marker: Marker; // reference marker instances
+  marker: google.maps.Marker; // reference marker instances
 
   constructor(
     mapRef: HTMLElement,

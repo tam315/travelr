@@ -11,7 +11,7 @@ class MapsShowAllPosition {
 
   markerCluster: any; // reference to the marker cluster
 
-  infowindow: any; // reference to the info window which is currently opened
+  infowindow: google.maps.InfoWindow; // reference to the info window which is currently opened
 
   queuedPosts: Post[]; // pending tasks because map was not initialized
 
