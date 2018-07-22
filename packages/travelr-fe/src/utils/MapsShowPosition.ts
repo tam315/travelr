@@ -1,7 +1,4 @@
-type Position = {
-  lng: number;
-  lat: number;
-};
+import { LatLng } from '../config/types';
 
 declare global {
   interface Window {
@@ -14,7 +11,7 @@ class MapsShowPosition {
 
   marker: google.maps.Marker; // reference marker instances
 
-  constructor(mapRef: HTMLElement, position: Position) {
+  constructor(mapRef: HTMLElement, position: LatLng) {
     const mapInitializer = this.mapInitializerGenerator(mapRef, position);
 
     // if API is not ready yet, pend tasks and exit constructor
@@ -28,7 +25,7 @@ class MapsShowPosition {
     mapInitializer();
   }
 
-  mapInitializerGenerator = (mapRef: HTMLElement, position: Position) => () => {
+  mapInitializerGenerator = (mapRef: HTMLElement, position: LatLng) => () => {
     const center = new google.maps.LatLng(position.lat, position.lng);
 
     // create map

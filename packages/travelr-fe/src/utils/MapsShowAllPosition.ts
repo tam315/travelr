@@ -1,4 +1,4 @@
-import { Post } from '../config/types';
+import { Post, LatLng } from '../config/types';
 
 declare var MarkerClusterer: any;
 
