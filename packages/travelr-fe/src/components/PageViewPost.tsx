@@ -177,6 +177,7 @@ export class PageViewPost extends React.Component<Props> {
             skeleton={<div className={classes.skeleton}>loading...</div>}
             autoReloadSpan={3000}
             autoReloadLimit={30}
+            hover
           />
           {userId === user.userId && (
             <Link to={`/post/${postId}/edit`} className={classes.editButton}>
