@@ -1,4 +1,5 @@
 import { Post, LatLng, MapZoomAndCenter } from '../config/types';
+import firebaseUtils from '../utils/firebaseUtils';
 
 declare var MarkerClusterer: any;
 
@@ -129,15 +130,17 @@ class MapsShowAllPosition {
         this.infowindow = new google.maps.InfoWindow();
         this.infowindow.setContent(
           `
-          <img src="${
-            post.oldImageUrl
-          }" height="96" width="96" onclick="window.mapsShowAllPositionOnPostClick(${
+          <img src="${firebaseUtils.getImageUrl(
+            post.oldImageUrl,
+            '96w',
+          )}" height="96" width="96" onclick="window.mapsShowAllPositionOnPostClick(${
             post.postId
           })" />
 
-          <img src="${
-            post.newImageUrl
-          }" height="96" width="96" onclick="window.mapsShowAllPositionOnPostClick(${
+          <img src="${firebaseUtils.getImageUrl(
+            post.newImageUrl,
+            '96w',
+          )}" height="96" width="96" onclick="window.mapsShowAllPositionOnPostClick(${
             post.postId
           })" />
           `,
