@@ -12,9 +12,14 @@ import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import IconExpandLess from '@material-ui/icons/ExpandLess';
 import IconExpandMore from '@material-ui/icons/ExpandMore';
+import deepmerge from 'deepmerge';
 import * as React from 'react';
 import InputRange from 'react-input-range';
-import { FilterCriterion, FilterStore } from '../config/types';
+import {
+  FilterCriterionReduced,
+  FilterCriterion,
+  FilterStore,
+} from '../config/types';
 import '../css/reactInputRange.css';
 
 const styles = {
@@ -46,7 +51,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onFilter: (
-    criterion: FilterCriterion,
+    criterion: FilterCriterionReduced,
     criterionUntouched: FilterCriterion,
   ) => void;
   classes: any;
@@ -54,19 +59,22 @@ type Props = {
 };
 
 type State = {
-  criterion: FilterCriterion;
+  criterion: FilterCriterionReduced;
   isListGroup1Open: boolean; // 「場所で探す」
   isListGroup2Open: boolean; // 「その他の条件で探す」
 };
 
 export class Filter extends React.Component<Props, State> {
+  // the component state should be reset to this value if the user canceled filtering
+  initialCriterion: FilterCriterion;
+
   constructor(props) {
     super(props);
 
-    const { filter } = this.props;
+    this.saveInitialCriterion();
 
     this.state = {
-      criterion: filter.criterion,
+      criterion: this.initialCriterion,
       isListGroup1Open: false,
       isListGroup2Open: false,
     };
@@ -74,16 +82,32 @@ export class Filter extends React.Component<Props, State> {
 
   // @ts-ignore
   componentDidUpdate = (prevProps: Props) => {
-    // update component's criterion:
-    // - when user updated the criterion (did filter)
-    // - when GET_FILTER_SELECTOR_RANGE_SUCCESS
-    const newCriterion = JSON.stringify(this.props.filter.criterion);
-    const oldCriterion = JSON.stringify(prevProps.filter.criterion);
-    if (newCriterion !== oldCriterion) {
-      this.setState({
-        criterion: this.props.filter.criterion,
-      });
+    const { filter } = this.props;
+
+    // update component's criterion when GET_FILTER_SELECTOR_RANGE_SUCCESS
+    const newCriterionUntouched = JSON.stringify(filter.criterionUntouched);
+    const oldCriterionUntouched = JSON.stringify(
+      prevProps.filter.criterionUntouched,
+    );
+    if (newCriterionUntouched !== oldCriterionUntouched) {
+      this.saveInitialCriterion();
+      this.resetStateToInitialCriterion();
     }
+  };
+
+  saveInitialCriterion = () => {
+    const { filter } = this.props;
+
+    this.initialCriterion = deepmerge(
+      filter.criterionUntouched,
+      filter.criterion,
+    );
+  };
+
+  resetStateToInitialCriterion = () => {
+    this.setState({
+      criterion: this.initialCriterion,
+    });
   };
 
   handleChange(e: React.ChangeEvent<HTMLInputElement>, stateKeyName: string) {
@@ -108,19 +132,20 @@ export class Filter extends React.Component<Props, State> {
     const { onClose, onFilter, filter } = this.props;
     const { criterion } = this.state;
 
+    // update initial criterion to the current state for the next filtering on the same component
+    this.initialCriterion = deepmerge(
+      filter.criterionUntouched,
+      this.state.criterion,
+    );
     onFilter(criterion, filter.criterionUntouched);
     onClose();
   };
 
   handleClose = () => {
-    const { onClose, filter } = this.props;
+    const { onClose } = this.props;
 
-    // reset criterions to the store state if the user just closed the filter
-    this.setState({
-      criterion: {
-        ...filter.criterion,
-      },
-    });
+    // reset criterions to the initial criterion if the user just closed the filter
+    this.resetStateToInitialCriterion();
 
     onClose();
   };
@@ -165,11 +190,7 @@ export class Filter extends React.Component<Props, State> {
 
   render() {
     const { isOpen, classes, filter } = this.props;
-    const {
-      criterion,
-      isListGroup1Open,
-      isListGroup2Open,
-    } = this.state;
+    const { criterion, isListGroup1Open, isListGroup2Open } = this.state;
 
     const menu = (
       <React.Fragment>

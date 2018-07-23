@@ -1,7 +1,7 @@
 import {
   AppStore,
   Comment,
-  FilterCriterion,
+  FilterCriterionReduced,
   NewPost,
   Post,
   PostsStore,
@@ -10,7 +10,7 @@ import {
   MapZoomAndCenter,
 } from './types';
 
-export const DUMMY_FILTER_CRITERION: FilterCriterion = {
+export const DUMMY_FILTER_CRITERION: FilterCriterionReduced = {
   shootDate: {
     min: 1999,
     max: 2012,

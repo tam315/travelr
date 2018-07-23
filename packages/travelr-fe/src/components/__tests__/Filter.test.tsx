@@ -67,17 +67,15 @@ describe('Filter component', () => {
 
     expect(mock.onFilter).toBeCalledWith(
       DUMMY_FILTER_CRITERION,
-      filterInitialState.criterion,
+      filterInitialState.criterionUntouched,
     );
   });
 
-  test("update criterion of component state if store's criterion change", () => {
-    // simulation of GET_FILTER_SELECTOR_RANGE_SUCCESS
-    // simulation of user did filtered
+  test('update component criterion when GET_FILTER_SELECTOR_RANGE_SUCCESS', () => {
     wrapper.setProps({
       filter: {
         criterion: DUMMY_FILTER_CRITERION,
-        criterionUntouched: filterInitialState.criterionUntouched,
+        criterionUntouched: DUMMY_FILTER_CRITERION, // <= initial state to this
         rangeSetupDone: true,
       },
     });
@@ -93,6 +91,8 @@ describe('Filter component', () => {
 
     expect(wrapper.state('criterion')).toEqual(DUMMY_FILTER_CRITERION);
     wrapper.instance().handleClose();
-    expect(wrapper.state('criterion')).toEqual(filterInitialState.criterion);
+    expect(wrapper.state('criterion')).toEqual(
+      filterInitialState.criterionUntouched,
+    );
   });
 });

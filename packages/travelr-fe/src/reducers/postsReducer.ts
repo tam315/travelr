@@ -1,5 +1,5 @@
 import actionTypes from '../actions/types';
-import { PostsStore, FilterCriterion } from '../config/types';
+import { PostsStore } from '../config/types';
 
 export const INITIAL_STATE: PostsStore = {
   all: [],

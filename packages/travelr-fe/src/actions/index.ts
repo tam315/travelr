@@ -6,7 +6,6 @@ import config from '../config';
 import {
   AuthSeed,
   Comment,
-  FilterCriterion,
   FilterCriterionReduced,
   NewPost,
   NewUserInfo,
@@ -14,6 +13,7 @@ import {
   PostToEdit,
   UserStore,
   MapZoomAndCenter,
+  FilterCriterion,
 } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';
 import { difference } from '../utils/general';
@@ -309,7 +309,7 @@ actions.fetchAllPosts = (criterion: FilterCriterionReduced = {}) => async (
 };
 
 actions.updateFilterCriterion = (
-  criterion: FilterCriterion,
+  criterion: FilterCriterionReduced,
   criterionUntouched: FilterCriterion,
 ) => async (dispatch: Dispatch<any>) => {
   // extract criteria actually changed by the user
@@ -318,7 +318,7 @@ actions.updateFilterCriterion = (
   // save the current criterion in the store
   dispatch({
     type: actionTypes.CHANGE_FILTER_CRITERION_SUCCESS,
-    payload: { criterion, criterionReduced },
+    payload: criterionReduced,
   });
   actions.fetchAllPosts(criterionReduced)(dispatch);
 };

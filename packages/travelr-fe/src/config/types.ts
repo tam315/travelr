@@ -33,7 +33,7 @@ export type PostsStore = {
 };
 
 export type FilterStore = {
-  criterion: FilterCriterion;
+  criterion: FilterCriterionReduced;
   criterionUntouched: FilterCriterion;
   rangeSetupDone: boolean;
 };
@@ -93,29 +93,6 @@ export type NewUserInfo = {
   displayName: string;
 };
 
-export type FilterCriterion = {
-  shootDate: {
-    min: number; // only A.D.
-    max: number; // only A.D.
-  };
-  likedCount: {
-    min: number;
-    max: number;
-  };
-  commentsCount: {
-    min: number;
-    max: number;
-  };
-  viewCount: {
-    min: number;
-    max: number;
-  };
-  placeName: string;
-  radius: string;
-  displayName: string;
-  description: string;
-};
-
 export type FilterCriterionReduced = {
   shootDate?: {
     min?: number; // only A.D.
@@ -137,6 +114,29 @@ export type FilterCriterionReduced = {
   radius?: string;
   displayName?: string;
   description?: string;
+};
+
+export type FilterCriterion = {
+  shootDate: {
+    min: number; // only A.D.
+    max: number; // only A.D.
+  };
+  likedCount: {
+    min: number;
+    max: number;
+  };
+  commentsCount: {
+    min: number;
+    max: number;
+  };
+  viewCount: {
+    min: number;
+    max: number;
+  };
+  placeName: string;
+  radius: string;
+  displayName: string;
+  description: string;
 };
 
 // required info to authenticate with the main API

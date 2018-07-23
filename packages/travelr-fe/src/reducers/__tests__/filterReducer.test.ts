@@ -1,20 +1,21 @@
 import types from '../../actions/types';
-import { DUMMY_FILTER_CRITERION } from '../../config/dummies';
+import { FilterCriterionReduced } from '../../config/types';
 import { difference } from '../../utils/general';
 import filterReducer, { INITIAL_STATE } from '../filterReducer';
 
 test('CHANGE_FILTER_CRITERION_SUCCESS', () => {
+  const criterionReduced: FilterCriterionReduced = {
+    displayName: 'dummy',
+  };
+
   const action = {
     type: types.CHANGE_FILTER_CRITERION_SUCCESS,
-    payload: {
-      criterion: DUMMY_FILTER_CRITERION,
-      criterionUntouched: INITIAL_STATE.criterionUntouched,
-    },
+    payload: criterionReduced,
   };
 
   const expected = {
     ...INITIAL_STATE,
-    criterion: DUMMY_FILTER_CRITERION,
+    criterion: criterionReduced,
   };
 
   expect(filterReducer(INITIAL_STATE, action)).toEqual(expected);
@@ -33,17 +34,6 @@ test('GET_FILTER_SELECTOR_RANGE_SUCCESS', () => {
   };
 
   const expectedDiff = {
-    criterion: {
-      likedCount: {
-        max: DUMMY_PAYLOAD.maxLikedCount,
-      },
-      commentsCount: {
-        max: DUMMY_PAYLOAD.maxCommentsCount,
-      },
-      viewCount: {
-        max: DUMMY_PAYLOAD.maxViewCount,
-      },
-    },
     criterionUntouched: {
       likedCount: {
         max: DUMMY_PAYLOAD.maxLikedCount,

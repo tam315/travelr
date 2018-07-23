@@ -6,11 +6,12 @@ import IconSearch from '@material-ui/icons/Search';
 import { History, Location } from 'history';
 import * as React from 'react';
 import {
-  FilterCriterion,
+  FilterCriterionReduced,
   FilterStore,
   PostsStore,
   AppStore,
   MapZoomAndCenter,
+  FilterCriterion,
 } from '../config/types';
 import Filter from './Filter';
 import PageViewPostsGrid from './PageViewPostsGrid';
@@ -34,12 +35,12 @@ const pathTabnumberMapping = {
 
 type Props = {
   classes: any;
-  fetchAllPosts: (criterion?: FilterCriterion) => any;
+  fetchAllPosts: (criterion?: FilterCriterionReduced) => any;
   increaseLimitCountOfGrid: () => void;
   getFilterSelectorRange: () => void;
   updateFilterCriterion: (
-    criterion: FilterCriterion,
-    criterionUntouched: FilterCriterion,
+    criterion: FilterCriterionReduced,
+    criterionUntouched: FilterCriterionReduced,
   ) => void;
   saveMapZoomAndCenter: (zoomAndCenter: MapZoomAndCenter) => void;
   history: History;
@@ -109,7 +110,7 @@ export class PageViewPosts extends React.Component<Props, State> {
   };
 
   handleFilter = (
-    criterion: FilterCriterion,
+    criterion: FilterCriterionReduced,
     initialCriterion: FilterCriterion,
   ) => {
     const { updateFilterCriterion } = this.props;

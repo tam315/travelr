@@ -399,10 +399,7 @@ describe('updateFilterCriterion', () => {
 
     expect(mockDispatch).toBeCalledWith({
       type: types.CHANGE_FILTER_CRITERION_SUCCESS,
-      payload: {
-        criterion: dummyCriterion,
-        criterionReduced: { a: 1 },
-      },
+      payload: { a: 1 },
     });
   });
 });
