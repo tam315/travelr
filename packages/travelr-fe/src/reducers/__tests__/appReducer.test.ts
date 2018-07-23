@@ -1,5 +1,6 @@
 import types from '../../actions/types';
 import appReducer, { INITIAL_STATE } from '../appReducer';
+import { MapZoomAndCenter } from '../../config/types';
 
 describe('appReducer', () => {
   test('REDUCE_SNACKBAR_QUEUE', () => {
@@ -70,6 +71,29 @@ describe('appReducer', () => {
     const expected = {
       ...INITIAL_STATE,
       showProgress: false,
+    };
+
+    expect(appReducer(state, action)).toEqual(expected);
+  });
+
+  test('SAVE_MAP_ZOOM_AND_CENTER', () => {
+    const state = {
+      ...INITIAL_STATE,
+    };
+
+    const action = {
+      type: types.SAVE_MAP_ZOOM_AND_CENTER,
+      payload: <MapZoomAndCenter>{
+        zoom: 10,
+        center: { lat: 1, lng: 2 },
+      },
+    };
+
+    const expected = {
+      ...INITIAL_STATE,
+      mapZoomLevel: 10,
+      mapLat: 1,
+      mapLng: 2,
     };
 
     expect(appReducer(state, action)).toEqual(expected);

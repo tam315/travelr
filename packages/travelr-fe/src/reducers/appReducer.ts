@@ -1,12 +1,12 @@
 import actionTypes from '../actions/types';
-import { AppStore } from '../config/types';
+import { AppStore, MapZoomAndCenter } from '../config/types';
 
 export const INITIAL_STATE: AppStore = {
   snackbarQueue: [],
   showProgress: false,
-  mapLat: 0,
-  mapLng: 0,
-  mapZoomLevel: 0,
+  mapLat: 38.1452368786617,
+  mapLng: 137.36165303813937,
+  mapZoomLevel: 4,
 };
 
 export default (state: AppStore = INITIAL_STATE, action: any): AppStore => {
@@ -33,6 +33,16 @@ export default (state: AppStore = INITIAL_STATE, action: any): AppStore => {
       return {
         ...state,
         showProgress: false,
+      };
+    }
+    case actionTypes.SAVE_MAP_ZOOM_AND_CENTER: {
+      const payload: MapZoomAndCenter = action.payload;
+      console.log(payload);
+      return {
+        ...state,
+        mapZoomLevel: payload.zoom,
+        mapLng: payload.center.lng,
+        mapLat: payload.center.lat,
       };
     }
     default:

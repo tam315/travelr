@@ -1,6 +1,6 @@
 import { withStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { Post } from '../config/types';
+import { Post, LatLng, AppStore, MapZoomAndCenter } from '../config/types';
 import history from '../utils/history';
 import MapsShowAllPosition from '../utils/MapsShowAllPosition';
 
@@ -17,11 +17,13 @@ const styles = {
 };
 
 type Props = {
+  app: AppStore;
   posts: Post[];
   classes: any;
+  saveMapZoomAndCenter: (zoomAndCenter: MapZoomAndCenter) => void;
 };
 
-class PageViewPostsMap extends React.Component<Props> {
+export class PageViewPostsMap extends React.Component<Props> {
   mapRef: React.RefObject<HTMLDivElement>;
 
   mapsShowAllPosition: MapsShowAllPosition;
@@ -34,22 +36,33 @@ class PageViewPostsMap extends React.Component<Props> {
 
   // @ts-ignore
   componentDidMount = () => {
-    const { posts } = this.props;
+    const { posts, saveMapZoomAndCenter, app } = this.props;
     const onPostClick = postId => history.push(`/post/${postId}`);
 
+    const zoomAndCenter: MapZoomAndCenter = {
+      zoom: app.mapZoomLevel,
+      center: {
+        lng: app.mapLng,
+        lat: app.mapLat,
+      },
+    };
+
     if (this.mapRef.current) {
-      this.mapsShowAllPosition = new MapsShowAllPosition(
-        this.mapRef.current,
+      this.mapsShowAllPosition = new MapsShowAllPosition(this.mapRef.current, {
         onPostClick,
-      );
+        zoomAndCenter,
+        onZoomOrCenterChange: saveMapZoomAndCenter,
+      });
       this.mapsShowAllPosition.placePosts(posts);
     }
   };
 
   // @ts-ignore
-  componentDidUpdate = () => {
-    const { posts } = this.props;
-    this.mapsShowAllPosition.placePosts(posts);
+  componentDidUpdate = (prevProps: Props) => {
+    const { posts, app } = this.props;
+    if (JSON.stringify(posts) !== JSON.stringify(prevProps.posts)) {
+      this.mapsShowAllPosition.placePosts(posts);
+    }
   };
 
   // @ts-ignore

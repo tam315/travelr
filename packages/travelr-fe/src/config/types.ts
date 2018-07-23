@@ -149,3 +149,8 @@ export type LatLng = {
   lat: number;
   lng: number;
 };
+
+export type MapZoomAndCenter = {
+  zoom: number;
+  center: LatLng;
+};

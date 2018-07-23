@@ -1,10 +1,4 @@
-import config from '../config';
 import { LatLng } from '../config/types';
-import { loadJS } from './general';
-
-declare var google: any;
-declare var MarkerClusterer: any;
-type Marker = { setMap: any; setPosition: any; addListener: any };
 
 class MapsPickPosition {
   callback: (position: LatLng) => any; // called when the pin position is changed
@@ -15,9 +9,9 @@ class MapsPickPosition {
 
   handleMarkerDragend: any;
 
-  map: any; // reference to map instance
+  map: google.maps.Map; // reference to map instance
 
-  marker: Marker; // reference marker instances
+  marker: google.maps.Marker; // reference marker instances
 
   constructor(
     mapRef: HTMLElement,
@@ -39,17 +33,10 @@ class MapsPickPosition {
 
     const mapInitializer = this.mapInitializerGenerator(mapRef);
 
-    // load the API if it is not loaded.
-    // pass the callback to initialize the map.
+    // if API is not ready yet, pend tasks and exit constructor
     if (typeof google !== 'object') {
       // @ts-ignore
       window.mapInitializer = mapInitializer;
-      loadJS(
-        `https://maps.googleapis.com/maps/api/js?key=${
-          config.googleMapApiKey
-        }&libraries=visualization&callback=mapInitializer`,
-      );
-      // exit constructor
       return;
     }
 

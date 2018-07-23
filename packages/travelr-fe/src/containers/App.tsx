@@ -17,7 +17,9 @@ import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
 import ProgressService from '../components/ProgressService';
 import SnackbarService from '../components/SnackbarService';
+import config from '../config';
 import { AppStore, UserStore } from '../config/types';
+import { loadJS } from '../utils/general';
 import history from '../utils/history';
 
 type Props = {
@@ -32,6 +34,16 @@ export class App extends React.Component<Props> {
   // @ts-ignore
   componentDidMount = async () => {
     const { startProgress, finishProgress, initAuth } = this.props;
+
+    // load google maps API. mapInitializer is dummy, and
+    // may already exists or be overwritten by the other component
+    if (!window.mapInitializer) window.mapInitializer = () => {};
+
+    loadJS(
+      `https://maps.googleapis.com/maps/api/js?key=${
+        config.googleMapApiKey
+      }&libraries=visualization&callback=mapInitializer`,
+    );
 
     // display progress bar for every fetch request
     fetchIntercept.register({
