@@ -224,41 +224,6 @@ actions.fetchAllPosts = () => ({
   type: actionTypes.FETCH_ALL_POSTS,
 });
 
-actions.changeFilterCriterion = (
-  criterion: FilterCriterionReduced,
-  criterionUntouched: FilterCriterion,
-) => async (dispatch: Dispatch<any>) => {
-  // extract criteria actually changed by the user
-  const criterionReduced = difference(criterion, criterionUntouched);
-
-  // save the current criterion in the store
-  dispatch({
-    type: actionTypes.CHANGE_FILTER_CRITERION_SUCCESS,
-    payload: criterionReduced,
-  });
-};
-
-actions.clearFilterCriterion = () => ({
-  type: actionTypes.CLEAR_FILTER_CRITERION_SUCCESS,
-});
-
-actions.getFilterSelectorRange = () => async (dispatch: Dispatch<any>) => {
-  try {
-    const stats = await wretch(`${config.apiUrl}posts/stats`)
-      .get()
-      .json();
-    dispatch({
-      type: actionTypes.GET_FILTER_SELECTOR_RANGE_SUCCESS,
-      payload: stats,
-    });
-  } catch (err) {
-    dispatch({
-      type: actionTypes.GET_FILTER_SELECTOR_RANGE_FAIL,
-      payload: err,
-    });
-  }
-};
-
 actions.fetchPost = (postId: number) => ({
   type: actionTypes.FETCH_POST,
   payload: +postId,
@@ -416,6 +381,41 @@ actions.selectMyPostsAll = () => ({
 actions.selectMyPostsReset = () => ({
   type: actionTypes.SELECT_MY_POSTS_RESET,
 });
+
+actions.changeFilterCriterion = (
+  criterion: FilterCriterionReduced,
+  criterionUntouched: FilterCriterion,
+) => async (dispatch: Dispatch<any>) => {
+  // extract criteria actually changed by the user
+  const criterionReduced = difference(criterion, criterionUntouched);
+
+  // save the current criterion in the store
+  dispatch({
+    type: actionTypes.CHANGE_FILTER_CRITERION_SUCCESS,
+    payload: criterionReduced,
+  });
+};
+
+actions.clearFilterCriterion = () => ({
+  type: actionTypes.CLEAR_FILTER_CRITERION_SUCCESS,
+});
+
+actions.getFilterSelectorRange = () => async (dispatch: Dispatch<any>) => {
+  try {
+    const stats = await wretch(`${config.apiUrl}posts/stats`)
+      .get()
+      .json();
+    dispatch({
+      type: actionTypes.GET_FILTER_SELECTOR_RANGE_SUCCESS,
+      payload: stats,
+    });
+  } catch (err) {
+    dispatch({
+      type: actionTypes.GET_FILTER_SELECTOR_RANGE_FAIL,
+      payload: err,
+    });
+  }
+};
 
 actions.createComment = (
   user: UserStore,

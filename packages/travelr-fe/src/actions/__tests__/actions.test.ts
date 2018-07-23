@@ -331,49 +331,6 @@ describe('fetchAllPosts', () => {
   });
 });
 
-describe('changeFilterCriterion', () => {
-  test('makes correct action when success', async () => {
-    const dummyCriterion = { a: 1, b: 0, c: 0 };
-    const dummyCriterionUntouched = { a: 0, b: 0, c: 0 };
-
-    const thunk = actions.changeFilterCriterion(
-      dummyCriterion,
-      dummyCriterionUntouched,
-    );
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(mockDispatch).toBeCalledWith({
-      type: types.CHANGE_FILTER_CRITERION_SUCCESS,
-      payload: { a: 1 },
-    });
-  });
-});
-
-describe('clearFilterCriterion', () => {
-  test('makes correct action', () => {
-    const action = actions.clearFilterCriterion();
-    expect(action).toEqual({
-      type: types.CLEAR_FILTER_CRITERION_SUCCESS,
-    });
-  });
-});
-
-describe('getFilterSelectorRange', () => {
-  test('makes correct action when success', async () => {
-    const dummyResponse = { a: 1 };
-    fetch.mockResponse(JSON.stringify(dummyResponse));
-    const thunk = actions.getFilterSelectorRange();
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(mockDispatch).toBeCalledWith({
-      type: types.GET_FILTER_SELECTOR_RANGE_SUCCESS,
-      payload: dummyResponse,
-    });
-  });
-});
-
 describe('fetchPost', () => {
   test('make correct action', () => {
     const DUMMY_POST_ID = 123;
@@ -645,6 +602,49 @@ describe('selectMyPostsReset', () => {
     const action = actions.selectMyPostsReset();
     expect(action).toEqual({
       type: types.SELECT_MY_POSTS_RESET,
+    });
+  });
+});
+
+describe('changeFilterCriterion', () => {
+  test('makes correct action when success', async () => {
+    const dummyCriterion = { a: 1, b: 0, c: 0 };
+    const dummyCriterionUntouched = { a: 0, b: 0, c: 0 };
+
+    const thunk = actions.changeFilterCriterion(
+      dummyCriterion,
+      dummyCriterionUntouched,
+    );
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(mockDispatch).toBeCalledWith({
+      type: types.CHANGE_FILTER_CRITERION_SUCCESS,
+      payload: { a: 1 },
+    });
+  });
+});
+
+describe('clearFilterCriterion', () => {
+  test('makes correct action', () => {
+    const action = actions.clearFilterCriterion();
+    expect(action).toEqual({
+      type: types.CLEAR_FILTER_CRITERION_SUCCESS,
+    });
+  });
+});
+
+describe('getFilterSelectorRange', () => {
+  test('makes correct action when success', async () => {
+    const dummyResponse = { a: 1 };
+    fetch.mockResponse(JSON.stringify(dummyResponse));
+    const thunk = actions.getFilterSelectorRange();
+    const mockDispatch = jest.fn();
+    await thunk(mockDispatch);
+
+    expect(mockDispatch).toBeCalledWith({
+      type: types.GET_FILTER_SELECTOR_RANGE_SUCCESS,
+      payload: dummyResponse,
     });
   });
 });
