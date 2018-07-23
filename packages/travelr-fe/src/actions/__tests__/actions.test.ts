@@ -360,7 +360,7 @@ describe('fetchAllPosts', () => {
     const mockDispatch = jest.fn();
     await thunk(mockDispatch);
 
-    expect(mockDispatch.mock.calls[0][0]).toEqual({
+    expect(mockDispatch.mock.calls[1][0]).toEqual({
       type: types.FETCH_ALL_POSTS_SUCCESS,
       payload: DUMMY_RESPONSE,
     });
@@ -372,7 +372,7 @@ describe('fetchAllPosts', () => {
     const mockDispatch = jest.fn();
     await thunk(mockDispatch);
 
-    expect(mockDispatch.mock.calls[0][0]).toEqual({
+    expect(mockDispatch.mock.calls[1][0]).toEqual({
       type: types.FETCH_ALL_POSTS_FAIL,
     });
   });
