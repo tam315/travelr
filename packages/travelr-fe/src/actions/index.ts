@@ -239,6 +239,10 @@ actions.updateFilterCriterion = (
   });
 };
 
+actions.clearFilterCriterion = () => ({
+  type: actionTypes.CLEAR_FILTER_CRITERION_SUCCESS,
+});
+
 actions.getFilterSelectorRange = () => async (dispatch: Dispatch<any>) => {
   try {
     const stats = await wretch(`${config.apiUrl}posts/stats`)

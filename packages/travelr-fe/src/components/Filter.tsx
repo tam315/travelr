@@ -22,7 +22,7 @@ import {
 } from '../config/types';
 import '../css/reactInputRange.css';
 
-const styles = {
+const styles = theme => ({
   paper: {
     display: 'block',
     overflowY: 'scroll',
@@ -43,9 +43,10 @@ const styles = {
   },
   filterButtonContainer: {
     justifyContent: 'center',
-    marginTop: '1rem',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
   },
-};
+});
 
 type Props = {
   isOpen: boolean;
@@ -54,6 +55,7 @@ type Props = {
     criterion: FilterCriterionReduced,
     criterionUntouched: FilterCriterion,
   ) => void;
+  onClearFilter: () => void;
   classes: any;
   filter: FilterStore;
 };
@@ -84,7 +86,18 @@ export class Filter extends React.Component<Props, State> {
   componentDidUpdate = (prevProps: Props) => {
     const { filter } = this.props;
 
-    // update component's criterion when GET_FILTER_SELECTOR_RANGE_SUCCESS
+    // update component's criterion when:
+    // - user filtered posts
+    // - user cleared filter criterion
+    const newCriterion = JSON.stringify(filter.criterion);
+    const oldCriterion = JSON.stringify(prevProps.filter.criterion);
+    if (newCriterion !== oldCriterion) {
+      this.saveInitialCriterion();
+      this.resetStateToInitialCriterion();
+    }
+
+    // update component's criterion when:
+    // - GET_FILTER_SELECTOR_RANGE_SUCCESS
     const newCriterionUntouched = JSON.stringify(filter.criterionUntouched);
     const oldCriterionUntouched = JSON.stringify(
       prevProps.filter.criterionUntouched,
@@ -138,6 +151,13 @@ export class Filter extends React.Component<Props, State> {
       this.state.criterion,
     );
     onFilter(criterion, filter.criterionUntouched);
+    onClose();
+  };
+
+  handleFilterClear = () => {
+    const { onClearFilter, onClose } = this.props;
+
+    onClearFilter();
     onClose();
   };
 
@@ -305,10 +325,22 @@ export class Filter extends React.Component<Props, State> {
             variant="contained"
             className={classes.button}
             onClick={this.handleFilter}
+            fullWidth
           >
             フィルタする
           </Button>
         </ListItem>
+
+        <Typography
+          color="secondary"
+          onClick={this.handleFilterClear}
+          align="center"
+          style={{ cursor: 'pointer' }}
+          // @ts-ignore
+          dataenzyme="clear-filter"
+        >
+          フィルタをクリア
+        </Typography>
       </React.Fragment>
     );
 

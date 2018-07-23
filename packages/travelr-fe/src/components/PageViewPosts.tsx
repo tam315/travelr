@@ -42,6 +42,7 @@ type Props = {
     criterion: FilterCriterionReduced,
     criterionUntouched: FilterCriterionReduced,
   ) => void;
+  clearFilterCriterion: () => void;
   saveMapZoomAndCenter: (zoomAndCenter: MapZoomAndCenter) => void;
   history: History;
   location: Location;
@@ -129,6 +130,7 @@ export class PageViewPosts extends React.Component<Props, State> {
       filter,
       increaseLimitCountOfGrid,
       saveMapZoomAndCenter,
+      clearFilterCriterion,
     } = this.props;
 
     const { tabNumber, isFilterOpen } = this.state;
@@ -176,6 +178,7 @@ export class PageViewPosts extends React.Component<Props, State> {
           isOpen={isFilterOpen}
           onClose={this.handleFilterClose}
           onFilter={this.handleFilter}
+          onClearFilter={clearFilterCriterion}
           filter={filter}
         />
 

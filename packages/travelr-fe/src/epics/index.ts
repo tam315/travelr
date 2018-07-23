@@ -87,6 +87,7 @@ export const fetchAllPostsEpic = (
     ofType(
       types.FETCH_ALL_POSTS,
       types.CHANGE_FILTER_CRITERION_SUCCESS,
+      types.CLEAR_FILTER_CRITERION_SUCCESS,
     ),
     switchMap(async () => {
       const {

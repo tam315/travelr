@@ -18,12 +18,14 @@ describe('Filter component', () => {
     mock = {
       onClose: jest.fn(),
       onFilter: jest.fn(),
+      onClearFilter: jest.fn(),
     };
     wrapper = shallow(
       <Filter
         isOpen
         onClose={mock.onClose}
         onFilter={mock.onFilter}
+        onClearFilter={mock.onClearFilter}
         classes={{}}
         filter={filterInitialState}
       />,
@@ -71,12 +73,30 @@ describe('Filter component', () => {
     );
   });
 
+  test('onClearFilter should be called when the "clear filter" button pressed', () => {
+    wrapper.find({ dataenzyme: 'clear-filter' }).simulate('click');
+
+    expect(mock.onClearFilter).toBeCalled();
+  });
+
+  test('update component criterion when user filtered posts or cleared filter', () => {
+    wrapper.setProps({
+      filter: {
+        criterion: DUMMY_FILTER_CRITERION, // <= from initial state to this
+        criterionUntouched: filterInitialState.criterionUntouched,
+        rangeSetupDone: filterInitialState.rangeSetupDone,
+      },
+    });
+
+    expect(wrapper.state('criterion')).toEqual(DUMMY_FILTER_CRITERION);
+  });
+
   test('update component criterion when GET_FILTER_SELECTOR_RANGE_SUCCESS', () => {
     wrapper.setProps({
       filter: {
-        criterion: DUMMY_FILTER_CRITERION,
-        criterionUntouched: DUMMY_FILTER_CRITERION, // <= initial state to this
-        rangeSetupDone: true,
+        criterion: filterInitialState.criterion,
+        criterionUntouched: DUMMY_FILTER_CRITERION, // <= from initial state to this
+        rangeSetupDone: filterInitialState.rangeSetupDone,
       },
     });
 

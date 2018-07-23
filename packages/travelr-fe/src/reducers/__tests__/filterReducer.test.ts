@@ -2,6 +2,7 @@ import types from '../../actions/types';
 import { FilterCriterionReduced } from '../../config/types';
 import { difference } from '../../utils/general';
 import filterReducer, { INITIAL_STATE } from '../filterReducer';
+import { DUMMY_FILTER_CRITERION } from '../../config/dummies';
 
 test('CHANGE_FILTER_CRITERION_SUCCESS', () => {
   const criterionReduced: FilterCriterionReduced = {
@@ -19,6 +20,23 @@ test('CHANGE_FILTER_CRITERION_SUCCESS', () => {
   };
 
   expect(filterReducer(INITIAL_STATE, action)).toEqual(expected);
+});
+
+test('CLEAR_FILTER_CRITERION_SUCCESS', () => {
+  const originalState = {
+    ...INITIAL_STATE,
+    criterion: DUMMY_FILTER_CRITERION,
+  };
+  const action = {
+    type: types.CLEAR_FILTER_CRITERION_SUCCESS,
+  };
+
+  const expected = {
+    ...INITIAL_STATE,
+    criterion: {},
+  };
+
+  expect(filterReducer(originalState, action)).toEqual(expected);
 });
 
 test('GET_FILTER_SELECTOR_RANGE_SUCCESS', () => {

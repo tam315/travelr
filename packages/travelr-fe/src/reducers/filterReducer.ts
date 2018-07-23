@@ -43,6 +43,11 @@ const filterReducer = (
         ...state,
         criterion: action.payload,
       };
+    case actionTypes.CLEAR_FILTER_CRITERION_SUCCESS:
+      return {
+        ...state,
+        criterion: {},
+      };
     case actionTypes.GET_FILTER_SELECTOR_RANGE_SUCCESS:
       if (state.rangeSetupDone) return state;
 

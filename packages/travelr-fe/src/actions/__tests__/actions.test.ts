@@ -350,6 +350,15 @@ describe('updateFilterCriterion', () => {
   });
 });
 
+describe('clearFilterCriterion', () => {
+  test('makes correct action', () => {
+    const action = actions.clearFilterCriterion();
+    expect(action).toEqual({
+      type: types.CLEAR_FILTER_CRITERION_SUCCESS,
+    });
+  });
+});
+
 describe('getFilterSelectorRange', () => {
   test('makes correct action when success', async () => {
     const dummyResponse = { a: 1 };
