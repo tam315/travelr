@@ -2,6 +2,7 @@ export type Store = {
   app: AppStore;
   user: UserStore;
   posts: PostsStore;
+  filter: FilterStore;
 };
 
 export type AppStore = {
