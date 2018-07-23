@@ -151,9 +151,7 @@ describe('initAuthEpic', () => {
     // @ts-ignore
     initAuthEpic(of(incomingAction)).subscribe(
       outcomingAction => {
-        expect(outcomingAction).toEqual({
-          type: actionTypes.INIT_AUTH_FAIL,
-        });
+        expect(outcomingAction.type).toEqual(actionTypes.INIT_AUTH_FAIL);
         assertionExecuted();
       },
       null,
@@ -241,9 +239,9 @@ describe('getOrCreateUserInfoEpic', () => {
     // @ts-ignore
     getOrCreateUserInfoEpic(of(incomingAction)).subscribe(
       outcomingAction => {
-        expect(outcomingAction).toEqual({
-          type: actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
-        });
+        expect(outcomingAction.type).toEqual(
+          actionTypes.GET_OR_CREATE_USER_INFO_FAIL,
+        );
         assertionExecutedCount += 1;
       },
       null,

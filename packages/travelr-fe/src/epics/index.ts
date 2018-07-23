@@ -41,9 +41,10 @@ export const initAuthEpic = (action$: ActionsObservable<any>) =>
       // if the user doesn't have token
       return { type: types.INIT_AUTH_USER_HAS_NO_CREDENTIAL };
     }),
-    catchError(() =>
+    catchError(err =>
       of({
         type: types.INIT_AUTH_FAIL,
+        payload: err,
       }),
     ),
   );
@@ -55,27 +56,26 @@ export const getOrCreateUserInfoEpic = (action$: ActionsObservable<any>) =>
       types.SIGN_IN_WITH_EMAIL_SUCCESS,
       types.SIGN_UP_WITH_EMAIL_SUCCESS,
     ),
-    flatMap(action => {
+    flatMap(async action => {
       // @ts-ignore
       const { token, displayName, emailVerified } = action.payload;
 
-      const request = wretch(`${config.apiUrl}users`)
+      const userInfo = await wretch(`${config.apiUrl}users`)
         .headers({ authorization: token })
         .post({ displayName })
         .json();
 
-      return from(request).pipe(
-        map(userInfo => ({
-          type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
-          payload: { ...userInfo, token, emailVerified },
-        })),
-      );
+      return {
+        type: types.GET_OR_CREATE_USER_INFO_SUCCESS,
+        payload: { ...userInfo, token, emailVerified },
+      };
     }),
-    catchError(() => {
-      return of({
+    catchError(err =>
+      of({
         type: types.GET_OR_CREATE_USER_INFO_FAIL,
-      });
-    }),
+        payload: err,
+      }),
+    ),
   );
 
 export const fetchAllPostsEpic = (
@@ -161,12 +161,11 @@ export const fetchAllPostsEpic = (
         .get()
         .json();
 
-      return posts;
+      return {
+        type: types.FETCH_ALL_POSTS_SUCCESS,
+        payload: posts,
+      };
     }),
-    map(posts => ({
-      type: types.FETCH_ALL_POSTS_SUCCESS,
-      payload: posts,
-    })),
     catchError(err =>
       of({
         type: types.FETCH_ALL_POSTS_FAIL,
@@ -186,7 +185,7 @@ export const fetchPostEpic = (
       types.DELETE_COMMENT_SUCCESS,
       types.TOGGLE_LIKE_SUCCESS,
     ),
-    flatMap(action => {
+    flatMap(async action => {
       const postId = action.payload;
       const { user } = state$.value;
       let url;
@@ -196,14 +195,15 @@ export const fetchPostEpic = (
         url = `${config.apiUrl}posts/${postId}`;
       }
 
-      return wretch(url)
+      const post = await wretch(url)
         .get()
         .json();
+
+      return {
+        type: types.FETCH_POST_SUCCESS,
+        payload: post,
+      };
     }),
-    map(post => ({
-      type: types.FETCH_POST_SUCCESS,
-      payload: post,
-    })),
     catchError(err =>
       of({
         type: types.FETCH_POST_FAIL,
