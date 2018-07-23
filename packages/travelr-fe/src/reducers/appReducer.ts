@@ -37,7 +37,6 @@ export default (state: AppStore = INITIAL_STATE, action: any): AppStore => {
     }
     case actionTypes.SAVE_MAP_ZOOM_AND_CENTER: {
       const payload: MapZoomAndCenter = action.payload;
-      console.log(payload);
       return {
         ...state,
         mapZoomLevel: payload.zoom,
