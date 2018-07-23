@@ -348,36 +348,38 @@ describe('fetchAllPostsEpic', () => {
 describe('fetchPostEpic', () => {
   test('if success (if user is NOT authenticated)', done => {
     const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
-    const DUMMY_PAYLOAD = {
-      postId: DUMMY_POST_ID,
-      user: DUMMY_USER_STORE_UNAUTHORIZED,
-    };
 
     fetch.mockResponse(JSON.stringify(DUMMY_POSTS[0]));
 
     const incomingActions = [
       {
         type: actionTypes.FETCH_POST,
-        payload: DUMMY_PAYLOAD,
+        payload: DUMMY_POST_ID,
       },
       {
         type: actionTypes.CREATE_COMMENT_SUCCESS,
-        payload: DUMMY_PAYLOAD,
+        payload: DUMMY_POST_ID,
       },
       {
         type: actionTypes.DELETE_COMMENT_SUCCESS,
-        payload: DUMMY_PAYLOAD,
+        payload: DUMMY_POST_ID,
       },
       {
         type: actionTypes.TOGGLE_LIKE_SUCCESS,
-        payload: DUMMY_PAYLOAD,
+        payload: DUMMY_POST_ID,
       },
     ];
+
+    const state$ = {
+      value: {
+        user: DUMMY_USER_STORE_UNAUTHORIZED,
+      },
+    };
 
     let assertionExecutedCount = 0;
 
     // @ts-ignore
-    fetchPostEpic(from(incomingActions)).subscribe(
+    fetchPostEpic(from(incomingActions), state$).subscribe(
       outcomingAction => {
         expect(fetch.mock.calls[assertionExecutedCount][0]).toContain(
           `/posts/${DUMMY_POST_ID}`,
@@ -401,33 +403,38 @@ describe('fetchPostEpic', () => {
 
   test('if success (if user IS authenticated)', done => {
     const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
-    const DUMMY_PAYLOAD = { postId: DUMMY_POST_ID, user: DUMMY_USER_STORE };
 
     fetch.mockResponse(JSON.stringify(DUMMY_POSTS[0]));
 
     const incomingActions = [
       {
         type: actionTypes.FETCH_POST,
-        payload: DUMMY_PAYLOAD,
+        payload: DUMMY_POST_ID,
       },
       {
         type: actionTypes.CREATE_COMMENT_SUCCESS,
-        payload: DUMMY_PAYLOAD,
+        payload: DUMMY_POST_ID,
       },
       {
         type: actionTypes.DELETE_COMMENT_SUCCESS,
-        payload: DUMMY_PAYLOAD,
+        payload: DUMMY_POST_ID,
       },
       {
         type: actionTypes.TOGGLE_LIKE_SUCCESS,
-        payload: DUMMY_PAYLOAD,
+        payload: DUMMY_POST_ID,
       },
     ];
+
+    const state$ = {
+      value: {
+        user: DUMMY_USER_STORE,
+      },
+    };
 
     let assertionExecutedCount = 0;
 
     // @ts-ignore
-    fetchPostEpic(from(incomingActions)).subscribe(
+    fetchPostEpic(from(incomingActions), state$).subscribe(
       outcomingAction => {
         expect(fetch.mock.calls[assertionExecutedCount][0]).toContain(
           `/posts/${DUMMY_POST_ID}?user_id=${DUMMY_USER_STORE.userId}`,
@@ -448,14 +455,13 @@ describe('fetchPostEpic', () => {
 
   test('if fail', done => {
     const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
-    const DUMMY_PAYLOAD = { postId: DUMMY_POST_ID, user: DUMMY_USER_STORE };
 
     fetch.mockReject(JSON.stringify(DUMMY_POSTS[0]));
 
     const incomingActions = [
       {
         type: actionTypes.FETCH_POST,
-        payload: DUMMY_PAYLOAD,
+        payload: DUMMY_POST_ID,
       },
     ];
 

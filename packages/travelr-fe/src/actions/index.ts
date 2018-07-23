@@ -260,9 +260,9 @@ actions.getFilterSelectorRange = () => async (dispatch: Dispatch<any>) => {
   }
 };
 
-actions.fetchPost = (postId: number, user: UserStore) => ({
+actions.fetchPost = (postId: number) => ({
   type: actionTypes.FETCH_POST,
-  payload: { postId, user },
+  payload: +postId,
 });
 
 actions.createPost = (user: UserStore, newPost: NewPost) => async (
@@ -431,7 +431,7 @@ actions.createComment = (
 
     dispatch({
       type: actionTypes.CREATE_COMMENT_SUCCESS,
-      payload: { postId, user },
+      payload: postId,
     });
   } catch (err) {
     dispatch({
@@ -452,7 +452,7 @@ actions.deleteComment = (user: UserStore, comment: Comment) => async (
 
     dispatch({
       type: actionTypes.DELETE_COMMENT_SUCCESS,
-      payload: { postId, user },
+      payload: postId,
     });
   } catch (err) {
     dispatch({
@@ -475,7 +475,7 @@ actions.toggleLike = (user: UserStore, post: Post) => async (
 
     dispatch({
       type: actionTypes.TOGGLE_LIKE_SUCCESS,
-      payload: { postId, user },
+      payload: postId,
     });
   } catch (err) {
     dispatch({

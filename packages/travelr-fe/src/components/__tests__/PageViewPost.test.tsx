@@ -57,14 +57,12 @@ describe('PageViewPost component', () => {
   test('fetchPost() is called when componentDidMount', () => {
     expect(mock.fetchPost).toHaveBeenCalledTimes(1);
     expect(mock.fetchPost.mock.calls[0][0]).toBe(+mockMatch.params.postId);
-    expect(mock.fetchPost.mock.calls[0][1]).toBe(DUMMY_USER_STORE);
   });
 
   test('fetchPost() is called when user store is changed', () => {
     wrapper.setProps({ user: DUMMY_USER_STORE_UNAUTHORIZED });
     expect(mock.fetchPost).toHaveBeenCalledTimes(2);
     expect(mock.fetchPost.mock.calls[1][0]).toBe(+mockMatch.params.postId);
-    expect(mock.fetchPost.mock.calls[1][1]).toBe(DUMMY_USER_STORE_UNAUTHORIZED);
   });
 
   test('toggleLike() is called when StatusBadge is clicked', () => {

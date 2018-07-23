@@ -377,11 +377,11 @@ describe('getFilterSelectorRange', () => {
 describe('fetchPost', () => {
   test('make correct action', () => {
     const DUMMY_POST_ID = 123;
-    const action = actions.fetchPost(DUMMY_POST_ID, DUMMY_USER_STORE);
+    const action = actions.fetchPost(DUMMY_POST_ID);
 
     expect(action).toEqual({
       type: types.FETCH_POST,
-      payload: { postId: DUMMY_POST_ID, user: DUMMY_USER_STORE },
+      payload: DUMMY_POST_ID,
     });
   });
 });
@@ -685,7 +685,7 @@ describe('createComment', () => {
 
     expect(mock.dispatch.mock.calls[0][0]).toEqual({
       type: types.CREATE_COMMENT_SUCCESS,
-      payload: { postId: DUMMY_POST_ID, user: DUMMY_USER_STORE },
+      payload: DUMMY_POST_ID,
     });
   });
 
@@ -727,7 +727,7 @@ describe('deleteComment', () => {
 
     expect(mock.dispatch.mock.calls[0][0]).toEqual({
       type: types.DELETE_COMMENT_SUCCESS,
-      payload: { postId: DUMMY_COMMENT.postId, user: DUMMY_USER_STORE },
+      payload: DUMMY_COMMENT.postId,
     });
   });
 
@@ -768,7 +768,7 @@ describe('toggleLike', () => {
 
     expect(mock.dispatch.mock.calls[0][0]).toEqual({
       type: types.TOGGLE_LIKE_SUCCESS,
-      payload: { postId: DUMMY_POSTS[0].postId, user: DUMMY_USER_STORE },
+      payload: DUMMY_POSTS[0].postId,
     });
   });
 

@@ -175,7 +175,10 @@ export const fetchAllPostsEpic = (
     ),
   );
 
-export const fetchPostEpic = (action$: ActionsObservable<any>) =>
+export const fetchPostEpic = (
+  action$: ActionsObservable<any>,
+  state$: StateObservable<Store>,
+) =>
   action$.pipe(
     ofType(
       types.FETCH_POST,
@@ -184,7 +187,8 @@ export const fetchPostEpic = (action$: ActionsObservable<any>) =>
       types.TOGGLE_LIKE_SUCCESS,
     ),
     flatMap(action => {
-      const { postId, user } = action.payload;
+      const postId = action.payload;
+      const { user } = state$.value;
       let url;
       if (user && user.userId) {
         url = `${config.apiUrl}posts/${postId}?user_id=${user.userId}`;

@@ -58,7 +58,7 @@ type Props = {
   match: match<{ postId: string }>;
   user: UserStore;
   posts: PostsStore;
-  fetchPost: (postId: number, user: UserStore) => void;
+  fetchPost: (postId: number) => void;
   toggleLike: (user: UserStore, post: Post) => void;
   createComment: any;
   deleteComment: any;
@@ -86,8 +86,8 @@ export class PageViewPost extends React.Component<Props> {
 
   // @ts-ignore
   componentDidMount = () => {
-    const { user, fetchPost } = this.props;
-    fetchPost(this.postId, user);
+    const { fetchPost } = this.props;
+    fetchPost(this.postId);
     this.refreshMap();
   };
 
@@ -96,7 +96,7 @@ export class PageViewPost extends React.Component<Props> {
     const { user, posts, fetchPost } = this.props;
 
     if (prevProps.user.userId !== user.userId) {
-      fetchPost(this.postId, user);
+      fetchPost(this.postId);
     }
 
     // do nothing if post is not fetched yet
