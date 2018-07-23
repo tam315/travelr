@@ -52,7 +52,11 @@ class MapsShowAllPosition {
     zoomAndCenter: MapZoomAndCenter,
   ) => () => {
     // create map
-    this.map = new google.maps.Map(mapRef, zoomAndCenter);
+    this.map = new google.maps.Map(mapRef, {
+      ...zoomAndCenter,
+      zoomControl: false,
+      streetViewControl: false,
+    });
 
     // close infowindow when the map is clicked
     this.map.addListener('click', () => {
