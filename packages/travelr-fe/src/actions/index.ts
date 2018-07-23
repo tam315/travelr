@@ -13,6 +13,7 @@ import {
   Post,
   PostToEdit,
   UserStore,
+  MapZoomAndCenter,
 } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';
 import { difference } from '../utils/general';
@@ -578,6 +579,11 @@ actions.startProgress = () => ({
 
 actions.finishProgress = () => ({
   type: actionTypes.FINISH_PROGRESS,
+});
+
+actions.saveMapZoomAndCenter = (zoomAndCenter: MapZoomAndCenter) => ({
+  type: actionTypes.SAVE_MAP_ZOOM_AND_CENTER,
+  payload: zoomAndCenter,
 });
 
 export default actions;

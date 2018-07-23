@@ -5,7 +5,13 @@ import IconMap from '@material-ui/icons/Place';
 import IconSearch from '@material-ui/icons/Search';
 import { History, Location } from 'history';
 import * as React from 'react';
-import { FilterCriterion, FilterStore, PostsStore } from '../config/types';
+import {
+  FilterCriterion,
+  FilterStore,
+  PostsStore,
+  AppStore,
+  MapZoomAndCenter,
+} from '../config/types';
 import Filter from './Filter';
 import PageViewPostsGrid from './PageViewPostsGrid';
 import PageViewPostsMap from './PageViewPostsMap';
@@ -35,8 +41,10 @@ type Props = {
     criterion: FilterCriterion,
     criterionUntouched: FilterCriterion,
   ) => void;
+  saveMapZoomAndCenter: (zoomAndCenter: MapZoomAndCenter) => void;
   history: History;
   location: Location;
+  app: AppStore;
   posts: PostsStore;
   filter: FilterStore;
 };
@@ -113,7 +121,14 @@ export class PageViewPosts extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, posts, filter, increaseLimitCountOfGrid } = this.props;
+    const {
+      classes,
+      app,
+      posts,
+      filter,
+      increaseLimitCountOfGrid,
+      saveMapZoomAndCenter,
+    } = this.props;
 
     const { tabNumber, isFilterOpen } = this.state;
 
@@ -147,7 +162,13 @@ export class PageViewPosts extends React.Component<Props, State> {
         )}
 
         {/* map view */}
-        {tabNumber === 1 && <PageViewPostsMap posts={posts.all} />}
+        {tabNumber === 1 && (
+          <PageViewPostsMap
+            app={app}
+            posts={posts.all}
+            saveMapZoomAndCenter={saveMapZoomAndCenter}
+          />
+        )}
 
         {/* filter */}
         <Filter

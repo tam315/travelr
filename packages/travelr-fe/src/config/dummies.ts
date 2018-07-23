@@ -7,6 +7,7 @@ import {
   PostsStore,
   PostToEdit,
   UserStore,
+  MapZoomAndCenter,
 } from './types';
 
 export const DUMMY_FILTER_CRITERION: FilterCriterion = {
@@ -238,4 +239,12 @@ export const DUMMY_USER_STORE_UNAUTHORIZED: UserStore = {
   earnedLikes: 0,
   earnedComments: 0,
   earnedViews: 0,
+};
+
+export const DUMMY_ZOOM_AND_CENTER: MapZoomAndCenter = {
+  zoom: 10,
+  center: {
+    lat: 1,
+    lng: 2,
+  },
 };

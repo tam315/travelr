@@ -866,3 +866,13 @@ describe('finishProgress', () => {
     });
   });
 });
+
+describe('saveMapZoomAndCenter', () => {
+  test('make a correct action', () => {
+    const action = actions.saveMapZoomAndCenter('dummy');
+    expect(action).toEqual({
+      type: types.SAVE_MAP_ZOOM_AND_CENTER,
+      payload: 'dummy',
+    });
+  });
+});

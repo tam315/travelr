@@ -1,4 +1,4 @@
-import { Post, LatLng } from '../config/types';
+import { Post, LatLng, MapZoomAndCenter } from '../config/types';
 
 declare var MarkerClusterer: any;
 
@@ -15,11 +15,24 @@ class MapsShowAllPosition {
 
   queuedPosts: Post[]; // pending tasks because map was not initialized
 
-  constructor(mapRef: HTMLElement, onPostClick: (postId: number) => void) {
-    const mapInitializer = this.mapInitializerGenerator(mapRef);
+  onZoomOrCenterChange: (zoomAndCenter: MapZoomAndCenter) => void;
+
+  constructor(
+    mapRef: HTMLElement,
+    option: {
+      zoomAndCenter: MapZoomAndCenter;
+      onPostClick: (postId: number) => void;
+      onZoomOrCenterChange: (zoomAndCenter: MapZoomAndCenter) => void;
+    },
+  ) {
+    const mapInitializer = this.mapInitializerGenerator(
+      mapRef,
+      option.zoomAndCenter,
+    );
 
     // @ts-ignore
-    window.mapsShowAllPositionOnPostClick = onPostClick;
+    window.mapsShowAllPositionOnPostClick = option.onPostClick;
+    this.onZoomOrCenterChange = option.onZoomOrCenterChange;
 
     this.queuedPosts = null;
 
@@ -34,18 +47,29 @@ class MapsShowAllPosition {
     mapInitializer();
   }
 
-  mapInitializerGenerator = (mapRef: HTMLElement) => () => {
-    const gotsuCity = new google.maps.LatLng(35.011892, 132.221816);
+  mapInitializerGenerator = (
+    mapRef: HTMLElement,
+    zoomAndCenter: MapZoomAndCenter,
+  ) => () => {
     // create map
-    this.map = new google.maps.Map(mapRef, {
-      zoom: 5,
-      center: gotsuCity,
-    });
+    this.map = new google.maps.Map(mapRef, zoomAndCenter);
 
     // close infowindow when the map is clicked
     this.map.addListener('click', () => {
       this.closePreviousInfowindow();
     });
+
+    // save zoomlevel and center position continuously
+    const getZoomAndCenter = (): MapZoomAndCenter => ({
+      zoom: this.map.getZoom(),
+      center: {
+        lng: this.map.getCenter().lng(),
+        lat: this.map.getCenter().lat(),
+      },
+    });
+    this.map.addListener('idle', () =>
+      this.onZoomOrCenterChange(getZoomAndCenter()),
+    );
 
     // this line should be here (not top of this func)
     // otherwise placeMarkers() fails

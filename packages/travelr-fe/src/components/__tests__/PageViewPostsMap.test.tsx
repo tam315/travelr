@@ -1,43 +1,69 @@
-import { mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import * as React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { DUMMY_POSTS } from '../../config/dummies';
+import { DUMMY_POSTS, DUMMY_APP_STORE } from '../../config/dummies';
 import MapsShowAllPosition from '../../utils/MapsShowAllPosition';
-import PageViewPostsMap from '../PageViewPostsMap';
+import { PageViewPostsMap } from '../PageViewPostsMap';
 
 jest.mock('../../utils/MapsShowAllPosition');
 
 const DUMMY_POSTS_ORIGINAL = DUMMY_POSTS.slice(0, -2);
 const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
 
-let wrapper;
-let mockPlacePostsFunc;
-
 describe('PageViewPostsMap component', () => {
-  beforeAll(() => {
+  let wrapper;
+  let mock;
+
+  beforeEach(() => {
+    mock = {
+      actions: {
+        saveMapZoomAndCenter: jest.fn(),
+      },
+      placePosts: jest.fn(),
+    };
     // manual implementation is required for the ES6 classes that uses arrow function.
     // https://facebook.github.io/jest/docs/en/es6-class-mocks.html
-    mockPlacePostsFunc = jest.fn();
-    MapsShowAllPosition.prototype.placePosts = mockPlacePostsFunc;
+    MapsShowAllPosition.prototype.placePosts = mock.placePosts;
 
-    wrapper = mount(
-      <BrowserRouter>
-        <PageViewPostsMap posts={DUMMY_POSTS_ORIGINAL} classes={{}} />
-      </BrowserRouter>,
+    wrapper = shallow(
+      <PageViewPostsMap
+        app={DUMMY_APP_STORE}
+        posts={DUMMY_POSTS_ORIGINAL}
+        classes={{}}
+        saveMapZoomAndCenter={mock.actions.saveMapZoomAndCenter}
+      />,
     );
   });
 
   test('instantiate google maps', () => {
+    wrapper.instance().mapRef = { current: {} };
+    wrapper.instance().componentDidMount();
+    // @ts-ignore
+    const options = MapsShowAllPosition.mock.calls[0][1];
+
     expect(MapsShowAllPosition).toHaveBeenCalledTimes(1);
+    expect(options.zoomAndCenter).toEqual({
+      zoom: DUMMY_APP_STORE.mapZoomLevel,
+      center: {
+        lng: DUMMY_APP_STORE.mapLng,
+        lat: DUMMY_APP_STORE.mapLat,
+      },
+    });
   });
 
   test('render posts when the component mounted', () => {
-    expect(mockPlacePostsFunc).toHaveBeenCalledTimes(1);
+    wrapper.instance().mapRef = { current: {} };
+    wrapper.instance().componentDidMount();
+
+    expect(mock.placePosts).toHaveBeenCalledTimes(1);
   });
 
   test('re-render posts when posts are updated', () => {
-    expect(mockPlacePostsFunc).toHaveBeenCalledTimes(1);
-    wrapper.setProps({ posts: DUMMY_POSTS_UPDATED, classes: {} });
-    expect(mockPlacePostsFunc).toHaveBeenCalledTimes(2);
+    wrapper.instance().mapRef = { current: {} };
+    wrapper.instance().componentDidMount();
+
+    expect(mock.placePosts).toHaveBeenCalledTimes(1);
+    wrapper.setProps({ posts: DUMMY_POSTS_UPDATED });
+    expect(mock.placePosts).toHaveBeenCalledTimes(2);
   });
 });

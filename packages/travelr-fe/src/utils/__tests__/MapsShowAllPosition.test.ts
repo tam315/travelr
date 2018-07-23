@@ -1,4 +1,4 @@
-import { DUMMY_POSTS } from '../../config/dummies';
+import { DUMMY_POSTS, DUMMY_ZOOM_AND_CENTER } from '../../config/dummies';
 import MapsShowAllPosition from '../MapsShowAllPosition';
 import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
 
@@ -7,11 +7,14 @@ const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
 
 describe('MapsShowAllPosition', () => {
   let mapRef;
-  let mockCallback;
+  let mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCallback = jest.fn();
+    mock = {
+      onPostClick: jest.fn(),
+      onZoomOrCenterChange: jest.fn(),
+    };
 
     document.body.innerHTML =
       '<div>' +
@@ -28,17 +31,23 @@ describe('MapsShowAllPosition', () => {
     deleteGoogleMapsApiMock();
   });
 
+  const createMapInstance = () =>
+    new MapsShowAllPosition(mapRef, {
+      onPostClick: mock.onPostClick,
+      onZoomOrCenterChange: mock.onZoomOrCenterChange,
+      zoomAndCenter: DUMMY_ZOOM_AND_CENTER,
+    });
+
   test('initialize the maps if the API is already available', () => {
     setGoogleMapsApiMock();
-    //  eslint-disable-next-line
-    const mapsShowAllPosition = new MapsShowAllPosition(mapRef, mockCallback);
+    createMapInstance();
 
     expect(google.maps.Map).toHaveBeenCalledTimes(1);
   });
 
   test('markers are created immediately if the API is already available', () => {
     setGoogleMapsApiMock();
-    const mapsShowAllPosition = new MapsShowAllPosition(mapRef, mockCallback);
+    const mapsShowAllPosition = createMapInstance();
 
     mapsShowAllPosition.placePosts(DUMMY_POSTS_ORIGINAL);
     mapsShowAllPosition.placePosts(DUMMY_POSTS_ORIGINAL);
@@ -53,7 +62,7 @@ describe('MapsShowAllPosition', () => {
   });
 
   test('marker creation is queued until the API is ready', () => {
-    const mapsShowAllPosition = new MapsShowAllPosition(mapRef, mockCallback);
+    const mapsShowAllPosition = createMapInstance();
 
     // only last posts should be queued
     mapsShowAllPosition.placePosts(DUMMY_POSTS_ORIGINAL);
@@ -63,7 +72,10 @@ describe('MapsShowAllPosition', () => {
 
     // simulates the state where the API is ready
     setGoogleMapsApiMock();
-    mapsShowAllPosition.mapInitializerGenerator(mapRef)();
+    mapsShowAllPosition.mapInitializerGenerator(
+      mapRef,
+      DUMMY_ZOOM_AND_CENTER,
+    )();
 
     // map should be created
     expect(google.maps.Map).toHaveBeenCalledTimes(1);
@@ -78,11 +90,10 @@ describe('MapsShowAllPosition', () => {
   });
 
   test('set callback as a global to call it from infowindow', () => {
-    // eslint-disable-next-line
-    const mapsShowAllPosition = new MapsShowAllPosition(mapRef, mockCallback);
+    createMapInstance();
 
     // queue should be reset
     // @ts-ignore
-    expect(window.mapsShowAllPositionOnPostClick).toBe(mockCallback);
+    expect(window.mapsShowAllPositionOnPostClick).toBe(mock.onPostClick);
   });
 });
