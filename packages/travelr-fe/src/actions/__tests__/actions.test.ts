@@ -331,12 +331,12 @@ describe('fetchAllPosts', () => {
   });
 });
 
-describe('updateFilterCriterion', () => {
+describe('changeFilterCriterion', () => {
   test('makes correct action when success', async () => {
     const dummyCriterion = { a: 1, b: 0, c: 0 };
     const dummyCriterionUntouched = { a: 0, b: 0, c: 0 };
 
-    const thunk = actions.updateFilterCriterion(
+    const thunk = actions.changeFilterCriterion(
       dummyCriterion,
       dummyCriterionUntouched,
     );

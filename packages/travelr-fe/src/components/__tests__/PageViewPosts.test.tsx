@@ -18,7 +18,7 @@ describe('PageViewPosts component', () => {
         fetchAllPosts: jest.fn(),
         increaseLimitCountOfGrid: jest.fn(),
         getFilterSelectorRange: jest.fn(),
-        updateFilterCriterion: jest.fn(),
+        changeFilterCriterion: jest.fn(),
       },
     };
 
@@ -27,7 +27,7 @@ describe('PageViewPosts component', () => {
         fetchAllPosts={mock.actions.fetchAllPosts}
         increaseLimitCountOfGrid={mock.actions.increaseLimitCountOfGrid}
         getFilterSelectorRange={mock.actions.getFilterSelectorRange}
-        updateFilterCriterion={mock.actions.updateFilterCriterion}
+        changeFilterCriterion={mock.actions.changeFilterCriterion}
         classes={{}}
         // @ts-ignore
         location={{}}
@@ -49,7 +49,7 @@ describe('PageViewPosts component', () => {
         fetchAllPosts={mock.actions.fetchAllPosts}
         increaseLimitCountOfGrid={mock.actions.increaseLimitCountOfGrid}
         getFilterSelectorRange={mock.actions.getFilterSelectorRange}
-        updateFilterCriterion={mock.actions.updateFilterCriterion}
+        changeFilterCriterion={mock.actions.changeFilterCriterion}
         classes={{}}
         // @ts-ignore
         location={{ pathname: '/all-grid' }}
@@ -68,7 +68,7 @@ describe('PageViewPosts component', () => {
         fetchAllPosts={mock.actions.fetchAllPosts}
         increaseLimitCountOfGrid={mock.actions.increaseLimitCountOfGrid}
         getFilterSelectorRange={mock.actions.getFilterSelectorRange}
-        updateFilterCriterion={mock.actions.updateFilterCriterion}
+        changeFilterCriterion={mock.actions.changeFilterCriterion}
         classes={{}}
         // @ts-ignore
         location={{ pathname: '/all-map' }}
@@ -90,8 +90,8 @@ describe('PageViewPosts component', () => {
     expect(wrapper.find(Button).props().disabled).toBe(true);
   });
 
-  test('updateFilterCriterion() is called when user did filter', () => {
+  test('changeFilterCriterion() is called when user did filter', () => {
     wrapper.instance().handleFilter();
-    expect(mock.actions.updateFilterCriterion).toBeCalled();
+    expect(mock.actions.changeFilterCriterion).toBeCalled();
   });
 });

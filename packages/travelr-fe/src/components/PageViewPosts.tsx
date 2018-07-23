@@ -38,7 +38,7 @@ type Props = {
   fetchAllPosts: (criterion?: FilterCriterionReduced) => any;
   increaseLimitCountOfGrid: () => void;
   getFilterSelectorRange: () => void;
-  updateFilterCriterion: (
+  changeFilterCriterion: (
     criterion: FilterCriterionReduced,
     criterionUntouched: FilterCriterionReduced,
   ) => void;
@@ -114,8 +114,8 @@ export class PageViewPosts extends React.Component<Props, State> {
     criterion: FilterCriterionReduced,
     initialCriterion: FilterCriterion,
   ) => {
-    const { updateFilterCriterion } = this.props;
-    updateFilterCriterion(criterion, initialCriterion);
+    const { changeFilterCriterion } = this.props;
+    changeFilterCriterion(criterion, initialCriterion);
   };
 
   handleFilterClose = () => {

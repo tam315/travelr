@@ -224,7 +224,7 @@ actions.fetchAllPosts = () => ({
   type: actionTypes.FETCH_ALL_POSTS,
 });
 
-actions.updateFilterCriterion = (
+actions.changeFilterCriterion = (
   criterion: FilterCriterionReduced,
   criterionUntouched: FilterCriterion,
 ) => async (dispatch: Dispatch<any>) => {
