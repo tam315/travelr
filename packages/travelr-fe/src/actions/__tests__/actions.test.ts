@@ -323,65 +323,11 @@ describe('signOutUser', () => {
 });
 
 describe('fetchAllPosts', () => {
-  test('generates correct url', async () => {
-    const criterion = DUMMY_FILTER_CRITERION;
-    const DUMMY_LAT_LNG = { lat: 1, lng: 2 };
-    // @ts-ignore
-    getPositionFromPlaceName.mockResolvedValue(DUMMY_LAT_LNG);
-    const thunk = actions.fetchAllPosts(criterion);
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(fetch.mock.calls[0][0]).toContain(
-      `posts?` +
-        `display_name=${DUMMY_FILTER_CRITERION.displayName}` +
-        `&description=${DUMMY_FILTER_CRITERION.description}` +
-        `&min_date=${DUMMY_FILTER_CRITERION.shootDate.min}-01-01` +
-        `&max_date=${DUMMY_FILTER_CRITERION.shootDate.max}-12-31` +
-        `&lng=${DUMMY_LAT_LNG.lng}` +
-        `&lat=${DUMMY_LAT_LNG.lat}` +
-        `&radius=${DUMMY_FILTER_CRITERION.radius}` +
-        `&min_view_count=${DUMMY_FILTER_CRITERION.viewCount.min}` +
-        `&max_view_count=${DUMMY_FILTER_CRITERION.viewCount.max}` +
-        `&min_liked_count=${DUMMY_FILTER_CRITERION.likedCount.min}` +
-        `&max_liked_count=${DUMMY_FILTER_CRITERION.likedCount.max}` +
-        `&min_comments_count=${DUMMY_FILTER_CRITERION.commentsCount.min}` +
-        `&max_comments_count=${DUMMY_FILTER_CRITERION.commentsCount.max}`,
-    );
-  });
-
-  test('makes GET request', async () => {
-    const thunk = actions.fetchAllPosts();
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(fetch.mock.calls.length).toBe(1);
-  });
-
-  test('makes correct action when success', async () => {
-    const DUMMY_RESPONSE = ['dummyPost1', 'dummyPost2'];
-
-    fetch.mockResponseOnce(JSON.stringify(DUMMY_RESPONSE));
-    const thunk = actions.fetchAllPosts();
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(mockDispatch.mock.calls[1][0]).toEqual({
-      type: types.FETCH_ALL_POSTS_SUCCESS,
-      payload: DUMMY_RESPONSE,
+  test('makes correct action', () => {
+    const action = actions.fetchAllPosts();
+    expect(action).toEqual({
+      type: types.FETCH_ALL_POSTS,
     });
-  });
-
-  test('makes correct action when fail', async () => {
-    fetch.mockReject(new Error('fake error message'));
-    const thunk = actions.fetchAllPosts();
-    const mockDispatch = jest.fn();
-    await thunk(mockDispatch);
-
-    expect(mockDispatch.mock.calls[1][0].type).toEqual(
-      types.FETCH_ALL_POSTS_FAIL,
-    );
-    expect(typeof mockDispatch.mock.calls[1][0].payload).toBe('object');
   });
 });
 

@@ -1,8 +1,9 @@
 import { from, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import {
-  getOrCreateUserInfoEpic,
+  fetchAllPostsEpic,
   fetchPostEpic,
+  getOrCreateUserInfoEpic,
   initAuthEpic,
   redirectorEpic,
   snackbarEpic,
@@ -11,18 +12,21 @@ import {
 } from '..';
 import actionTypes from '../../actions/types';
 import {
-  DUMMY_USER_STORE,
+  DUMMY_FILTER_CRITERION,
   DUMMY_POSTS,
+  DUMMY_USER_STORE,
   DUMMY_USER_STORE_UNAUTHORIZED,
 } from '../../config/dummies';
 import { AuthSeed } from '../../config/types';
 import firebaseUtils from '../../utils/firebaseUtils';
 import history from '../../utils/history';
+import { getPositionFromPlaceName } from '../../utils/mapsUtils';
 
 declare const fetch: any;
 
 jest.mock('../../utils/firebaseUtils');
 jest.mock('../../utils/history');
+jest.mock('../../utils/mapsUtils');
 
 type ActionsAndResults = {
   marbles: string;
@@ -245,6 +249,96 @@ describe('getOrCreateUserInfoEpic', () => {
       null,
       () => {
         expect(assertionExecutedCount).toBe(1);
+        done();
+      },
+    );
+  });
+});
+
+describe('fetchAllPostsEpic', () => {
+  test('generates correct url', done => {
+    const criterion = DUMMY_FILTER_CRITERION;
+    const DUMMY_LAT_LNG = { lat: 1, lng: 2 };
+    // @ts-ignore
+    getPositionFromPlaceName.mockResolvedValue(DUMMY_LAT_LNG);
+
+    fetch.mockResponse(JSON.stringify(DUMMY_POSTS[0]));
+
+    const incomingActions = [
+      {
+        type: actionTypes.FETCH_ALL_POSTS,
+      },
+    ];
+
+    const state = {
+      value: {
+        filter: {
+          criterion,
+        },
+      },
+    };
+
+    let assertionExecutedCount = 0;
+
+    // @ts-ignore
+    fetchAllPostsEpic(from(incomingActions), state).subscribe(
+      outcomingAction => {
+        expect(fetch.mock.calls[assertionExecutedCount][0]).toContain(
+          `posts?` +
+            `display_name=${DUMMY_FILTER_CRITERION.displayName}` +
+            `&description=${DUMMY_FILTER_CRITERION.description}` +
+            `&min_date=${DUMMY_FILTER_CRITERION.shootDate.min}-01-01` +
+            `&max_date=${DUMMY_FILTER_CRITERION.shootDate.max}-12-31` +
+            `&lng=${DUMMY_LAT_LNG.lng}` +
+            `&lat=${DUMMY_LAT_LNG.lat}` +
+            `&radius=${DUMMY_FILTER_CRITERION.radius}` +
+            `&min_view_count=${DUMMY_FILTER_CRITERION.viewCount.min}` +
+            `&max_view_count=${DUMMY_FILTER_CRITERION.viewCount.max}` +
+            `&min_liked_count=${DUMMY_FILTER_CRITERION.likedCount.min}` +
+            `&max_liked_count=${DUMMY_FILTER_CRITERION.likedCount.max}` +
+            `&min_comments_count=${DUMMY_FILTER_CRITERION.commentsCount.min}` +
+            `&max_comments_count=${DUMMY_FILTER_CRITERION.commentsCount.max}`,
+        );
+
+        expect(outcomingAction).toEqual({
+          type: actionTypes.FETCH_ALL_POSTS_SUCCESS,
+          payload: DUMMY_POSTS[0],
+        });
+
+        assertionExecutedCount += 1;
+      },
+      null,
+      () => {
+        expect(assertionExecutedCount).toBe(incomingActions.length);
+        done();
+      },
+    );
+  });
+
+  test('makes correct action when fail', done => {
+    // @ts-ignore
+    getPositionFromPlaceName.mockRejectedValue();
+
+    const incomingActions = [
+      {
+        type: actionTypes.FETCH_ALL_POSTS,
+      },
+    ];
+    const state = {};
+
+    let assertionExecutedCount = 0;
+
+    // @ts-ignore
+    fetchAllPostsEpic(from(incomingActions), state).subscribe(
+      outcomingAction => {
+        expect(outcomingAction.type).toBe(actionTypes.FETCH_ALL_POSTS_FAIL);
+        expect(outcomingAction.payload).toBeTruthy();
+
+        assertionExecutedCount += 1;
+      },
+      null,
+      () => {
+        expect(assertionExecutedCount).toBe(incomingActions.length);
         done();
       },
     );
