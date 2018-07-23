@@ -175,6 +175,8 @@ export class PageViewPost extends React.Component<Props> {
             leftImage={firebaseUtils.getImageUrl(oldImageUrl, '1024w')}
             rightImage={firebaseUtils.getImageUrl(newImageUrl, '1024w')}
             skeleton={<div className={classes.skeleton}>loading...</div>}
+            autoReloadSpan={3000}
+            autoReloadLimit={30}
           />
           {userId === user.userId && (
             <Link to={`/post/${postId}/edit`} className={classes.editButton}>
