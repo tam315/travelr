@@ -17,7 +17,6 @@ import {
 } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';
 import { difference } from '../utils/general';
-import { getPositionFromPlaceName } from '../utils/mapsUtils';
 import actionTypes from './types';
 
 const { authRef } = firebaseUtils;
