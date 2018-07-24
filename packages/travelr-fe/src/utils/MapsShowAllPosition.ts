@@ -89,7 +89,10 @@ class MapsShowAllPosition {
   };
 
   closePreviousInfowindow = () => {
-    if (this.infowindow) this.infowindow.close();
+    if (this.infowindow) {
+      this.infowindow.close();
+      this.infowindow = null;
+    }
   };
 
   placePosts = (posts: Post[]) => {
