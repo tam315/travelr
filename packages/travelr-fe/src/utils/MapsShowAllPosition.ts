@@ -168,6 +168,12 @@ class MapsShowAllPosition {
       imagePath:
         'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
     });
+
+    // this.markerCluster.addListener('clusterclick', cluster => {
+    //   const markers = cluster.getMarkers();
+    //   const position = cluster.getCenter();
+    //   const contents = createContent(markers);
+    // });
   };
 }
 
