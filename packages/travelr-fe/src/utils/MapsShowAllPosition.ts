@@ -116,38 +116,45 @@ class MapsShowAllPosition {
       this.markerCluster = null;
     }
 
+    const createContent = marker => {
+      const srcOldImage = firebaseUtils.getImageUrl(
+        marker.post.oldImageUrl,
+        '96w',
+      );
+      const srcNewImage = firebaseUtils.getImageUrl(
+        marker.post.newImageUrl,
+        '96w',
+      );
+      return (
+        `<img src="${srcOldImage}" height="96" width="96" ` +
+        `onclick="window.mapsShowAllPositionOnPostClick(` +
+        `${marker.post.postId})" />` +
+        `<img src="${srcNewImage}" height="96" width="96" ` +
+        `onclick="window.mapsShowAllPositionOnPostClick(` +
+        `${marker.post.postId})" />`
+      );
+    };
+
     // create markers
     this.markers = posts.map(post => {
       // marker for each post
       const position = new google.maps.LatLng(post.lat, post.lng);
       const marker = new google.maps.Marker({
         position,
-        map: this.map,
+        // following custom properties can be called like `marker.post.***`
+        // @ts-ignore
+        post,
       });
 
       // show the infowindow for each post when the marker is cliked
       marker.addListener('click', () => {
         this.closePreviousInfowindow();
 
+        const content = createContent(marker);
+
         // preserve the info window for later closing
         this.infowindow = new google.maps.InfoWindow();
-        this.infowindow.setContent(
-          `
-          <img src="${firebaseUtils.getImageUrl(
-            post.oldImageUrl,
-            '96w',
-          )}" height="96" width="96" onclick="window.mapsShowAllPositionOnPostClick(${
-            post.postId
-          })" />
-
-          <img src="${firebaseUtils.getImageUrl(
-            post.newImageUrl,
-            '96w',
-          )}" height="96" width="96" onclick="window.mapsShowAllPositionOnPostClick(${
-            post.postId
-          })" />
-          `,
-        );
+        this.infowindow.setContent(content);
         this.infowindow.open(this.map, marker);
       });
 
