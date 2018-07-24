@@ -52,7 +52,7 @@ const postsReducer = (
     case actionTypes.INCREASE_LIMIT_COUNT_OF_GRID: {
       return {
         ...state,
-        limitCountOfGrid: state.limitCountOfGrid + 21,
+        limitCountOfGrid: state.limitCountOfGrid + 6,
       };
     }
     case actionTypes.SELECT_MY_POSTS: {

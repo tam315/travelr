@@ -99,7 +99,7 @@ describe('posts reducer', () => {
 
     const expected = {
       ...INITIAL_STATE,
-      limitCountOfGrid: 42,
+      limitCountOfGrid: INITIAL_STATE.limitCountOfGrid + 6,
     };
 
     expect(postsReducer(INITIAL_STATE, action)).toEqual(expected);
