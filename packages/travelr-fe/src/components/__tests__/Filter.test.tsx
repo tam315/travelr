@@ -115,4 +115,13 @@ describe('Filter component', () => {
       filterInitialState.criterionUntouched,
     );
   });
+
+  test("only accepsts numbers for 'radius'", () => {
+    // simulate user input
+    wrapper.find({ dataenzyme: 'radius' }).simulate('change', {
+      target: { value: 'ABCあいう５０' },
+    });
+
+    expect(wrapper.state('criterion').radius).toEqual('50');
+  });
 });

@@ -124,10 +124,20 @@ export class Filter extends React.Component<Props, State> {
   };
 
   handleChange(e: React.ChangeEvent<HTMLInputElement>, stateKeyName: string) {
+    let value = e.target.value;
+
+    // only accepts numbers for 'radius'
+    if (stateKeyName === 'radius') {
+      value = value.replace(/[０-９]/g, s =>
+        String.fromCharCode(s.charCodeAt(0) - 65248),
+      );
+      value = value.replace(/[^0-9]/g, s => '');
+    }
+
     this.setState({
       criterion: {
         ...this.state.criterion,
-        [stateKeyName]: e.target.value,
+        [stateKeyName]: value,
       },
     });
   }
@@ -282,6 +292,8 @@ export class Filter extends React.Component<Props, State> {
                 placeholder="半径"
                 onChange={e => this.handleChange(e, 'radius')}
                 value={criterion.radius}
+                // @ts-ignore
+                dataenzyme="radius"
               />
               <Typography variant="body1">km以内</Typography>
             </ListItem>
