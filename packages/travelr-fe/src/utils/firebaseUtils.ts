@@ -57,7 +57,7 @@ const uploadImageFile = async (
   return result;
 };
 
-const getImageUrl = (filename: string, option: '1024w' | '96w') => {
+const getImageUrl = (filename: string, option: '1024w' | '192w' | '96w') => {
   // TODO: delete this (showing absolute pass as is)
   if (filename.indexOf('http') !== -1) return filename;
 

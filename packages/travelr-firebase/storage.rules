@@ -6,6 +6,9 @@ service firebase.storage {
     match /1024w/{allPaths=**} {
       allow read;
     }
+    match /192w/{allPaths=**} {
+      allow read;
+    }
     match /96w/{allPaths=**} {
       allow read;
     }

@@ -78,7 +78,11 @@ exports.onFileChange = functions.storage.object().onFinalize(object => {
 
   console.log('File upload detected!');
 
-  if (fileName.startsWith('1024w/') || fileName.startsWith('96w/')) {
+  if (
+    fileName.startsWith('1024w/') ||
+    fileName.startsWith('192w/') ||
+    fileName.startsWith('96w/')
+  ) {
     console.log('Ignoreing already resized files!', fileName);
     return true;
   }
@@ -102,48 +106,75 @@ exports.onFileChange = functions.storage.object().onFinalize(object => {
         os.tmpdir(),
         path.basename(`tmp1024w-${fileName}`)
       );
+      const tmpFilePath192w = path.join(
+        os.tmpdir(),
+        path.basename(`tmp192w-${fileName}`)
+      );
       const tmpFilePath96w = path.join(
         os.tmpdir(),
         path.basename(`tmp96w-${fileName}`)
       );
 
-      return bucket
-        .file(fileName)
-        .download({
-          destination: tmpFilePathOriginal
-        })
-        .then(() =>
-          spawn('convert', [
-            tmpFilePathOriginal,
-            '-resize',
-            '1024x1024>',
-            '-quality',
-            '70',
-            tmpFilePath1024w
-          ])
-        )
-        .then(() =>
-          bucket.upload(tmpFilePath1024w, {
-            destination: `1024w/${path.basename(fileName)}`
+      return (
+        bucket
+          .file(fileName)
+          .download({
+            destination: tmpFilePathOriginal
           })
-        )
-        .then(() =>
-          spawn('convert', [
-            tmpFilePathOriginal,
-            '-resize',
-            '96x96',
-            '-quality',
-            '70',
-            tmpFilePath96w
-          ])
-        )
-        .then(() =>
-          bucket.upload(tmpFilePath96w, {
-            destination: `96w/${path.basename(fileName)}`
-          })
-        )
-        .then(() => console.log('resized files created!'))
-        .catch(err => console.error('an error occured!: ', err));
+          // 1024w
+          .then(() =>
+            spawn('convert', [
+              tmpFilePathOriginal,
+              '-resize',
+              '1024x1024>',
+              '-quality',
+              '70',
+              tmpFilePath1024w
+            ])
+          )
+          .then(() =>
+            bucket.upload(tmpFilePath1024w, {
+              destination: `1024w/${path.basename(fileName)}`
+            })
+          )
+
+          // 192w
+          .then(() =>
+            spawn('convert', [
+              tmpFilePathOriginal,
+              '-resize',
+              '192x192w>',
+              '-quality',
+              '70',
+              tmpFilePath192w
+            ])
+          )
+          .then(() =>
+            bucket.upload(tmpFilePath192w, {
+              destination: `192w/${path.basename(fileName)}`
+            })
+          )
+
+          // 96w
+          .then(() =>
+            spawn('convert', [
+              tmpFilePathOriginal,
+              '-resize',
+              '96x96',
+              '-quality',
+              '70',
+              tmpFilePath96w
+            ])
+          )
+          .then(() =>
+            bucket.upload(tmpFilePath96w, {
+              destination: `96w/${path.basename(fileName)}`
+            })
+          )
+
+          // complete
+          .then(() => console.log('resized files created!'))
+      );
     })
     .catch(err => console.error('an error occured!: ', err));
 });

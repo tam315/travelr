@@ -81,7 +81,7 @@ class PageViewPostsGrid extends React.Component<Props> {
         style={{ height: cellHeight }}
       >
         <img
-          src={firebaseUtils.getImageUrl(tile.oldImageUrl, '96w')}
+          src={firebaseUtils.getImageUrl(tile.oldImageUrl, '192w')}
           alt={tile.description}
         />
 
