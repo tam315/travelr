@@ -1,3 +1,4 @@
+import { CircularProgress } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import BottomScrollListener from 'react-bottom-scroll-listener';
@@ -8,7 +9,7 @@ import StatusBadge from './StatusBadge';
 
 const MAX_WIDTH = 528;
 
-const styles = {
+const styles = theme => ({
   root: {
     maxWidth: MAX_WIDTH,
     margin: 'auto',
@@ -32,7 +33,12 @@ const styles = {
     bottom: 4,
     right: 4,
   },
-};
+  circulator: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: theme.spacing.unit * 4,
+  },
+});
 
 type Props = {
   classes: any;
@@ -56,8 +62,6 @@ class PageViewPostsGrid extends React.Component<Props> {
 
   renderGridItems = () => {
     const { classes, posts, limitCountOfGrid } = this.props;
-
-    if (!posts || !limitCountOfGrid) return false;
 
     const limitedPosts = posts.slice(0, limitCountOfGrid);
 
@@ -88,14 +92,27 @@ class PageViewPostsGrid extends React.Component<Props> {
     ));
   };
 
+  renderLoadingNotification = () => {
+    const { posts, limitCountOfGrid, classes } = this.props;
+    if (limitCountOfGrid < posts.length) {
+      return (
+        <div className={classes.circulator}>
+          <CircularProgress />
+        </div>
+      );
+    }
+  };
+
   render() {
-    const { classes } = this.props;
+    const { classes, posts, limitCountOfGrid } = this.props;
+
+    if (!posts || !limitCountOfGrid) return;
 
     return (
       <div className={classes.root}>
         <div className={classes.grid}>{this.renderGridItems()}</div>
 
-        <div>Loading.....</div>
+        {this.renderLoadingNotification()}
         <BottomScrollListener
           onBottom={this.handleOnBottom}
           debounce={0}
