@@ -63,16 +63,6 @@ actions.deleteUser = (user: UserStore) => async (dispatch: Dispatch<any>) => {
       return;
     }
 
-    if (
-      // TODO: dialog
-      // eslint-disable-next-line
-      !confirm(
-        '本当にアカウントを削除してよろしいですか？すべてのデータが失われます。',
-      )
-    ) {
-      return;
-    }
-
     await wretch(`${config.apiUrl}users/${userId}`)
       .headers({ authorization: token })
       .delete()
@@ -505,6 +495,15 @@ actions.finishProgress = () => ({
 actions.saveMapZoomAndCenter = (zoomAndCenter: MapZoomAndCenter) => ({
   type: actionTypes.SAVE_MAP_ZOOM_AND_CENTER,
   payload: zoomAndCenter,
+});
+
+actions.openDialog = payload => ({
+  payload,
+  type: actionTypes.OPEN_DIALOG,
+});
+
+actions.closeDialog = () => ({
+  type: actionTypes.CLOSE_DIALOG,
 });
 
 export default actions;

@@ -64,6 +64,7 @@ type Props = {
   selectMyPosts(postIds: number[]): any;
   selectMyPostsAll(): any;
   selectMyPostsReset(): any;
+  openDialog: any;
 };
 
 type State = {
@@ -109,10 +110,21 @@ export class PageManagePosts extends React.Component<Props, State> {
       user,
       posts: { myPostsSelected },
       deletePosts,
+      openDialog,
     } = this.props;
 
     this.handleMenuClose();
-    deletePosts(user, myPostsSelected);
+
+    if (!(myPostsSelected.length > 0)) return;
+
+    // prettier-ignore
+    openDialog({
+      dialogTitle: '投稿の削除',
+      dialogContent: `${myPostsSelected.length}件の投稿を削除してよろしいですか？`,
+      dialogPositiveSelector: '削除する',
+      dialogNegativeSelector: 'キャンセル',
+      dialogSuccessCallback: () => deletePosts(user, myPostsSelected),
+    });
   };
 
   handleMenuClose = () => {

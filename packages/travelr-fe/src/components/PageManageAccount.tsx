@@ -40,6 +40,7 @@ type Props = {
   updateUserInfo: (user: UserStore, newUserInfo: NewUserInfo) => void;
   signOutUser: any;
   deleteUser: (user: UserStore) => void;
+  openDialog: any;
   sendEmailVerification: any;
 };
 
@@ -102,8 +103,15 @@ export class PageManageAccount extends React.Component<Props, State> {
   };
 
   handleDeleteUser = async () => {
-    const { user, deleteUser } = this.props;
-    deleteUser(user);
+    const { user, deleteUser, openDialog } = this.props;
+    openDialog({
+      dialogTitle: 'アカウントの削除',
+      dialogContent:
+        '本当にアカウントを削除してよろしいですか？すべてのデータが失われます。',
+      dialogPositiveSelector: 'アカウントを削除する',
+      dialogNegativeSelector: 'キャンセル',
+      dialogSuccessCallback: () => deleteUser(user),
+    });
   };
 
   handleSendEmailVerification = () => {

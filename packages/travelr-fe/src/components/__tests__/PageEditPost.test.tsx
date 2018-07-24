@@ -29,6 +29,7 @@ describe('PageEditPost component', () => {
         editPost: jest.fn(),
         deletePost: jest.fn(),
         fetchPost: jest.fn(),
+        openDialog: jest.fn(),
       },
     };
     const match = { params: { postId: DUMMY_POST_TO_EDIT.postId } };
@@ -42,6 +43,7 @@ describe('PageEditPost component', () => {
         editPost={mock.actions.editPost}
         deletePost={mock.actions.deletePost}
         fetchPost={mock.actions.fetchPost}
+        openDialog={mock.actions.openDialog}
       />,
     );
   });
@@ -62,18 +64,13 @@ describe('PageEditPost component', () => {
   });
 
   test('deletePost() is called when a delete button is clicked', async () => {
-    window.confirm = jest.fn().mockImplementation(() => true);
     wrapper.setState(DUMMY_POST_TO_EDIT);
     wrapper
       .find(Typography)
       .last()
       .simulate('click');
 
-    expect(mock.actions.deletePost).toBeCalled();
-    expect(mock.actions.deletePost.mock.calls[0][0]).toEqual(DUMMY_USER_STORE);
-    expect(mock.actions.deletePost.mock.calls[0][1]).toEqual(
-      DUMMY_POST_TO_EDIT.postId,
-    );
+    expect(mock.actions.openDialog).toBeCalled();
   });
 
   test('instantiate map', async () => {

@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 import { compose } from 'redux';
 import actions from '../actions';
+import DialogService from '../components/DialogService';
 import Header from '../components/Header';
 import PageAuth from '../components/PageAuth';
 import PageCreatePost from '../components/PageCreatePost';
@@ -110,6 +111,10 @@ export class App extends React.Component<Props> {
         {
           // @ts-ignore
           <SnackbarService {...this.props} />
+        }
+        {
+          // @ts-ignore
+          <DialogService {...this.props} />
         }
         <ProgressService {...this.props} />
 

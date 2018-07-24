@@ -23,6 +23,7 @@ describe('PageManageAccount component', () => {
         deleteUser: jest.fn(),
         addSnackbarQueue: jest.fn(),
         sendEmailVerification: jest.fn(),
+        openDialog: jest.fn(),
       },
     };
 
@@ -32,6 +33,7 @@ describe('PageManageAccount component', () => {
         signOutUser={mock.actions.signOutUser}
         deleteUser={mock.actions.deleteUser}
         sendEmailVerification={mock.actions.sendEmailVerification}
+        openDialog={mock.actions.openDialog}
         user={DUMMY_USER_STORE}
         classes={{}}
       />,
@@ -99,14 +101,14 @@ describe('PageManageAccount component', () => {
     expect(mock.actions.signOutUser).toBeCalled();
   });
 
-  test('invoke deleteUser() when delete account button is clicked', done => {
+  test('invoke openDialog() when delete account button is clicked', done => {
     wrapper
       .find({ color: 'secondary' })
       .at(1)
       .simulate('click');
 
     setImmediate(() => {
-      expect(mock.actions.deleteUser).toBeCalled();
+      expect(mock.actions.openDialog).toBeCalled();
       done();
     });
   });

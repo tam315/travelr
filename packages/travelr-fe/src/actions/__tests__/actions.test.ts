@@ -90,7 +90,6 @@ describe('deleteUser', () => {
   test('make a correct fetch and action if success', async () => {
     fetch.mockResponse();
     firebaseUtils.canUserDeletedNow = jest.fn().mockResolvedValue(true);
-    window.confirm = jest.fn().mockImplementation(() => true);
     const mockDispatch = jest.fn();
     await thunk(mockDispatch);
 
@@ -113,7 +112,6 @@ describe('deleteUser', () => {
   test('make a correct action if fail', async () => {
     fetch.mockReject();
     firebaseUtils.canUserDeletedNow = jest.fn().mockResolvedValue(true);
-    window.confirm = jest.fn().mockImplementation(() => true);
     const mockDispatch = jest.fn();
     await thunk(mockDispatch);
 
@@ -823,6 +821,25 @@ describe('saveMapZoomAndCenter', () => {
     expect(action).toEqual({
       type: types.SAVE_MAP_ZOOM_AND_CENTER,
       payload: 'dummy',
+    });
+  });
+});
+
+describe('openDialog', () => {
+  test('make a correct action', () => {
+    const action = actions.openDialog('dummy');
+    expect(action).toEqual({
+      type: types.OPEN_DIALOG,
+      payload: 'dummy',
+    });
+  });
+});
+
+describe('closeDialog', () => {
+  test('make a correct action', () => {
+    const action = actions.closeDialog('dummy');
+    expect(action).toEqual({
+      type: types.CLOSE_DIALOG,
     });
   });
 });

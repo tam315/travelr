@@ -23,6 +23,7 @@ describe('PageManagePosts component', () => {
         selectMyPosts: jest.fn(),
         selectMyPostsAll: jest.fn(),
         selectMyPostsReset: jest.fn(),
+        openDialog: jest.fn(),
       },
       history: { push: jest.fn() },
     };
@@ -37,6 +38,7 @@ describe('PageManagePosts component', () => {
         selectMyPosts={mock.actions.selectMyPosts}
         selectMyPostsAll={mock.actions.selectMyPostsAll}
         selectMyPostsReset={mock.actions.selectMyPostsReset}
+        openDialog={mock.actions.openDialog}
       />,
     );
   });
@@ -96,12 +98,20 @@ describe('PageManagePosts component', () => {
     expect(mock.actions.selectMyPostsReset).toHaveBeenCalledTimes(1);
   });
 
-  test('deletePosts() called when the menu item is clicked', () => {
+  test('openDialog() called when the menu item is clicked', () => {
+    // simulate selecting post
+    wrapper.setProps({
+      posts: {
+        ...DUMMY_POSTS_STORE,
+        myPostsSelected: [DUMMY_POSTS_STORE.myPosts[0].postId],
+      },
+    });
+    // simulate clicking 'delete' button
     wrapper
       .find(MenuItem)
       .at(2)
       .simulate('click');
-    expect(mock.actions.deletePosts).toHaveBeenCalledTimes(1);
+    expect(mock.actions.openDialog).toHaveBeenCalledTimes(1);
   });
 
   test('selectMyPosts() called when a checkbox is clicked', () => {

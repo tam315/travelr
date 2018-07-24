@@ -206,9 +206,15 @@ export const DUMMY_POST_TO_EDIT: PostToEdit = {
 export const DUMMY_APP_STORE: AppStore = {
   snackbarQueue: [],
   showProgress: false,
-  mapLat: 0, // TODO
-  mapLng: 0, // TODO
-  mapZoomLevel: 0, // TODO
+  mapLat: 0,
+  mapLng: 0,
+  mapZoomLevel: 0,
+  dialogIsOpen: false,
+  dialogTitle: '',
+  dialogContent: '',
+  dialogPositiveSelector: '',
+  dialogNegativeSelector: '',
+  dialogSuccessCallback: null,
 };
 
 export const DUMMY_POSTS_STORE: PostsStore = {

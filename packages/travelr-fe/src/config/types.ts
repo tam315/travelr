@@ -11,6 +11,12 @@ export type AppStore = {
   mapLat: number;
   mapLng: number;
   mapZoomLevel: number;
+  dialogIsOpen: boolean;
+  dialogTitle: string;
+  dialogContent: string;
+  dialogPositiveSelector: string;
+  dialogNegativeSelector: string;
+  dialogSuccessCallback: () => void;
 };
 
 export type UserStore = {

@@ -98,4 +98,48 @@ describe('appReducer', () => {
 
     expect(appReducer(state, action)).toEqual(expected);
   });
+
+  test('OPEN_DIALOG', () => {
+    const DUMMY_PAYLOAD = {
+      dialogTitle: 'dummy_title',
+      dialogContent: 'dummy_content',
+      dialogPositiveSelector: 'dummy_selector1',
+      dialogNegativeSelector: 'dummy_selector2',
+      dialogSuccessCallback: () => {},
+    };
+
+    const action = {
+      type: types.OPEN_DIALOG,
+      payload: DUMMY_PAYLOAD,
+    };
+
+    const expected = {
+      ...INITIAL_STATE,
+      ...DUMMY_PAYLOAD,
+      dialogIsOpen: true,
+    };
+
+    expect(appReducer(INITIAL_STATE, action)).toEqual(expected);
+  });
+
+  test('CLOSE_DIALOG', () => {
+    const state = {
+      ...INITIAL_STATE,
+      dialogTitle: 'dummy_title',
+      dialogContent: 'dummy_content',
+      dialogPositiveSelector: 'dummy_selector1',
+      dialogNegativeSelector: 'dummy_selector2',
+      dialogSuccessCallback: () => {},
+    };
+    const action = {
+      type: types.CLOSE_DIALOG,
+    };
+
+    const expected = {
+      ...state,
+      dialogIsOpen: false,
+    };
+
+    expect(appReducer(state, action)).toEqual(expected);
+  });
 });

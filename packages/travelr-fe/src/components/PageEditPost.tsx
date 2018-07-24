@@ -38,6 +38,7 @@ type Props = {
   editPost: (user: UserStore, postToEdit: PostToEdit) => void;
   fetchPost: (postId: number) => void;
   deletePost: (user: UserStore, postId: number) => void;
+  openDialog: any;
 };
 
 type State = {
@@ -155,14 +156,16 @@ export class PageEditPost extends React.Component<Props, State> {
   };
 
   handleDeletePost = () => {
-    const { deletePost, user } = this.props;
+    const { deletePost, openDialog, user } = this.props;
     const { postId } = this.state;
 
-    // eslint-disable-next-line
-    if (confirm('本当に削除してよろしいですか？')) {
-      // TODO: dialog
-      deletePost(user, postId);
-    }
+    openDialog({
+      dialogTitle: '投稿の削除',
+      dialogContent: 'この投稿を削除してよろしいですか？',
+      dialogPositiveSelector: 'アカウントを削除する',
+      dialogNegativeSelector: 'キャンセル',
+      dialogSuccessCallback: () => deletePost(user, postId),
+    });
   };
 
   render() {
@@ -220,6 +223,7 @@ export class PageEditPost extends React.Component<Props, State> {
             color="secondary"
             variant="body2"
             onClick={this.handleDeletePost}
+            style={{ cursor: 'pointer' }}
           >
             投稿を削除する
           </Typography>

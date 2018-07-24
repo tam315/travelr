@@ -3,10 +3,16 @@ import { AppStore, MapZoomAndCenter } from '../config/types';
 
 export const INITIAL_STATE: AppStore = {
   snackbarQueue: [],
-  showProgress: false,
+  showProgress: true,
   mapLat: 38.1452368786617,
   mapLng: 137.36165303813937,
   mapZoomLevel: 4,
+  dialogIsOpen: false,
+  dialogTitle: '',
+  dialogContent: '',
+  dialogPositiveSelector: '',
+  dialogNegativeSelector: '',
+  dialogSuccessCallback: null,
 };
 
 export default (state: AppStore = INITIAL_STATE, action: any): AppStore => {
@@ -42,6 +48,24 @@ export default (state: AppStore = INITIAL_STATE, action: any): AppStore => {
         mapZoomLevel: payload.zoom,
         mapLng: payload.center.lng,
         mapLat: payload.center.lat,
+      };
+    }
+    case actionTypes.OPEN_DIALOG: {
+      return {
+        ...state,
+        dialogIsOpen: true,
+        dialogTitle: '',
+        dialogContent: '',
+        dialogPositiveSelector: '',
+        dialogNegativeSelector: '',
+        dialogSuccessCallback: null,
+        ...action.payload,
+      };
+    }
+    case actionTypes.CLOSE_DIALOG: {
+      return {
+        ...state,
+        dialogIsOpen: false,
       };
     }
     default:
