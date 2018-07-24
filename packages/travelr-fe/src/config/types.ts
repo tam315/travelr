@@ -8,9 +8,9 @@ export type Store = {
 export type AppStore = {
   snackbarQueue: string[];
   showProgress: boolean;
-  mapLat: number; // TODO
-  mapLng: number; // TODO
-  mapZoomLevel: number; // TODO
+  mapLat: number;
+  mapLng: number;
+  mapZoomLevel: number;
 };
 
 export type UserStore = {
