@@ -128,10 +128,10 @@ class MapsShowAllPosition {
       return (
         `<img src="${srcOldImage}" height="96" width="96" ` +
         `onclick="window.mapsShowAllPositionOnPostClick(` +
-        `${marker.post.postId})" />` +
+        `${marker.post.postId})" style="object-fit: cover" />` +
         `<img src="${srcNewImage}" height="96" width="96" ` +
         `onclick="window.mapsShowAllPositionOnPostClick(` +
-        `${marker.post.postId})" />`
+        `${marker.post.postId})" style="object-fit: cover" />`
       );
     };
 
