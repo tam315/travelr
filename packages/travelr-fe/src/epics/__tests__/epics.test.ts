@@ -587,6 +587,12 @@ test('snackbarEpic', done => {
 
   const incomingActions = [
     {
+      type: actionTypes.TOGGLE_LIKE_FAIL,
+      payload: {
+        message: "missing 'authorization' header",
+      },
+    },
+    {
       type: actionTypes.SIGN_IN_WITH_EMAIL_FAIL,
       payload: mockSpecificErrorFromFirebaseSDK,
     },
@@ -602,7 +608,10 @@ test('snackbarEpic', done => {
   ];
 
   const expectedActions = [
-    // show specific error if error from firebase sdk is provided
+    {
+      type: actionTypes.ADD_SNACKBAR_QUEUE,
+      payload: 'この操作を行うためにはサインインが必要です',
+    },
     {
       type: actionTypes.ADD_SNACKBAR_QUEUE,
       payload: 'メールアドレスの形式が正しくありません',
@@ -611,7 +620,6 @@ test('snackbarEpic', done => {
       type: actionTypes.ADD_SNACKBAR_QUEUE,
       payload: '不明なエラーが発生しました',
     },
-    // show general error message
     {
       type: actionTypes.ADD_SNACKBAR_QUEUE,
       payload: 'サインインに失敗しました',

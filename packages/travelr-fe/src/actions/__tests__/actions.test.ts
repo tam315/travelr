@@ -693,9 +693,8 @@ describe('createComment', () => {
     fetch.mockReject();
     await thunk(mock.dispatch);
 
-    expect(mock.dispatch.mock.calls[0][0]).toEqual({
-      type: types.CREATE_COMMENT_FAIL,
-    });
+    expect(mock.dispatch.mock.calls[0][0].type).toBe(types.CREATE_COMMENT_FAIL);
+    expect(mock.dispatch.mock.calls[0][0]).toHaveProperty('payload');
   });
 });
 
@@ -776,9 +775,8 @@ describe('toggleLike', () => {
     fetch.mockReject();
     await thunk(mock.dispatch);
 
-    expect(mock.dispatch.mock.calls[0][0]).toEqual({
-      type: types.TOGGLE_LIKE_FAIL,
-    });
+    expect(mock.dispatch.mock.calls[0][0].type).toBe(types.TOGGLE_LIKE_FAIL);
+    expect(mock.dispatch.mock.calls[0][0]).toHaveProperty('payload');
   });
 });
 

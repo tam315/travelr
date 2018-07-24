@@ -4,7 +4,7 @@ import {
   ofType,
   StateObservable,
 } from 'redux-observable';
-import { from, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, flatMap, map, mapTo, switchMap } from 'rxjs/operators';
 import wretch from 'wretch';
 import types from '../actions/types';
@@ -297,73 +297,67 @@ export const redirectorEpic = (action$: ActionsObservable<any>) =>
   );
 
 export const snackbarEpic = (action$: ActionsObservable<any>) => {
-  // helper to create actions to display snackbar
-  const s = message => ({
-    type: types.ADD_SNACKBAR_QUEUE,
-    payload: message,
-  });
-
   // prettier-ignore
   const errCodeAndMessagePairs = {
-    'auth/account-exists-with-different-credential': s('このメールアドレスは別のログイン方法に紐づけされています'),
-    'auth/email-already-in-use': s('このメールアドレスは既に使用されています'),
-    'auth/invalid-email': s('メールアドレスの形式が正しくありません'),
-    'auth/user-not-found': s('このメールアドレスは登録されていません'),
-    'auth/weak-password': s('パスワードは6文字以上必要です'),
-    'auth/wrong-password': s('パスワードが間違っているか、メールアドレスがほかのログイン方法に紐付けされています。'),
-    'storage/unauthorized': s('メール認証が完了していません。アカウント管理画面からメール認証を行ってください。'),
+    'auth/account-exists-with-different-credential': 'このメールアドレスは別のログイン方法に紐づけされています',
+    'auth/email-already-in-use': 'このメールアドレスは既に使用されています',
+    'auth/invalid-email': 'メールアドレスの形式が正しくありません',
+    'auth/user-not-found': 'このメールアドレスは登録されていません',
+    'auth/weak-password': 'パスワードは6文字以上必要です',
+    'auth/wrong-password': 'パスワードが間違っているか、メールアドレスがほかのログイン方法に紐付けされています。',
+    'storage/unauthorized': 'メール認証が完了していません。アカウント管理画面からメール認証を行ってください。',
   };
 
   // prettier-ignore
   const actionAndMessagePairs = {
-    [types.INIT_AUTH_FAIL]: s('認証情報の取得に失敗しました'),
-    [types.GET_OR_CREATE_USER_INFO_FAIL]: s('ユーザ情報の作成または取得に失敗しました'),
+    [types.INIT_AUTH_FAIL]: '認証情報の取得に失敗しました',
+    [types.GET_OR_CREATE_USER_INFO_FAIL]: 'ユーザ情報の作成または取得に失敗しました',
 
-    [types.UPDATE_USER_INFO_SUCCESS]: s('ユーザ情報を更新しました'),
-    [types.UPDATE_USER_INFO_FAIL]: s('ユーザ情報の更新に失敗しました'),
+    [types.UPDATE_USER_INFO_SUCCESS]: 'ユーザ情報を更新しました',
+    [types.UPDATE_USER_INFO_FAIL]: 'ユーザ情報の更新に失敗しました',
 
-    [types.DELETE_USER_SUCCESS]: s('アカウントを削除しました'),
-    [types.DELETE_USER_FAIL]: s('アカウントの情報に失敗しました'),
+    [types.DELETE_USER_SUCCESS]: 'アカウントを削除しました',
+    [types.DELETE_USER_FAIL]: 'アカウントの情報に失敗しました',
 
-    [types.SIGN_IN_WITH_EMAIL_FAIL]: s('サインインに失敗しました'),
+    [types.SIGN_IN_WITH_EMAIL_FAIL]: 'サインインに失敗しました',
 
-    [types.SIGN_UP_WITH_EMAIL_SUCCESS]: s('アカウントを作成しました。メールボックスを確認して、認証を完了させてください。'),
-    [types.SIGN_UP_WITH_EMAIL_FAIL]: s('アカウントの作成に失敗しました'),
+    [types.SIGN_UP_WITH_EMAIL_SUCCESS]: 'アカウントを作成しました。メールボックスを確認して、認証を完了させてください。',
+    [types.SIGN_UP_WITH_EMAIL_FAIL]: 'アカウントの作成に失敗しました',
 
-    [types.SEND_EMAIL_VERIFICATION_SUCCESS]: s('認証メールを再送しました'),
-    [types.SEND_EMAIL_VERIFICATION_FAIL]: s('認証メールの再送に失敗しました'),
+    [types.SEND_EMAIL_VERIFICATION_SUCCESS]: '認証メールを再送しました',
+    [types.SEND_EMAIL_VERIFICATION_FAIL]: '認証メールの再送に失敗しました',
 
-    [types.SEND_PASSWORD_RESET_EMAIL_SUCCESS]: s('パスワードリセットのメールを送信しました'),
-    [types.SEND_PASSWORD_RESET_EMAIL_FAIL]: s('パスワードリセットのメール送信に失敗しました'),
+    [types.SEND_PASSWORD_RESET_EMAIL_SUCCESS]: 'パスワードリセットのメールを送信しました',
+    [types.SEND_PASSWORD_RESET_EMAIL_FAIL]: 'パスワードリセットのメール送信に失敗しました',
 
-    [types.SIGN_OUT_USER_SUCCESS]: s('サインアウトしました'),
-    [types.SIGN_OUT_USER_FAIL]: s('サインアウトに失敗しました'),
+    [types.SIGN_OUT_USER_SUCCESS]: 'サインアウトしました',
+    [types.SIGN_OUT_USER_FAIL]: 'サインアウトに失敗しました',
 
-    [types.FETCH_ALL_POSTS_FAIL]: s('投稿の取得に失敗しました'),
+    [types.FETCH_ALL_POSTS_FAIL]: '投稿の取得に失敗しました',
 
-    [types.FETCH_POST_FAIL]: s('投稿の取得に失敗しました'),
+    [types.FETCH_POST_FAIL]: '投稿の取得に失敗しました',
 
-    [types.CREATE_POST_SUCCESS]: s('投稿を作成しました。画像の生成に15秒程度かかります。'),
-    [types.CREATE_POST_FAIL]: s('投稿の作成に失敗しました'),
+    [types.CREATE_POST_SUCCESS]: '投稿を作成しました。画像の生成に15秒程度かかります。',
+    [types.CREATE_POST_FAIL]: '投稿の作成に失敗しました',
 
-    [types.EDIT_POST_SUCCESS]: s('投稿を編集しました'),
-    [types.EDIT_POST_FAIL]: s('投稿の編集に失敗しました'),
+    [types.EDIT_POST_SUCCESS]: '投稿を編集しました',
+    [types.EDIT_POST_FAIL]: '投稿の編集に失敗しました',
 
-    [types.FETCH_MY_POSTS_FAIL]: s('投稿の取得に失敗しました'),
+    [types.FETCH_MY_POSTS_FAIL]: '投稿の取得に失敗しました',
 
-    [types.DELETE_POST_SUCCESS]: s('投稿を削除しました'),
-    [types.DELETE_POST_FAIL]: s('投稿の削除に失敗しました'),
+    [types.DELETE_POST_SUCCESS]: '投稿を削除しました',
+    [types.DELETE_POST_FAIL]: '投稿の削除に失敗しました',
 
-    [types.DELETE_POSTS_SUCCESS]: s('投稿を削除しました'),
-    [types.DELETE_POSTS_FAIL]: s('投稿の削除に失敗しました'),
+    [types.DELETE_POSTS_SUCCESS]: '投稿を削除しました',
+    [types.DELETE_POSTS_FAIL]: '投稿の削除に失敗しました',
 
-    [types.CREATE_COMMENT_SUCCESS]: s('コメントを投稿しました'),
-    [types.CREATE_COMMENT_FAIL]: s('コメントの投稿に失敗しました'),
+    [types.CREATE_COMMENT_SUCCESS]: 'コメントを投稿しました',
+    [types.CREATE_COMMENT_FAIL]: 'コメントの投稿に失敗しました',
 
-    [types.DELETE_COMMENT_SUCCESS]: s('コメントを削除しました'),
-    [types.DELETE_COMMENT_FAIL]: s('コメントの削除に失敗しました'),
+    [types.DELETE_COMMENT_SUCCESS]: 'コメントを削除しました',
+    [types.DELETE_COMMENT_FAIL]: 'コメントの削除に失敗しました',
 
-    [types.TOGGLE_LIKE_FAIL]: s('いいねの変更に失敗しました'),
+    [types.TOGGLE_LIKE_FAIL]: 'いいねの変更に失敗しました',
   };
 
   const actionNameArray = Object.keys(actionAndMessagePairs);
@@ -373,27 +367,33 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
     map(action => {
       const err = action.payload;
 
+      // if user is trying to do some task that needs the authorization
+      if (
+        (action.type === types.TOGGLE_LIKE_FAIL ||
+          action.type === types.CREATE_COMMENT_FAIL) &&
+        err &&
+        err.message === "missing 'authorization' header"
+      ) {
+        return 'この操作を行うためにはサインインが必要です';
+      }
+
       // display more specific error messages if 'err.code'(from firebase SDK) is provided
       if (err && err.code) {
-        return (
-          errCodeAndMessagePairs[err.code] || {
-            type: types.ADD_SNACKBAR_QUEUE,
-            payload: '不明なエラーが発生しました',
-          }
-        );
+        return errCodeAndMessagePairs[err.code] || '不明なエラーが発生しました';
       }
+
       // display more specific error messages if 'err.message' is provided
       if (err && err.message) {
-        return (
-          errCodeAndMessagePairs[err.code] || {
-            type: types.ADD_SNACKBAR_QUEUE,
-            payload: err.message,
-          }
-        );
+        return errCodeAndMessagePairs[err.code] || err.message;
       }
+
       // otherwise show generic message
       return actionAndMessagePairs[action.type];
     }),
+    map(message => ({
+      type: types.ADD_SNACKBAR_QUEUE,
+      payload: message,
+    })),
   );
 };
 

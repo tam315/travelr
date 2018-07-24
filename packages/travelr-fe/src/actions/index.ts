@@ -435,6 +435,7 @@ actions.createComment = (
   } catch (err) {
     dispatch({
       type: actionTypes.CREATE_COMMENT_FAIL,
+      payload: err,
     });
   }
 };
@@ -479,6 +480,7 @@ actions.toggleLike = (user: UserStore, post: Post) => async (
   } catch (err) {
     dispatch({
       type: actionTypes.TOGGLE_LIKE_FAIL,
+      payload: err,
     });
   }
 };
