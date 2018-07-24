@@ -1,4 +1,5 @@
 import {
+  Button,
   Collapse,
   Divider,
   Drawer,
@@ -7,9 +8,11 @@ import {
   ListItemText,
   TextField,
   Typography,
+  ListItemSecondaryAction,
+  IconButton,
 } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import IconClose from '@material-ui/icons/Close';
 import IconExpandLess from '@material-ui/icons/ExpandLess';
 import IconExpandMore from '@material-ui/icons/ExpandMore';
 import deepmerge from 'deepmerge';
@@ -230,6 +233,15 @@ export class Filter extends React.Component<Props, State> {
               primary="フィルタ"
               primaryTypographyProps={{ variant: 'title' }}
             />
+            <ListItemSecondaryAction>
+              <IconButton
+                onClick={this.handleClose}
+                // @ts-ignore
+                dataenzyme="close-button"
+              >
+                <IconClose />
+              </IconButton>
+            </ListItemSecondaryAction>
           </ListItem>
         </List>
 

@@ -124,4 +124,10 @@ describe('Filter component', () => {
 
     expect(wrapper.state('criterion').radius).toEqual('50');
   });
+
+  test('onClose props is invoked when close button clicked', () => {
+    wrapper.find({ dataenzyme: 'close-button' }).simulate('click');
+
+    expect(mock.onClose).toBeCalled();
+  });
 });
