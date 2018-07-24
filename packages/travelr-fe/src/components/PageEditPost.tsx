@@ -162,7 +162,7 @@ export class PageEditPost extends React.Component<Props, State> {
     openDialog({
       dialogTitle: '投稿の削除',
       dialogContent: 'この投稿を削除してよろしいですか？',
-      dialogPositiveSelector: 'アカウントを削除する',
+      dialogPositiveSelector: '削除',
       dialogNegativeSelector: 'キャンセル',
       dialogSuccessCallback: () => deletePost(user, postId),
     });
