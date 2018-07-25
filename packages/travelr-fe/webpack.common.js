@@ -1,12 +1,8 @@
-const history = require('connect-history-api-fallback');
-const convert = require('koa-connect');
-
 module.exports = {
   entry: './src/index.tsx',
   output: {
     filename: 'bundle.js',
   },
-  mode: 'development',
   module: {
     rules: [
       {
@@ -40,16 +36,5 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
-  },
-  devtool: 'inline-source-map',
-  // settings for webpack-serve
-  serve: {
-    content: [__dirname, 'public'], // serve this folder as '/'
-    // fallback all routes to index.html
-    add: app => {
-      app.use(convert(history()));
-    },
-    hot: true,
-    https: false,
   },
 };

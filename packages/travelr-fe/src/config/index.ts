@@ -1,4 +1,4 @@
-export default {
+const base = {
   apiUrl: 'http://localhost:3090/',
   googleMapApiKey: 'AIzaSyCVzSPlgcFr5D46o5F9frzyKLik5rl7ywM',
   firebase: {
@@ -8,3 +8,11 @@ export default {
     storageBucket: 'travelr-a75c4.appspot.com',
   },
 };
+
+const prod = {
+  apiUrl: 'http://some-fancy-api:8888/',
+};
+
+// use process.env.NODE_ENV to access `process` variable
+module.exports =
+  process.env.NODE_ENV === 'production' ? { ...base, ...prod } : base;
