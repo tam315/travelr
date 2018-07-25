@@ -18,11 +18,16 @@ class MapsShowAllPosition {
 
   onZoomOrCenterChange: (zoomAndCenter: MapZoomAndCenter) => void;
 
+  onPinClick: (post: Post) => void;
+
+  onClusterClick: (post: Post[]) => void;
+
   constructor(
     mapRef: HTMLElement,
     option: {
       zoomAndCenter: MapZoomAndCenter;
-      onPostClick: (postId: number) => void;
+      onPinClick: (post: Post) => void;
+      onClusterClick: (post: Post[]) => void;
       onZoomOrCenterChange: (zoomAndCenter: MapZoomAndCenter) => void;
     },
   ) {
@@ -32,7 +37,8 @@ class MapsShowAllPosition {
     );
 
     // @ts-ignore
-    window.mapsShowAllPositionOnPostClick = option.onPostClick;
+    this.onPinClick = option.onPinClick;
+    this.onClusterClick = option.onClusterClick;
     this.onZoomOrCenterChange = option.onZoomOrCenterChange;
 
     this.queuedPosts = null;
@@ -59,11 +65,6 @@ class MapsShowAllPosition {
       streetViewControl: false,
     });
 
-    // close infowindow when the map is clicked
-    this.map.addListener('click', () => {
-      this.closePreviousInfowindow();
-    });
-
     // save zoomlevel and center position continuously
     const getZoomAndCenter = (): MapZoomAndCenter => ({
       zoom: this.map.getZoom(),
@@ -88,13 +89,6 @@ class MapsShowAllPosition {
     }
   };
 
-  closePreviousInfowindow = () => {
-    if (this.infowindow) {
-      this.infowindow.close();
-      this.infowindow = null;
-    }
-  };
-
   placePosts = (posts: Post[]) => {
     // if api is not ready, queue posts and exit funtion
     if (!this.isApiAndMapReady) {
@@ -116,25 +110,6 @@ class MapsShowAllPosition {
       this.markerCluster = null;
     }
 
-    const createContent = marker => {
-      const srcOldImage = firebaseUtils.getImageUrl(
-        marker.post.oldImageUrl,
-        '96w',
-      );
-      const srcNewImage = firebaseUtils.getImageUrl(
-        marker.post.newImageUrl,
-        '96w',
-      );
-      return (
-        `<img src="${srcOldImage}" height="96" width="96" ` +
-        `onclick="window.mapsShowAllPositionOnPostClick(` +
-        `${marker.post.postId})" style="object-fit: cover" />` +
-        `<img src="${srcNewImage}" height="96" width="96" ` +
-        `onclick="window.mapsShowAllPositionOnPostClick(` +
-        `${marker.post.postId})" style="object-fit: cover" />`
-      );
-    };
-
     // create markers
     this.markers = posts.map(post => {
       // marker for each post
@@ -146,16 +121,8 @@ class MapsShowAllPosition {
         post,
       });
 
-      // show the infowindow for each post when the marker is cliked
       marker.addListener('click', () => {
-        this.closePreviousInfowindow();
-
-        const content = createContent(marker);
-
-        // preserve the info window for later closing
-        this.infowindow = new google.maps.InfoWindow();
-        this.infowindow.setContent(content);
-        this.infowindow.open(this.map, marker);
+        this.onPinClick(marker.post);
       });
 
       return marker;
@@ -163,17 +130,16 @@ class MapsShowAllPosition {
 
     // a specific js library file is required for markerCluster. see index.html
     this.markerCluster = new MarkerClusterer(this.map, this.markers, {
-      maxZoom: 10,
       zoomOnClick: false,
       imagePath:
         'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
     });
 
-    // this.markerCluster.addListener('clusterclick', cluster => {
-    //   const markers = cluster.getMarkers();
-    //   const position = cluster.getCenter();
-    //   const contents = createContent(markers);
-    // });
+    this.markerCluster.addListener('clusterclick', cluster => {
+      const markers = cluster.getMarkers();
+      const posts = markers.map(marker => marker.post);
+      this.onClusterClick(posts);
+    });
   };
 
   updateZoomAndCenter = (positionAndZoomLevel: {

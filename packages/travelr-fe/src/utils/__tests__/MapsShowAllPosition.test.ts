@@ -12,7 +12,8 @@ describe('MapsShowAllPosition', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mock = {
-      onPostClick: jest.fn(),
+      onPinClick: jest.fn(),
+      onClusterClick: jest.fn(),
       onZoomOrCenterChange: jest.fn(),
     };
 
@@ -33,7 +34,8 @@ describe('MapsShowAllPosition', () => {
 
   const createMapInstance = () =>
     new MapsShowAllPosition(mapRef, {
-      onPostClick: mock.onPostClick,
+      onPinClick: mock.onPinClick,
+      onClusterClick: mock.onClusterClick,
       onZoomOrCenterChange: mock.onZoomOrCenterChange,
       zoomAndCenter: DUMMY_ZOOM_AND_CENTER,
     });
@@ -87,14 +89,6 @@ describe('MapsShowAllPosition', () => {
 
     // queue should be reset
     expect(mapsShowAllPosition.queuedPosts).toBe(null);
-  });
-
-  test('set callback as a global to call it from infowindow', () => {
-    createMapInstance();
-
-    // queue should be reset
-    // @ts-ignore
-    expect(window.mapsShowAllPositionOnPostClick).toBe(mock.onPostClick);
   });
 
   test('update zoom and center', () => {

@@ -1,7 +1,6 @@
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import * as React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { DUMMY_POSTS, DUMMY_APP_STORE } from '../../config/dummies';
+import { DUMMY_APP_STORE, DUMMY_POSTS } from '../../config/dummies';
 import MapsShowAllPosition from '../../utils/MapsShowAllPosition';
 import { PageViewPostsMap } from '../PageViewPostsMap';
 
@@ -39,8 +38,6 @@ describe('PageViewPostsMap component', () => {
   });
 
   test('instantiate google maps', () => {
-    wrapper.instance().mapRef = { current: {} };
-    wrapper.instance().componentDidMount();
     // @ts-ignore
     const options = MapsShowAllPosition.mock.calls[0][1];
 
@@ -55,25 +52,16 @@ describe('PageViewPostsMap component', () => {
   });
 
   test('render posts when the component mounted', () => {
-    wrapper.instance().mapRef = { current: {} };
-    wrapper.instance().componentDidMount();
-
     expect(mock.placePosts).toHaveBeenCalledTimes(1);
   });
 
   test('update posts if store is updated', () => {
-    wrapper.instance().mapRef = { current: {} };
-    wrapper.instance().componentDidMount();
-
     expect(mock.placePosts).toHaveBeenCalledTimes(1);
     wrapper.setProps({ posts: DUMMY_POSTS_UPDATED });
     expect(mock.placePosts).toHaveBeenCalledTimes(2);
   });
 
   test('update zoom and center if store is updated', () => {
-    wrapper.instance().mapRef = { current: {} };
-    wrapper.instance().componentDidMount();
-
     const updated = {
       mapLatUpdated: 1,
       mapLngUpdated: 2,
@@ -83,5 +71,26 @@ describe('PageViewPostsMap component', () => {
     expect(mock.updateZoomAndCenter).toHaveBeenCalledTimes(0);
     wrapper.setProps({ app: { ...DUMMY_APP_STORE, ...updated } });
     expect(mock.updateZoomAndCenter).toHaveBeenCalledTimes(1);
+  });
+
+  test('handle detailed posts correctly', () => {
+    // initial
+    expect(wrapper.state('detailedPosts')).toEqual([]);
+
+    // click pin
+    wrapper.instance().handlePinClick(DUMMY_POSTS[0]);
+    expect(wrapper.state('detailedPosts')).toEqual([DUMMY_POSTS[0]]);
+
+    // reset
+    wrapper.instance().handleDetailClose();
+    expect(wrapper.state('detailedPosts')).toEqual([]);
+
+    // click cluster
+    wrapper.instance().handleClusterClick(DUMMY_POSTS);
+    expect(wrapper.state('detailedPosts')).toEqual(DUMMY_POSTS);
+
+    // reset
+    wrapper.instance().handleDetailClose();
+    expect(wrapper.state('detailedPosts')).toEqual([]);
   });
 });

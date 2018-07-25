@@ -19,6 +19,7 @@ export const setGoogleMapsApiMock = () => {
   };
   // @ts-ignore
   MarkerClusterer = jest.fn().mockImplementation(() => ({
+    addListener: jest.fn(),
     clearMarkers: jest.fn(),
   }));
 };

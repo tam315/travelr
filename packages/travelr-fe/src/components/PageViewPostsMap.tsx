@@ -1,8 +1,8 @@
 import { withStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { Post, LatLng, AppStore, MapZoomAndCenter } from '../config/types';
-import history from '../utils/history';
+import { AppStore, MapZoomAndCenter, Post } from '../config/types';
 import MapsShowAllPosition from '../utils/MapsShowAllPosition';
+import PageViewPostsMapDetail from './PageViewPostsMapDetail';
 
 // header height is:
 //   64px if the window width is same or bigger than 600px
@@ -23,7 +23,16 @@ type Props = {
   saveMapZoomAndCenter: (zoomAndCenter: MapZoomAndCenter) => void;
 };
 
-export class PageViewPostsMap extends React.Component<Props> {
+type State = {
+  detailedPosts: Post[];
+};
+
+export class PageViewPostsMap extends React.Component<Props, State> {
+  state = {
+    // posts currently displayed in modal
+    detailedPosts: [],
+  };
+
   mapRef: React.RefObject<HTMLDivElement>;
 
   mapsShowAllPosition: MapsShowAllPosition;
@@ -37,7 +46,6 @@ export class PageViewPostsMap extends React.Component<Props> {
   // @ts-ignore
   componentDidMount = () => {
     const { posts, saveMapZoomAndCenter, app } = this.props;
-    const onPostClick = postId => history.push(`/post/${postId}`);
 
     const zoomAndCenter: MapZoomAndCenter = {
       zoom: app.mapZoomLevel,
@@ -47,14 +55,13 @@ export class PageViewPostsMap extends React.Component<Props> {
       },
     };
 
-    if (this.mapRef.current) {
-      this.mapsShowAllPosition = new MapsShowAllPosition(this.mapRef.current, {
-        onPostClick,
-        zoomAndCenter,
-        onZoomOrCenterChange: saveMapZoomAndCenter,
-      });
-      this.mapsShowAllPosition.placePosts(posts);
-    }
+    this.mapsShowAllPosition = new MapsShowAllPosition(this.mapRef.current, {
+      zoomAndCenter,
+      onPinClick: this.handlePinClick,
+      onClusterClick: this.handleClusterClick,
+      onZoomOrCenterChange: saveMapZoomAndCenter,
+    });
+    this.mapsShowAllPosition.placePosts(posts);
   };
 
   // @ts-ignore
@@ -78,10 +85,30 @@ export class PageViewPostsMap extends React.Component<Props> {
     }
   };
 
+  handlePinClick = post => this.setState({ detailedPosts: [post] });
+
+  handleClusterClick = posts => this.setState({ detailedPosts: [...posts] });
+
+  handleDetailClose = () => {
+    this.setState({
+      detailedPosts: [],
+    });
+  };
+
   // @ts-ignore
   render = () => {
     const { classes } = this.props;
-    return <div ref={this.mapRef} className={classes.mapContainer} />;
+    const { detailedPosts } = this.state;
+
+    return (
+      <React.Fragment>
+        <div ref={this.mapRef} className={classes.mapContainer} />
+        <PageViewPostsMapDetail
+          posts={detailedPosts}
+          onClose={this.handleDetailClose}
+        />
+      </React.Fragment>
+    );
   };
 }
 
