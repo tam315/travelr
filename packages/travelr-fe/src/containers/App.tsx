@@ -18,6 +18,7 @@ import PageViewPost from '../components/PageViewPost';
 import PageViewPosts from '../components/PageViewPosts';
 import ProgressService from '../components/ProgressService';
 import SnackbarService from '../components/SnackbarService';
+import PageAbout from '../components/PageAbout';
 import config from '../config';
 import { AppStore, UserStore } from '../config/types';
 import { loadJS } from '../utils/general';
@@ -145,6 +146,7 @@ export class App extends React.Component<Props> {
                 exact
                 component={this.renderPageManageAccount}
               />
+              <Route path="/about" exact component={PageAbout} />
             </Switch>
           </React.Fragment>
         </Router>
