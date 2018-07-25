@@ -1,94 +1,84 @@
-import ListItem from '@material-ui/core/ListItem';
-import { mount } from 'enzyme';
+import { ListItemText, ListItem } from '@material-ui/core';
+import { shallow } from 'enzyme';
 import * as React from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import Menu from '../Menu';
 
 describe('Menu component', () => {
-  describe('if user is signed out', () => {
-    let wrapper;
+  let wrapper;
 
-    beforeAll(() => {
-      const mockFunction = jest.fn();
-      wrapper = mount(
-        <BrowserRouter>
-          <Menu
-            isOpen
-            onClose={mockFunction}
-            onOpen={mockFunction}
-            isUserAuthorized={false}
-          />
-        </BrowserRouter>,
-      );
-    });
+  beforeAll(() => {
+    const mockFunction = jest.fn();
+    wrapper = shallow(
+      <Menu
+        isOpen
+        onClose={mockFunction}
+        onOpen={mockFunction}
+        isUserAuthorized={false}
+      />,
+    );
+  });
 
-    test('have correct menu items', () => {
-      const menuItems = [
-        ['写真を見る', '/all-grid'],
-        ['写真を投稿する', '/auth'],
-      ];
+  test('if user is NOT authorized', () => {
+    const menuItems = [
+      ['Travelr'],
+      ['一覧で見る', '/all-grid'],
+      ['マップで見る', '/all-map'],
+      ['写真を投稿する', '/auth'],
+      ['このサイトについて', '/about'],
+    ];
 
-      menuItems.forEach((item, index) => {
-        const [name, link] = item;
+    menuItems.forEach((item, index) => {
+      const [name, link] = item;
 
+      expect(
+        wrapper
+          .find(ListItemText)
+          .at(index)
+          .prop('primary'),
+      ).toBe(name);
+
+      if (link) {
         expect(
           wrapper
             .find(ListItem)
             .at(index)
-            .text(),
-        ).toContain(name);
-        expect(
-          wrapper
-            .find(ListItem)
-            .at(index)
-            .props().to,
+            .prop('to'),
         ).toBe(link);
-      });
+      }
     });
   });
 
-  describe('if user is signed in', () => {
-    let wrapper;
+  test('if user IS authorized', () => {
+    const menuItems = [
+      ['Travelr'],
+      ['一覧で見る', '/all-grid'],
+      ['マップで見る', '/all-map'],
+      ['投稿する', '/post/create'],
+      ['アカウント', '/account'],
+      ['投稿管理', '/account/posts'],
+      ['このサイトについて', '/about'],
+    ];
 
-    beforeAll(() => {
-      const mockFunction = jest.fn();
+    wrapper.setProps({ isUserAuthorized: true });
 
-      wrapper = mount(
-        <BrowserRouter>
-          <Menu
-            isOpen
-            isUserAuthorized
-            onClose={mockFunction}
-            onOpen={mockFunction}
-          />
-        </BrowserRouter>,
-      );
-    });
+    menuItems.forEach((item, index) => {
+      const [name, link] = item;
 
-    test('have correct menu items', () => {
-      const menuItems = [
-        ['写真を見る', '/all-grid'],
-        ['写真を投稿する', '/post/create'],
-        ['アカウント管理', '/account'],
-        ['投稿管理', '/account/posts'],
-      ];
+      expect(
+        wrapper
+          .find(ListItemText)
+          .at(index)
+          .prop('primary'),
+      ).toBe(name);
 
-      menuItems.forEach((item, index) => {
-        const [name, link] = item;
-
+      if (link) {
         expect(
           wrapper
             .find(ListItem)
             .at(index)
-            .text(),
-        ).toContain(name);
-        expect(
-          wrapper
-            .find(ListItem)
-            .at(index)
-            .props().to,
+            .prop('to'),
         ).toBe(link);
-      });
+      }
     });
   });
 });

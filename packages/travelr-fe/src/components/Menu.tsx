@@ -8,7 +8,8 @@ import {
 } from '@material-ui/core';
 import IconAccountCircle from '@material-ui/icons/AccountCircle';
 import IconAddPhoto from '@material-ui/icons/AddAPhoto';
-import IconPhotoLibrary from '@material-ui/icons/PhotoLibrary';
+import IconGrid from '@material-ui/icons/GridOn';
+import IconMap from '@material-ui/icons/Place';
 import IconViewList from '@material-ui/icons/ViewList';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
@@ -25,88 +26,57 @@ function Menu(props: Props) {
 
   const authorizedMenu = (
     <React.Fragment>
-      <List>
-        {/* TODO: add account information here */}
-        <ListItem
-          button
-          component={Link}
-          // @ts-ignore
-          to="/all-grid"
-        >
-          <ListItemIcon>
-            <IconPhotoLibrary />
-          </ListItemIcon>
-          <ListItemText primary="写真を見る" />
-        </ListItem>
-        <ListItem
-          button
-          component={Link}
-          // @ts-ignore
-          to="/post/create"
-        >
-          <ListItemIcon>
-            <IconAddPhoto />
-          </ListItemIcon>
-          <ListItemText primary="写真を投稿する" />
-        </ListItem>
-      </List>
+      <ListItem
+        button
+        component={Link}
+        // @ts-ignore
+        to="/post/create"
+      >
+        <ListItemIcon>
+          <IconAddPhoto />
+        </ListItemIcon>
+        <ListItemText primary="投稿する" />
+      </ListItem>
 
-      <Divider />
+      <ListItem
+        button
+        component={Link}
+        // @ts-ignore
+        to="/account"
+      >
+        <ListItemIcon>
+          <IconAccountCircle />
+        </ListItemIcon>
+        <ListItemText primary="アカウント" />
+      </ListItem>
 
-      <List>
-        <ListItem
-          button
-          component={Link}
-          // @ts-ignore
-          to="/account"
-        >
-          <ListItemIcon>
-            <IconAccountCircle />
-          </ListItemIcon>
-          <ListItemText primary="アカウント管理" />
-        </ListItem>
-        <ListItem
-          button
-          component={Link}
-          // @ts-ignore
-          to="/account/posts"
-        >
-          <ListItemIcon>
-            <IconViewList />
-          </ListItemIcon>
-          <ListItemText primary="投稿管理" />
-        </ListItem>
-      </List>
+      <ListItem
+        button
+        component={Link}
+        // @ts-ignore
+        to="/account/posts"
+      >
+        <ListItemIcon>
+          <IconViewList />
+        </ListItemIcon>
+        <ListItemText primary="投稿管理" />
+      </ListItem>
     </React.Fragment>
   );
 
   const unauthorizedMenu = (
     <React.Fragment>
-      <List>
-        {/* @ts-ignore */}
-        <ListItem
-          button
-          component={Link}
-          // @ts-ignore
-          to="/all-grid"
-        >
-          <ListItemIcon>
-            <IconPhotoLibrary />
-          </ListItemIcon>
-          <ListItemText primary="写真を見る" />
-        </ListItem>
-        <ListItem
-          button
-          component={Link}
-          // @ts-ignore
-          to="/auth"
-        >
-          <ListItemIcon>
-            <IconAddPhoto />
-          </ListItemIcon>
-          <ListItemText primary="写真を投稿する" />
-        </ListItem>
-      </List>
+      <ListItem
+        button
+        component={Link}
+        // @ts-ignore
+        to="/auth"
+      >
+        <ListItemIcon>
+          <IconAddPhoto />
+        </ListItemIcon>
+        <ListItemText primary="写真を投稿する" />
+      </ListItem>
     </React.Fragment>
   );
 
@@ -118,7 +88,54 @@ function Menu(props: Props) {
       onOpen={onOpen}
     >
       <div tabIndex={0} role="button" onClick={onClose} onKeyDown={onClose}>
-        {isUserAuthorized ? authorizedMenu : unauthorizedMenu}
+        <List>
+          <ListItem>
+            <ListItemText
+              primary="Travelr"
+              primaryTypographyProps={{ variant: 'headline' }}
+            />
+          </ListItem>
+          <Divider />
+
+          <ListItem
+            button
+            component={Link}
+            // @ts-ignore
+            to="/all-grid"
+          >
+            <ListItemIcon>
+              <IconGrid />
+            </ListItemIcon>
+            <ListItemText primary="一覧で見る" />
+          </ListItem>
+
+          <ListItem
+            button
+            component={Link}
+            // @ts-ignore
+            to="/all-map"
+          >
+            <ListItemIcon>
+              <IconMap />
+            </ListItemIcon>
+            <ListItemText primary="マップで見る" />
+          </ListItem>
+
+          {isUserAuthorized ? authorizedMenu : unauthorizedMenu}
+
+          <Divider />
+          <ListItem
+            button
+            component={Link}
+            // @ts-ignore
+            to="/about"
+          >
+            <ListItemText
+              primary="このサイトについて"
+              primaryTypographyProps={{ variant: 'caption' }}
+            />
+          </ListItem>
+        </List>
       </div>
     </SwipeableDrawer>
   );
