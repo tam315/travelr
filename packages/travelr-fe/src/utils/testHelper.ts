@@ -6,6 +6,7 @@ export const setGoogleMapsApiMock = () => {
       Map: jest.fn().mockImplementation(() => ({
         addListener: jest.fn(),
         panTo: jest.fn(),
+        setCenter: jest.fn(),
         setZoom: jest.fn(),
       })),
       Marker: jest.fn().mockImplementation(() => ({

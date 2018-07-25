@@ -175,6 +175,16 @@ class MapsShowAllPosition {
     //   const contents = createContent(markers);
     // });
   };
+
+  updateZoomAndCenter = (positionAndZoomLevel: {
+    lat: number;
+    lng: number;
+    zoomLevel: number;
+  }) => {
+    const { lat, lng, zoomLevel } = positionAndZoomLevel;
+    this.map.setCenter(new google.maps.LatLng(lat, lng));
+    this.map.setZoom(zoomLevel);
+  };
 }
 
 export default MapsShowAllPosition;

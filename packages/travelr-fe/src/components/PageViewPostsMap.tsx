@@ -63,6 +63,19 @@ export class PageViewPostsMap extends React.Component<Props> {
     if (JSON.stringify(posts) !== JSON.stringify(prevProps.posts)) {
       this.mapsShowAllPosition.placePosts(posts);
     }
+
+    // when UPDATE_MAP_ZOOM_AND_CENTER_SUCCESS
+    if (
+      app.mapLatUpdated !== prevProps.app.mapLatUpdated ||
+      app.mapLngUpdated !== prevProps.app.mapLngUpdated ||
+      app.mapZoomLevelUpdated !== prevProps.app.mapZoomLevelUpdated
+    ) {
+      this.mapsShowAllPosition.updateZoomAndCenter({
+        lat: app.mapLatUpdated,
+        lng: app.mapLngUpdated,
+        zoomLevel: app.mapZoomLevelUpdated,
+      });
+    }
   };
 
   // @ts-ignore

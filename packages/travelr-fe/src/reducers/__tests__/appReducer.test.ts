@@ -142,4 +142,21 @@ describe('appReducer', () => {
 
     expect(appReducer(state, action)).toEqual(expected);
   });
+
+  test('UPDATE_MAP_ZOOM_AND_CENTER_SUCCESS', () => {
+    const DUMMY_PAYLOAD = { lat: 1, lng: 2, radius: '3' };
+    const action = {
+      type: types.UPDATE_MAP_ZOOM_AND_CENTER_SUCCESS,
+      payload: DUMMY_PAYLOAD,
+    };
+
+    const expected = {
+      ...INITIAL_STATE,
+      mapLatUpdated: DUMMY_PAYLOAD.lat,
+      mapLngUpdated: DUMMY_PAYLOAD.lng,
+      mapZoomLevelUpdated: 11,
+    };
+
+    expect(appReducer(INITIAL_STATE, action)).toEqual(expected);
+  });
 });

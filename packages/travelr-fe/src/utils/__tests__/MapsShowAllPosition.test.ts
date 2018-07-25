@@ -96,4 +96,15 @@ describe('MapsShowAllPosition', () => {
     // @ts-ignore
     expect(window.mapsShowAllPositionOnPostClick).toBe(mock.onPostClick);
   });
+
+  test('update zoom and center', () => {
+    setGoogleMapsApiMock();
+    const mapsShowAllPosition = createMapInstance();
+    mapsShowAllPosition.updateZoomAndCenter({ lat: 1, lng: 2, zoomLevel: 3 });
+
+    // queue should be reset
+    // @ts-ignore
+    expect(mapsShowAllPosition.map.setCenter).toBeCalled();
+    expect(mapsShowAllPosition.map.setZoom).toBeCalled();
+  });
 });

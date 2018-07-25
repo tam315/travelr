@@ -11,6 +11,9 @@ export type AppStore = {
   mapLat: number;
   mapLng: number;
   mapZoomLevel: number;
+  mapLatUpdated: number;
+  mapLngUpdated: number;
+  mapZoomLevelUpdated: number;
   dialogIsOpen: boolean;
   dialogTitle: string;
   dialogContent: string;

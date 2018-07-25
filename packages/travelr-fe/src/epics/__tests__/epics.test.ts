@@ -9,6 +9,7 @@ import {
   snackbarEpic,
   startProgressServiceEpic,
   stopProgressServiceEpic,
+  mapZoomAndCenterUpdaterEpic,
 } from '..';
 import actionTypes from '../../actions/types';
 import {
@@ -548,6 +549,86 @@ test('stopProgressServiceEpic', done => {
       done();
     },
   );
+});
+
+describe('mapZoomAndCenterUpdaterEpic', () => {
+  test('if success', done => {
+    let assertionExecutedCount = 0;
+
+    // @ts-ignore
+    getPositionFromPlaceName.mockResolvedValue({ lat: 1, lng: 2 });
+
+    const state$ = {
+      value: {
+        filter: {
+          criterion: {
+            placeName: 'dummy_city',
+            radius: '3',
+          },
+        },
+      },
+    };
+    const incomingActions = [
+      {
+        type: actionTypes.CHANGE_FILTER_CRITERION_SUCCESS,
+      },
+    ];
+
+    // @ts-ignore
+    mapZoomAndCenterUpdaterEpic(of(...incomingActions), state$).subscribe(
+      outcomingAction => {
+        expect(outcomingAction).toEqual({
+          type: actionTypes.UPDATE_MAP_ZOOM_AND_CENTER_SUCCESS,
+          payload: { lat: 1, lng: 2, radius: '3' },
+        });
+        assertionExecutedCount += 1;
+      },
+      null,
+      () => {
+        expect(assertionExecutedCount).toBe(incomingActions.length);
+        done();
+      },
+    );
+  });
+
+  test('if fail', done => {
+    let assertionExecutedCount = 0;
+
+    // @ts-ignore
+    getPositionFromPlaceName.mockRejectedValue({});
+
+    const state$ = {
+      value: {
+        filter: {
+          criterion: {
+            placeName: 'dummy_city',
+            radius: '3',
+          },
+        },
+      },
+    };
+    const incomingActions = [
+      {
+        type: actionTypes.CHANGE_FILTER_CRITERION_SUCCESS,
+      },
+    ];
+
+    // @ts-ignore
+    mapZoomAndCenterUpdaterEpic(of(...incomingActions), state$).subscribe(
+      outcomingAction => {
+        expect(outcomingAction.type).toBe(
+          actionTypes.UPDATE_MAP_ZOOM_AND_CENTER_FAIL,
+        );
+        expect(outcomingAction).toHaveProperty('payload');
+        assertionExecutedCount += 1;
+      },
+      null,
+      () => {
+        expect(assertionExecutedCount).toBe(incomingActions.length);
+        done();
+      },
+    );
+  });
 });
 
 test('redirectorEpic', done => {

@@ -20,10 +20,13 @@ describe('PageViewPostsMap component', () => {
         saveMapZoomAndCenter: jest.fn(),
       },
       placePosts: jest.fn(),
+      updateZoomAndCenter: jest.fn(),
     };
     // manual implementation is required for the ES6 classes that uses arrow function.
     // https://facebook.github.io/jest/docs/en/es6-class-mocks.html
     MapsShowAllPosition.prototype.placePosts = mock.placePosts;
+    MapsShowAllPosition.prototype.updateZoomAndCenter =
+      mock.updateZoomAndCenter;
 
     wrapper = shallow(
       <PageViewPostsMap
@@ -58,12 +61,27 @@ describe('PageViewPostsMap component', () => {
     expect(mock.placePosts).toHaveBeenCalledTimes(1);
   });
 
-  test('re-render posts when posts are updated', () => {
+  test('update posts if store is updated', () => {
     wrapper.instance().mapRef = { current: {} };
     wrapper.instance().componentDidMount();
 
     expect(mock.placePosts).toHaveBeenCalledTimes(1);
     wrapper.setProps({ posts: DUMMY_POSTS_UPDATED });
     expect(mock.placePosts).toHaveBeenCalledTimes(2);
+  });
+
+  test('update zoom and center if store is updated', () => {
+    wrapper.instance().mapRef = { current: {} };
+    wrapper.instance().componentDidMount();
+
+    const updated = {
+      mapLatUpdated: 1,
+      mapLngUpdated: 2,
+      mapZoomLevel: 3,
+    };
+
+    expect(mock.updateZoomAndCenter).toHaveBeenCalledTimes(0);
+    wrapper.setProps({ app: { ...DUMMY_APP_STORE, ...updated } });
+    expect(mock.updateZoomAndCenter).toHaveBeenCalledTimes(1);
   });
 });

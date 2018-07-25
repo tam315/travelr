@@ -260,6 +260,34 @@ export const stopProgressServiceEpic = (action$: ActionsObservable<any>) =>
     }),
   );
 
+export const mapZoomAndCenterUpdaterEpic = (
+  action$: ActionsObservable<any>,
+  state$: StateObservable<Store>,
+) =>
+  action$.pipe(
+    ofType(types.CHANGE_FILTER_CRITERION_SUCCESS),
+    flatMap(async () => {
+      const { placeName, radius } = state$.value.filter.criterion;
+
+      if (!placeName) return { type: 'NOOP' };
+
+      const { lat, lng } = await getPositionFromPlaceName(placeName);
+
+      if (!lat || !lng || !radius) return { type: 'NOOP' };
+
+      return {
+        type: types.UPDATE_MAP_ZOOM_AND_CENTER_SUCCESS,
+        payload: { lat, lng, radius },
+      };
+    }),
+    catchError(err =>
+      of({
+        type: types.UPDATE_MAP_ZOOM_AND_CENTER_FAIL,
+        payload: err,
+      }),
+    ),
+  );
+
 export const redirectorEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
     ofType(
@@ -404,6 +432,7 @@ export default combineEpics(
   fetchPostEpic,
   startProgressServiceEpic,
   stopProgressServiceEpic,
+  mapZoomAndCenterUpdaterEpic,
   redirectorEpic,
   snackbarEpic,
 );

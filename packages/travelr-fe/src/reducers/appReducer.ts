@@ -7,6 +7,9 @@ export const INITIAL_STATE: AppStore = {
   mapLat: 38.1452368786617,
   mapLng: 137.36165303813937,
   mapZoomLevel: 4,
+  mapLatUpdated: null,
+  mapLngUpdated: null,
+  mapZoomLevelUpdated: null,
   dialogIsOpen: false,
   dialogTitle: '',
   dialogContent: '',
@@ -66,6 +69,22 @@ export default (state: AppStore = INITIAL_STATE, action: any): AppStore => {
       return {
         ...state,
         dialogIsOpen: false,
+      };
+    }
+    case actionTypes.UPDATE_MAP_ZOOM_AND_CENTER_SUCCESS: {
+      const { lat, lng, radius } = action.payload;
+      // prettier-ignore
+      const zoomLevel =
+        +radius < 10 ? 11 :
+        +radius < 20 ? 10 :
+        +radius < 50 ? 9 :
+        +radius < 100 ? 8 :
+        +radius < 200 ? 7 : 6;
+      return {
+        ...state,
+        mapLatUpdated: lat,
+        mapLngUpdated: lng,
+        mapZoomLevelUpdated: zoomLevel,
       };
     }
     default:
