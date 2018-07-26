@@ -411,11 +411,6 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
         return errCodeAndMessagePairs[err.code] || '不明なエラーが発生しました';
       }
 
-      // display more specific error messages if 'err.message' is provided
-      if (err && err.message) {
-        return errCodeAndMessagePairs[err.code] || err.message;
-      }
-
       // otherwise show generic message
       return actionAndMessagePairs[action.type];
     }),
