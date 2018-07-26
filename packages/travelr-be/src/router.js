@@ -5,6 +5,9 @@ const PostsController = require('./controllers/posts');
 const { checkToken } = AuthenticationController;
 
 module.exports = app => {
+  // readiness status
+  app.get('/readiness', (req, res) => res.send('ok'));
+
   // users
   app.post('/users', checkToken, UsersController.getOrCreateUser);
   app.get('/users/token', checkToken, UsersController.getUserByToken);

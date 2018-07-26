@@ -23,7 +23,7 @@ spec:
     spec: # pod spec
       containers:
       - name: travelr-be
-        image: asia.gcr.io/kubernetes-206923/travelr-be:1.0.1
+        image: asia.gcr.io/kubernetes-206923/travelr-be:1.0.2
         resources:
           requests:
             cpu: 0
@@ -47,6 +47,6 @@ spec:
           exec:
             command:
             - curl
-            - localhost/posts/stats
+            - localhost/readiness
           initialDelaySeconds: 5
           timeoutSeconds: 3
