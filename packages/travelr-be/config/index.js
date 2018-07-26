@@ -1,4 +1,4 @@
-module.exports = {
+let config = {
   database: {
     development: {
       host: 'localhost',
@@ -17,3 +17,20 @@ module.exports = {
     privateKey: JSON.parse(process.env.FIREBASE_PRIVATE_KEY),
   },
 };
+
+if (process.env.NODE_ENV === 'production') {
+  config = {
+    ...config,
+    database: {
+      development: {
+        host: 'postgres-svc',
+        user: 'travelr',
+        password: process.env.POSTGRES_TRAVELR_PASS,
+        database: 'travelr',
+      },
+      production: {},
+    },
+  };
+}
+
+module.exports = config;
