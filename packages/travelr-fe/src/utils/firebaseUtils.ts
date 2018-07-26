@@ -1,6 +1,7 @@
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/storage';
+// @ts-ignore
 import config from '../config';
 import { AuthSeed, UserStore } from '../config/types';
 

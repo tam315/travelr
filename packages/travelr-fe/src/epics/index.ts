@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { catchError, flatMap, map, mapTo, switchMap } from 'rxjs/operators';
 import wretch from 'wretch';
 import types from '../actions/types';
+// @ts-ignore
 import config from '../config';
 import { Store } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';

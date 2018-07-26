@@ -2,6 +2,7 @@ import * as firebase from 'firebase/app';
 import { Dispatch } from 'redux';
 import uuid from 'uuid/v4';
 import wretch from 'wretch';
+// @ts-ignore
 import config from '../config';
 import {
   AuthSeed,

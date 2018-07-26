@@ -19,6 +19,7 @@ import PageViewPosts from '../components/PageViewPosts';
 import ProgressService from '../components/ProgressService';
 import SnackbarService from '../components/SnackbarService';
 import PageAbout from '../components/PageAbout';
+// @ts-ignore
 import config from '../config';
 import { AppStore, UserStore } from '../config/types';
 import { loadJS } from '../utils/general';
