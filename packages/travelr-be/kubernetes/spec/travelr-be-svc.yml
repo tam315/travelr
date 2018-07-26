@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: travelr-be-svc # この名前でpodから名前解決できる
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: travelr-be
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: travelr-be-dpl
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels: # labels to select/identify the deployment
+        app: travelr-be
+    spec: # pod spec
+      containers:
+      - name: travelr-be
+        image: asia.gcr.io/kubernetes-206923/travelr-be:1.0.1
+        resources:
+          requests:
+            cpu: 0
+            memory: 0
+        ports:
+        - containerPort: 80
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: POSTGRES_TRAVELR_PASS
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: postgres_travelr_pass
+        - name: FIREBASE_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: firebase_private_key
+        readinessProbe:
+          exec:
+            command:
+            - curl
+            - localhost/posts/stats
+          initialDelaySeconds: 5
+          timeoutSeconds: 3

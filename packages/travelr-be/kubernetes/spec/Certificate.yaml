@@ -17,3 +17,23 @@ spec:
         ingress: my-ingress # 使用しているIngressの名前
       domains:
       - pgadmin4.yuuniworks.com # ドメイン
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: travelr-be-tls # TLSにつける名前
+  namespace: default
+spec:
+  secretName: travelr-be-tls # TLSにつける名前
+  issuerRef:
+    name: letsencrypt-prod # 作成したClusterIssuerの名前
+    kind: ClusterIssuer
+  commonName: travelr-be.yuuniworks.com # ドメイン
+  dnsNames:
+  - travelr-be.yuuniworks.com # ドメイン
+  acme:
+    config:
+    - http01:
+        ingress: my-ingress # 使用しているIngressの名前
+      domains:
+      - travelr-be.yuuniworks.com # ドメイン
