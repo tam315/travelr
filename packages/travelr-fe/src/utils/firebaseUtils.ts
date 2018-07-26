@@ -65,7 +65,7 @@ const getImageUrl = (filename: string, option: '1024w' | '192w' | '96w') => {
   const folder = `${option}%2F`;
 
   // tslint:disable-next-line:max-line-length
-  return `https://firebasestorage.googleapis.com/v0/b/travelr-a75c4.appspot.com/o/${folder}${filename}?alt=media`;
+  return `https://firebasestorage.googleapis.com/v0/b/travelr-images/o/${folder}${filename}?alt=media`;
 };
 
 export default {

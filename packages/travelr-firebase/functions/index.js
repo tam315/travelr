@@ -72,7 +72,7 @@ function blurOffensiveImages(object) {
     .catch(err => console.error('failed image analyzation: ', err));
 }
 
-exports.onFileChange = functions.storage.object().onFinalize(object => {
+exports.onFileChange = functions.storage.bucket('travelr-images').object().onFinalize(object => {
   const bucketName = object.bucket;
   const fileName = object.name;
 
