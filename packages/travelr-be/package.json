@@ -21,11 +21,11 @@
     "express": "^4.16.3",
     "firebase-admin": "^5.12.1",
     "morgan": "^1.9.0",
-    "nodemon": "^1.17.5",
     "pg-promise": "^8.4.4"
   },
   "devDependencies": {
     "lorem-ipsum": "^1.0.4",
+    "nodemon": "^1.17.5",
     "prompt": "^1.0.0",
     "random-string": "^0.2.0",
     "supertest": "^3.1.0"
