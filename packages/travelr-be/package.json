@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "serve": "nodemon ./src/index.js",
+    "start": "node ./src/index.js",
     "test": "jest -i",
     "dev-initdb": "nodemon src/dev/setupDummyData.js",
     "up": "docker-compose up -d",
