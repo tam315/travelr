@@ -15,7 +15,7 @@ kind: Deployment
 metadata:
   name: travelr-be-dpl
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels: # labels to select/identify the deployment
@@ -23,7 +23,7 @@ spec:
     spec: # pod spec
       containers:
       - name: travelr-be
-        image: asia.gcr.io/kubernetes-206923/travelr-be:1.0.2
+        image: asia.gcr.io/kubernetes-206923/travelr-be:1.0.5
         resources:
           requests:
             cpu: 0
