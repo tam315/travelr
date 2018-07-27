@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "serve": "nodemon ./src/index.js",
+    "start": "node ./src/index.js",
     "test": "jest -i",
     "dev-initdb": "nodemon src/dev/setupDummyData.js",
     "up": "docker-compose up -d",
@@ -15,15 +16,16 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "firebase-admin": "^5.12.1",
     "morgan": "^1.9.0",
-    "nodemon": "^1.17.5",
     "pg-promise": "^8.4.4"
   },
   "devDependencies": {
     "lorem-ipsum": "^1.0.4",
+    "nodemon": "^1.17.5",
     "prompt": "^1.0.0",
     "random-string": "^0.2.0",
     "supertest": "^3.1.0"
