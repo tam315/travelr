@@ -13,7 +13,4 @@ RUN yarn --prod
 COPY src /home/travelr-be/src/
 COPY config /home/travelr-be/config/
 
-# install curl for kubernetes readiness prove
-RUN apk add --no-cache curl
-
 CMD ["yarn","start"]

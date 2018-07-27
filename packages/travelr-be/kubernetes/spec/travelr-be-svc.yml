@@ -44,9 +44,8 @@ spec:
               name: mysecret
               key: firebase_private_key
         readinessProbe:
-          exec:
-            command:
-            - curl
-            - localhost/readiness
+          httpGet:
+            path: /readiness
+            port: 80
           initialDelaySeconds: 5
-          timeoutSeconds: 3
+          timeoutSeconds: 1
