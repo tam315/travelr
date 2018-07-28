@@ -7,20 +7,20 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   tls:
-  - secretName: pgadmin4-tls
+  - secretName: travelr-pgadmin-tls
     hosts:
-    - pgadmin4.yuuniworks.com
-  - secretName: travelr-be-tls
+    - travelr-pgadmin.yuuniworks.com
+  - secretName: travelr-api-tls
     hosts:
-    - travelr-be.yuuniworks.com
+    - travelr-api.yuuniworks.com
   rules:
-  - host: pgadmin4.yuuniworks.com
+  - host: travelr-pgadmin.yuuniworks.com
     http:
       paths:
       - backend:
           serviceName: travelr-pgadmin-svc
           servicePort: 80
-  - host: travelr-be.yuuniworks.com
+  - host: travelr-api.yuuniworks.com
     http:
       paths:
       - backend:

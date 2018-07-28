@@ -1,39 +1,39 @@
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: pgadmin4-tls # TLSにつける名前
+  name: travelr-pgadmin-tls # TLSにつける名前
   namespace: default
 spec:
-  secretName: pgadmin4-tls # TLSにつける名前
+  secretName: travelr-pgadmin-tls # TLSにつける名前
   issuerRef:
     name: letsencrypt-prod # 作成したClusterIssuerの名前
     kind: ClusterIssuer
-  commonName: pgadmin4.yuuniworks.com # ドメイン
+  commonName: travelr-pgadmin.yuuniworks.com # ドメイン
   dnsNames:
-  - pgadmin4.yuuniworks.com # ドメイン
+  - travelr-pgadmin.yuuniworks.com # ドメイン
   acme:
     config:
     - http01:
         ingress: my-ingress # 使用しているIngressの名前
       domains:
-      - pgadmin4.yuuniworks.com # ドメイン
+      - travelr-pgadmin.yuuniworks.com # ドメイン
 ---
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: travelr-be-tls # TLSにつける名前
+  name: travelr-api-tls # TLSにつける名前
   namespace: default
 spec:
-  secretName: travelr-be-tls # TLSにつける名前
+  secretName: travelr-api-tls # TLSにつける名前
   issuerRef:
     name: letsencrypt-prod # 作成したClusterIssuerの名前
     kind: ClusterIssuer
-  commonName: travelr-be.yuuniworks.com # ドメイン
+  commonName: travelr-api.yuuniworks.com # ドメイン
   dnsNames:
-  - travelr-be.yuuniworks.com # ドメイン
+  - travelr-api.yuuniworks.com # ドメイン
   acme:
     config:
     - http01:
         ingress: my-ingress # 使用しているIngressの名前
       domains:
-      - travelr-be.yuuniworks.com # ドメイン
+      - travelr-api.yuuniworks.com # ドメイン
