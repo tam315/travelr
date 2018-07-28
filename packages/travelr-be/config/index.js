@@ -1,12 +1,9 @@
 let config = {
   database: {
-    development: {
-      host: 'localhost',
-      user: 'travelr',
-      password: process.env.TRAVELR_DB_DEV_PASS,
-      database: 'travelr',
-    },
-    production: {},
+    host: 'localhost',
+    user: 'travelr',
+    password: process.env.TRAVELR_DB_DEV_PASS,
+    database: 'travelr',
   },
   SRID: 4326,
   firebaseCredential: {
@@ -22,13 +19,10 @@ if (process.env.NODE_ENV === 'production') {
   config = {
     ...config,
     database: {
-      development: {
-        host: 'postgres-svc',
-        user: 'travelr',
-        password: process.env.POSTGRES_TRAVELR_PASS,
-        database: 'travelr',
-      },
-      production: {},
+      host: 'travelr-postgres-svc',
+      user: 'travelr',
+      password: process.env.POSTGRES_TRAVELR_PASS,
+      database: 'travelr',
     },
   };
 }

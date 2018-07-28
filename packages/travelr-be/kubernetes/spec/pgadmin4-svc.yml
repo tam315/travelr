@@ -1,32 +1,32 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: pgadmin4-svc # この名前でpodから名前解決できる
+  name: travelr-pgadmin-svc # この名前でpodから名前解決できる
 spec:
   type: NodePort
   ports:
   - port: 80
     targetPort: 80
   selector:
-    app: pgadmin4
+    app: travelr-pgadmin
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: pgadmin4-dpl
+  name: travelr-pgadmin-dpl
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: pgadmin4
+        app: travelr-pgadmin
     spec:
       volumes:
-      - name: volume-pgadmin4
+      - name: volume-travelr-pgadmin
         persistentVolumeClaim:
-          claimName: pvc-pgadmin4
+          claimName: pvc-travelr-pgadmin
       containers:
-      - name: pgadmin4
+      - name: travelr-pgadmin
         image: dpage/pgadmin4:3.1
         resources:
           requests:
@@ -41,10 +41,10 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mysecret
-              key: pgadmin4_pass
+              key: travelr_pgadmin4_pass
         volumeMounts:
           - mountPath: "/var/lib/pgadmin"
-            name: volume-pgadmin4
+            name: volume-travelr-pgadmin
         # Ingressのバックエンドとして使うためには必須
         readinessProbe:
           httpGet:
@@ -57,10 +57,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-pgadmin4
+  name: pvc-travelr-pgadmin
 spec:
   storageClassName: ""
-  volumeName: pv-pgadmin4
+  volumeName: pv-travelr-pgadmin
   accessModes:
     - ReadWriteOnce
   resources:
@@ -71,13 +71,15 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-pgadmin4
+  name: pv-travelr-pgadmin
 spec:
   storageClassName: ""
   capacity:
     storage: 10G
   accessModes:
     - ReadWriteOnce
+  # run following command once before use th disk
+  # gcloud compute disks create --size=10GB --zone=asia-northeast1-a --type=pd-standard disk-for-travelr-pgadmin
   gcePersistentDisk:
-    pdName: disk-for-pgadmin4
+    pdName: disk-for-travelr-pgadmin
     fsType: ext4

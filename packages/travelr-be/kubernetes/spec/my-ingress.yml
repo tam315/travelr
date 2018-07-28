@@ -18,11 +18,11 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: pgadmin4-svc
+          serviceName: travelr-pgadmin-svc
           servicePort: 80
   - host: travelr-be.yuuniworks.com
     http:
       paths:
       - backend:
-          serviceName: travelr-be-svc
+          serviceName: travelr-api-svc
           servicePort: 80
