@@ -21,7 +21,7 @@ CREATE TABLE posts
     shoot_date    DATE NOT NULL,
     geom          GEOMETRY(POINT) NOT NULL,
     view_count    INT NOT NULL DEFAULT 0,
-    created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 
 CREATE INDEX posts_user_id_idx ON posts(user_id);
