@@ -41,7 +41,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mysecret
-              key: travelr_pgadmin4_pass
+              key: travelr_pgadmin_pass
         volumeMounts:
           - mountPath: "/var/lib/pgadmin"
             name: volume-travelr-pgadmin
