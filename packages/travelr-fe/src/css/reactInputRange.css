@@ -5,15 +5,15 @@
   border-radius: 100%;
   cursor: pointer;
   display: block;
-  height: 1rem;
+  height: 1.4rem;
   transform: translate(-50%, -65%);
   outline: none;
   position: absolute;
   transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-  width: 1rem;
+  width: 1.4rem;
 }
 .input-range__slider:active {
-  transform: translate(-50%, -65%) scale(1.5);
+  transform: translate(-50%, -65%) scale(1.2);
   transform-origin: center;
 }
 .input-range__slider:focus {
