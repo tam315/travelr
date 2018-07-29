@@ -23,7 +23,7 @@ spec:
     spec: # pod spec
       containers:
       - name: travelr-api
-        image: asia.gcr.io/kubernetes-206923/travelr-api:1.0.5
+        image: asia.gcr.io/kubernetes-206923/travelr-api:1.0.6
         resources:
           requests:
             cpu: 0
