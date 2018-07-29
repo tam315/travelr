@@ -10,7 +10,7 @@ const base = {
 };
 
 const prod = {
-  apiUrl: 'http://some-fancy-api:8888/',
+  apiUrl: 'https://travelr-api.yuuniworks.com/',
 };
 
 // use process.env.NODE_ENV to access `process` variable
