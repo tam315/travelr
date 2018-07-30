@@ -15,6 +15,9 @@ export const setGoogleMapsApiMock = () => {
         setPosition: jest.fn(),
       })),
       InfoWindow: jest.fn(),
+      ControlPosition: {
+        RIGHT_CENTER: 'RIGHT_CENTER',
+      },
     },
   };
 };

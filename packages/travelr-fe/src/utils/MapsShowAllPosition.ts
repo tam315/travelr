@@ -59,7 +59,9 @@ class MapsShowAllPosition {
     // create map
     this.map = new google.maps.Map(mapRef, {
       ...zoomAndCenter,
-      zoomControl: false,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
       streetViewControl: false,
       // enable all touch gestures
       gestureHandling: 'greedy',
