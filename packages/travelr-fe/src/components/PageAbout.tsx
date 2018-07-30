@@ -2,7 +2,7 @@ import { Typography, Paper } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 // @ts-ignore
-import TermsOfService from '../config/termsOfService.md';
+import termsOfServiceHtml from '../config/termsOfService.md';
 
 const styles = theme => ({
   root: {
@@ -60,7 +60,7 @@ const PageAbout = props => {
       </Typography>
       <Paper>
         <div
-          dangerouslySetInnerHTML={{ __html: TermsOfService }}
+          dangerouslySetInnerHTML={{ __html: termsOfServiceHtml }}
           className={classes.paper}
         />
       </Paper>
