@@ -55,6 +55,8 @@ class MapsPickPosition {
       streetViewControl: false,
       mapTypeControl: false,
       zoomControl: true,
+      // enable all touch gestures
+      gestureHandling: 'greedy',
     });
 
     // create marker

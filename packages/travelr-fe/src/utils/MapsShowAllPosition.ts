@@ -63,6 +63,8 @@ class MapsShowAllPosition {
       ...zoomAndCenter,
       zoomControl: false,
       streetViewControl: false,
+      // enable all touch gestures
+      gestureHandling: 'greedy',
     });
 
     // save zoomlevel and center position continuously
