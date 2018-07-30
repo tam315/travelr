@@ -174,7 +174,11 @@ export class PageViewPost extends React.Component<Props> {
           <ReactCompareImage
             leftImage={firebaseUtils.getImageUrl(oldImageUrl, '1024w')}
             rightImage={firebaseUtils.getImageUrl(newImageUrl, '1024w')}
-            skeleton={<div className={classes.skeleton}>loading...</div>}
+            skeleton={
+              <div className={classes.skeleton}>
+                <Typography>loading...</Typography>
+              </div>
+            }
             autoReloadSpan={3000}
             autoReloadLimit={30}
             hover
