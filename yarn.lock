@@ -1016,6 +1016,10 @@
     through2 "^2.0.0"
     xdg-basedir "^3.0.0"
 
+"@google/markerclustererplus@^2.1.10":
+  version "2.1.10"
+  resolved "https://registry.yarnpkg.com/@google/markerclustererplus/-/markerclustererplus-2.1.10.tgz#5e99b0310ae7bc830100d173e0337cc0e54fc385"
+
 "@material-ui/core@^1.2.2":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-1.4.0.tgz#e535fef84576b096c46e1fb7d6c4c61895155fd3"

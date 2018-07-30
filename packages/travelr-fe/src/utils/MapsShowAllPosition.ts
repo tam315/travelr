@@ -1,7 +1,5 @@
-import { Post, LatLng, MapZoomAndCenter } from '../config/types';
-import firebaseUtils from '../utils/firebaseUtils';
-
-declare var MarkerClusterer: any;
+import MarkerClusterer from '@google/markerclustererplus';
+import { MapZoomAndCenter, Post } from '../config/types';
 
 class MapsShowAllPosition {
   isApiAndMapReady: boolean = false; // whether API and a map instance is ready

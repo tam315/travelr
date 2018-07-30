@@ -17,11 +17,6 @@ export const setGoogleMapsApiMock = () => {
       InfoWindow: jest.fn(),
     },
   };
-  // @ts-ignore
-  MarkerClusterer = jest.fn().mockImplementation(() => ({
-    addListener: jest.fn(),
-    clearMarkers: jest.fn(),
-  }));
 };
 
 export const deleteGoogleMapsApiMock = () => {

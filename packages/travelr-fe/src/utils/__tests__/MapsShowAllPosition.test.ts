@@ -1,6 +1,9 @@
 import { DUMMY_POSTS, DUMMY_ZOOM_AND_CENTER } from '../../config/dummies';
 import MapsShowAllPosition from '../MapsShowAllPosition';
 import { deleteGoogleMapsApiMock, setGoogleMapsApiMock } from '../testHelper';
+import MarkerClusterer from '@google/markerclustererplus';
+
+jest.mock('@google/markerclustererplus');
 
 const DUMMY_POSTS_ORIGINAL = DUMMY_POSTS.slice(0, -2);
 const DUMMY_POSTS_UPDATED = DUMMY_POSTS.slice(-2, DUMMY_POSTS.length);
@@ -26,6 +29,11 @@ describe('MapsShowAllPosition', () => {
       '</div>';
 
     mapRef = document.getElementById('maps');
+
+    MarkerClusterer.mockImplementation(() => ({
+      addListener: jest.fn(),
+      clearMarkers: jest.fn(),
+    }));
   });
 
   afterEach(() => {

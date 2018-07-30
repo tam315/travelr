@@ -6,7 +6,6 @@ module.exports = {
   },
   globals: {
     google: true,
-    MarkerClusterer: true,
   },
   // console.log will not show without these line
   verbose: false,
