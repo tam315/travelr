@@ -13,10 +13,7 @@
     "@google-cloud/vision": "^0.20.0",
     "child-process-promise": "^2.2.1",
     "firebase-admin": "~5.12.1",
-    "firebase-functions": "^2.0.2"
+    "firebase-functions": "^1.0.3"
   },
-  "private": true,
-  "engines": {
-    "node": "8"
-  }
+  "private": true
 }
