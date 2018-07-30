@@ -60,6 +60,8 @@ globals:
   navigator:
   alert:
   confirm:
+  workbox:
+  importScripts:
 
 plugins:
   - flowtype

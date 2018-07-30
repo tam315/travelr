@@ -72,6 +72,13 @@ export class App extends React.Component<Props> {
     });
 
     initAuth();
+
+    // add service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
   };
 
   // these lines are inevitable.
