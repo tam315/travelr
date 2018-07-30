@@ -65,6 +65,8 @@ class MapsShowAllPosition {
       streetViewControl: false,
       // enable all touch gestures
       gestureHandling: 'greedy',
+      // click listener doesn't work with fullscreen
+      fullscreenControl: false,
     });
 
     // save zoomlevel and center position continuously
