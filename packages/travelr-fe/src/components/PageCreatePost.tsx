@@ -178,7 +178,6 @@ export class PageCreatePost extends React.Component<Props, State> {
             ファイルを選択
             <input
               ref={this.oldImage}
-              capture="camera"
               style={{ display: 'none' }}
               type="file"
               accept="image/*"
@@ -194,7 +193,6 @@ export class PageCreatePost extends React.Component<Props, State> {
             ファイルを選択
             <input
               ref={this.newImage}
-              capture="camera"
               style={{ display: 'none' }}
               type="file"
               accept="image/*"
