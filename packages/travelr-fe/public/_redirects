@@ -1,0 +1,2 @@
+# tell netlify to redirect all trafic to the root path
+/* / 200
