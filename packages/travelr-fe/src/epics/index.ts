@@ -370,6 +370,7 @@ export const snackbarEpic = (action$: ActionsObservable<any>) => {
 
     [types.FETCH_POST_FAIL]: '投稿の取得に失敗しました',
 
+    [types.CREATE_POST]: '画像をアップロード中です。しばらくお待ち下さい。',
     [types.CREATE_POST_SUCCESS]: '投稿を作成しました。画像の生成に15秒程度かかります。',
     [types.CREATE_POST_FAIL]: '投稿の作成に失敗しました',
 
