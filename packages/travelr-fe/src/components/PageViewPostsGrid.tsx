@@ -22,6 +22,7 @@ const styles = theme => ({
   },
   gridItem: {
     position: 'relative',
+    background: '#eeeeee',
     '& img': {
       height: '100%',
       objectFit: 'cover',
