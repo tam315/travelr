@@ -89,6 +89,8 @@ export const fetchAllPostsEpic = (
       types.FETCH_ALL_POSTS,
       types.CHANGE_FILTER_CRITERION_SUCCESS,
       types.CLEAR_FILTER_CRITERION_SUCCESS,
+      types.CREATE_POST_SUCCESS,
+      types.EDIT_POST_SUCCESS,
       types.DELETE_POST_SUCCESS,
       types.DELETE_POSTS_SUCCESS,
     ),
