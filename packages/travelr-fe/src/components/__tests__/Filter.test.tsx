@@ -116,15 +116,6 @@ describe('Filter component', () => {
     );
   });
 
-  test("only accepsts numbers for 'radius'", () => {
-    // simulate user input
-    wrapper.find({ dataenzyme: 'radius' }).simulate('change', {
-      target: { value: 'ABCあいう５０' },
-    });
-
-    expect(wrapper.state('criterion').radius).toEqual('50');
-  });
-
   test('onClose props is invoked when close button clicked', () => {
     wrapper.find({ dataenzyme: 'close-button' }).simulate('click');
 
