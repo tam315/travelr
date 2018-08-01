@@ -205,7 +205,7 @@ export const DUMMY_POST_TO_EDIT: PostToEdit = {
 
 export const DUMMY_APP_STORE: AppStore = {
   snackbarQueue: [],
-  showProgress: false,
+  tasksInProgress: new Set(),
   mapLat: 0,
   mapLng: 0,
   mapZoomLevel: 0,

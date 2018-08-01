@@ -3,7 +3,7 @@ import { AppStore, MapZoomAndCenter } from '../config/types';
 
 export const INITIAL_STATE: AppStore = {
   snackbarQueue: [],
-  showProgress: true,
+  tasksInProgress: new Set(),
   mapLat: 38.1452368786617,
   mapLng: 137.36165303813937,
   mapZoomLevel: 4,
@@ -33,15 +33,19 @@ export default (state: AppStore = INITIAL_STATE, action: any): AppStore => {
       return newState;
     }
     case actionTypes.START_PROGRESS: {
+      const newSet = new Set(state.tasksInProgress);
+      newSet.add(action.payload);
       return {
         ...state,
-        showProgress: true,
+        tasksInProgress: newSet,
       };
     }
     case actionTypes.FINISH_PROGRESS: {
+      const newSet = new Set(state.tasksInProgress);
+      newSet.delete(action.payload);
       return {
         ...state,
-        showProgress: false,
+        tasksInProgress: newSet,
       };
     }
     case actionTypes.SAVE_MAP_ZOOM_AND_CENTER: {

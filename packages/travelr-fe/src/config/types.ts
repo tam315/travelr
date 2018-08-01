@@ -7,7 +7,9 @@ export type Store = {
 
 export type AppStore = {
   snackbarQueue: string[];
-  showProgress: boolean;
+  // progress bar is displayed if 'tasksInProgress' has a size.
+  // 'tasksInProgress' will contains action.type or 'fetch'.
+  tasksInProgress: Set<string>;
   mapLat: number;
   mapLng: number;
   mapZoomLevel: number;

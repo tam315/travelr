@@ -485,11 +485,13 @@ actions.addSnackbarQueue = (message: string) => ({
   payload: message,
 });
 
-actions.startProgress = () => ({
+actions.startProgress = (payload: string) => ({
+  payload,
   type: actionTypes.START_PROGRESS,
 });
 
-actions.finishProgress = () => ({
+actions.finishProgress = (payload: string) => ({
+  payload,
   type: actionTypes.FINISH_PROGRESS,
 });
 

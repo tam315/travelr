@@ -4,7 +4,7 @@ import {
   ofType,
   StateObservable,
 } from 'redux-observable';
-import { of } from 'rxjs';
+import { merge, of } from 'rxjs';
 import { catchError, flatMap, map, mapTo, switchMap } from 'rxjs/operators';
 import wretch from 'wretch';
 import types from '../actions/types';
@@ -232,37 +232,84 @@ export const startProgressServiceEpic = (action$: ActionsObservable<any>) =>
       types.CREATE_POST,
       types.EDIT_POST,
     ),
-    mapTo({
+    map(action => ({
       type: types.START_PROGRESS,
-    }),
+      payload: action.type,
+    })),
   );
 
 export const stopProgressServiceEpic = (action$: ActionsObservable<any>) =>
-  action$.pipe(
-    ofType(
-      types.INIT_AUTH_USER_HAS_CREDENTIAL,
-      types.INIT_AUTH_USER_HAS_NO_CREDENTIAL,
-      types.INIT_AUTH_FAIL,
-      types.GET_OR_CREATE_USER_INFO_SUCCESS,
-      types.GET_OR_CREATE_USER_INFO_FAIL,
-      types.SIGN_IN_WITH_EMAIL_SUCCESS,
-      types.SIGN_IN_WITH_EMAIL_FAIL,
-      types.SIGN_UP_WITH_EMAIL_SUCCESS,
-      types.SIGN_UP_WITH_EMAIL_FAIL,
-      types.SEND_EMAIL_VERIFICATION_SUCCESS,
-      types.SEND_EMAIL_VERIFICATION_FAIL,
-      types.SEND_PASSWORD_RESET_EMAIL_SUCCESS,
-      types.SEND_PASSWORD_RESET_EMAIL_FAIL,
-      types.FETCH_ALL_POSTS_SUCCESS,
-      types.FETCH_ALL_POSTS_FAIL,
-      types.CREATE_POST_SUCCESS,
-      types.CREATE_POST_FAIL,
-      types.EDIT_POST_SUCCESS,
-      types.EDIT_POST_FAIL,
+  // prettier-ignore
+  merge(
+    action$.pipe(
+      ofType(
+        types.INIT_AUTH_USER_HAS_CREDENTIAL,
+        types.INIT_AUTH_USER_HAS_NO_CREDENTIAL,
+        types.INIT_AUTH_FAIL,
+      ),
+      mapTo(types.INIT_AUTH),
     ),
-    mapTo({
+    action$.pipe(
+      ofType(
+        types.GET_OR_CREATE_USER_INFO_SUCCESS,
+        types.GET_OR_CREATE_USER_INFO_FAIL,
+      ),
+      mapTo(types.GET_OR_CREATE_USER_INFO),
+    ),
+    action$.pipe(
+      ofType(
+        types.SIGN_IN_WITH_EMAIL_SUCCESS,
+        types.SIGN_IN_WITH_EMAIL_FAIL,
+      ),
+      mapTo(types.SIGN_IN_WITH_EMAIL),
+    ),
+    action$.pipe(
+      ofType(
+        types.SIGN_UP_WITH_EMAIL_SUCCESS,
+        types.SIGN_UP_WITH_EMAIL_FAIL,
+      ),
+      mapTo(types.SIGN_UP_WITH_EMAIL),
+    ),
+    action$.pipe(
+      ofType(
+        types.SEND_EMAIL_VERIFICATION_SUCCESS,
+        types.SEND_EMAIL_VERIFICATION_FAIL,
+      ),
+      mapTo(types.SEND_EMAIL_VERIFICATION),
+    ),
+    action$.pipe(
+      ofType(
+        types.SEND_PASSWORD_RESET_EMAIL_SUCCESS,
+        types.SEND_PASSWORD_RESET_EMAIL_FAIL,
+      ),
+      mapTo(types.SEND_PASSWORD_RESET_EMAIL),
+    ),
+    action$.pipe(
+      ofType(
+        types.FETCH_ALL_POSTS_SUCCESS,
+        types.FETCH_ALL_POSTS_FAIL,
+      ),
+      mapTo(types.FETCH_ALL_POSTS),
+    ),
+    action$.pipe(
+      ofType(
+        types.CREATE_POST_SUCCESS,
+        types.CREATE_POST_FAIL,
+      ),
+      mapTo(types.CREATE_POST),
+    ),
+    action$.pipe(
+      ofType(
+        types.EDIT_POST_SUCCESS,
+        types.EDIT_POST_FAIL,
+      ),
+      mapTo(types.EDIT_POST),
+    ),
+  ).pipe(
+    map(payload => ({
+      payload,
       type: types.FINISH_PROGRESS,
-    }),
+    })),
   );
 
 export const mapZoomAndCenterUpdaterEpic = (

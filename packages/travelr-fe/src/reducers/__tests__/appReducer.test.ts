@@ -43,37 +43,31 @@ describe('appReducer', () => {
   test('START_PROGRESS', () => {
     const state = {
       ...INITIAL_STATE,
-      showProgress: false,
+      tasksInProgress: new Set(),
     };
 
     const action = {
       type: types.START_PROGRESS,
+      payload: 'some-action-name',
     };
 
-    const expected = {
-      ...INITIAL_STATE,
-      showProgress: true,
-    };
-
-    expect(appReducer(state, action)).toEqual(expected);
+    const result = appReducer(state, action);
+    expect(result.tasksInProgress.has('some-action-name')).toBeTruthy();
   });
 
   test('FINISH_PROGRESS', () => {
     const state = {
       ...INITIAL_STATE,
-      showProgress: true,
+      tasksInProgress: new Set('some-action-name'),
     };
 
     const action = {
       type: types.FINISH_PROGRESS,
+      payload: 'some-action-name',
     };
 
-    const expected = {
-      ...INITIAL_STATE,
-      showProgress: false,
-    };
-
-    expect(appReducer(state, action)).toEqual(expected);
+    const result = appReducer(state, action);
+    expect(result.tasksInProgress.has('some-action-name')).toBeFalsy();
   });
 
   test('SAVE_MAP_ZOOM_AND_CENTER', () => {

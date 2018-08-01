@@ -499,9 +499,8 @@ test('startProgressServiceEpic', done => {
   // @ts-ignore
   startProgressServiceEpic(of(...incomingActions)).subscribe(
     outcomingAction => {
-      expect(outcomingAction).toEqual({
-        type: actionTypes.START_PROGRESS,
-      });
+      expect(outcomingAction.type).toBe(actionTypes.START_PROGRESS);
+      expect(typeof outcomingAction.payload).toBe('string');
       assertionExecutedCount += 1;
     },
     null,
@@ -538,9 +537,8 @@ test('stopProgressServiceEpic', done => {
   // @ts-ignore
   stopProgressServiceEpic(of(...incomingActions)).subscribe(
     outcomingAction => {
-      expect(outcomingAction).toEqual({
-        type: actionTypes.FINISH_PROGRESS,
-      });
+      expect(outcomingAction.type).toBe(actionTypes.FINISH_PROGRESS);
+      expect(typeof outcomingAction.payload).toBe('string');
       assertionExecutedCount += 1;
     },
     null,

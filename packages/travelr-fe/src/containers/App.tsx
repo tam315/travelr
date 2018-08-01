@@ -27,8 +27,8 @@ import history from '../utils/history';
 
 type Props = {
   initAuth: () => any;
-  startProgress: () => void;
-  finishProgress: () => void;
+  startProgress: (payload: string) => void;
+  finishProgress: (payload: string) => void;
   app: AppStore;
   user: UserStore;
 };
@@ -51,22 +51,22 @@ export class App extends React.Component<Props> {
     // display progress bar for every fetch request
     fetchIntercept.register({
       request: (url, config) => {
-        startProgress();
+        startProgress('fetch');
         return [url, config];
       },
 
       requestError: error => {
-        finishProgress();
+        finishProgress('fetch');
         return Promise.reject(error);
       },
 
       response: response => {
-        finishProgress();
+        finishProgress('fetch');
         return response;
       },
 
       responseError: error => {
-        finishProgress();
+        finishProgress('fetch');
         return Promise.reject(error);
       },
     });
