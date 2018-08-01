@@ -8361,8 +8361,8 @@ react-bottom-scroll-listener@^1.3.0:
     prop-types "^15.6.0"
 
 react-compare-image@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/react-compare-image/-/react-compare-image-0.6.1.tgz#36db83b68b352aa3854c54081c92c55931193efd"
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/react-compare-image/-/react-compare-image-0.6.2.tgz#cd59fad6aee69e91ce284e2dce43b6015d55952f"
   dependencies:
     css-element-queries "^1.0.2"
 
