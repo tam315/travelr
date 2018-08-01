@@ -6,6 +6,7 @@
     "quotemark": false,
     "semicolon": false,
     "ter-arrow-parens": false,
-    "variable-name": false
+    "variable-name": false,
+    "no-boolean-literal-compare": true
   }
 }
