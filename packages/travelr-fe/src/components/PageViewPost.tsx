@@ -81,9 +81,7 @@ export class PageViewPost extends React.Component<Props> {
 
     const { match } = this.props;
 
-    if (match.params.postId) {
-      this.postId = Number(match.params.postId);
-    }
+    this.postId = Number(match.params.postId);
 
     // div element refs for google maps
     this.mapRef = React.createRef();
