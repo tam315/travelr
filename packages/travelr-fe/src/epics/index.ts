@@ -353,7 +353,7 @@ export const redirectorEpic = (action$: ActionsObservable<any>) =>
     map(action => {
       switch (action.type) {
         case types.GET_OR_CREATE_USER_INFO_SUCCESS:
-          if (history.location.pathname === '/auth') history.push('/all-map');
+          if (history.location.pathname === '/auth') history.push('/all-grid');
           break;
         case types.DELETE_USER_SUCCESS:
           history.push('/');
