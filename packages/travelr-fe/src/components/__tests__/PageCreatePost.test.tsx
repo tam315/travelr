@@ -4,9 +4,11 @@ import * as React from 'react';
 import { DUMMY_USER_STORE } from '../../config/dummies';
 import MapsPickPosition from '../../utils/MapsPickPosition';
 import { PageCreatePost } from '../PageCreatePost';
+import { getPositionFromPlaceName } from '../../utils/mapsUtils';
 
 jest.mock('../../utils/firebaseUtils');
 jest.mock('../../utils/MapsPickPosition');
+jest.mock('../../utils/mapsUtils');
 
 const DUMMY_STATE = {
   oldImageFilePath: 'dummy',
@@ -80,15 +82,11 @@ describe('PageCreatePost component', () => {
 
   test('set the state and the map position if getting position succeed', async () => {
     const DUMMY_GEOM = {
-      coords: {
-        longitude: 135.0,
-        latitude: 35.0,
-      },
+      lat: 35.0,
+      lng: 135.0,
     };
     // @ts-ignore
-    global.navigator.geolocation = {
-      getCurrentPosition: jest.fn(callback => callback(DUMMY_GEOM)),
-    };
+    getPositionFromPlaceName.mockResolvedValue(DUMMY_GEOM);
 
     const instance = wrapper.instance();
 
@@ -97,17 +95,24 @@ describe('PageCreatePost component', () => {
       setPosition: jest.fn(),
     };
 
+    // provide dummy placeName as
+    // getLatLngFromPlaceName() requires state.placeName
+    wrapper.find({ dataenzyme: 'placeName' }).simulate('change', {
+      target: { value: 'dummy place name' },
+      preventDefault: () => {},
+    });
+
     // simulate the success of getting position
-    instance.getCurrentPosition();
+    await instance.getLatLngFromPlaceName();
 
     // should set the state
-    expect(wrapper.state('lng')).toEqual(DUMMY_GEOM.coords.longitude);
-    expect(wrapper.state('lat')).toEqual(DUMMY_GEOM.coords.latitude);
+    expect(wrapper.state('lng')).toEqual(DUMMY_GEOM.lng);
+    expect(wrapper.state('lat')).toEqual(DUMMY_GEOM.lat);
 
     // should set the position of the map
     expect(instance.mapsPickPosition.setPosition).toBeCalledWith({
-      lng: DUMMY_GEOM.coords.longitude,
-      lat: DUMMY_GEOM.coords.latitude,
+      lng: DUMMY_GEOM.lng,
+      lat: DUMMY_GEOM.lat,
     });
   });
 

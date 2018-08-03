@@ -10,6 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { LatLng, NewPost, UserStore } from '../config/types';
 import MapsPickPosition from '../utils/MapsPickPosition';
+import { getPositionFromPlaceName } from '../utils/mapsUtils';
 
 const styles = theme => ({
   root: {
@@ -21,6 +22,14 @@ const styles = theme => ({
     padding: theme.spacing.unit * 2,
     '& legend': {
       marginBottom: theme.spacing.unit * 1,
+    },
+  },
+  searchContainer: {
+    display: 'flex',
+    marginBottom: theme.spacing.unit * 2,
+    '& > :first-child': {
+      flex: '1 0 0',
+      marginRight: theme.spacing.unit * 1,
     },
   },
 });
@@ -39,6 +48,7 @@ type State = {
   shootDate: string;
   lng: number;
   lat: number;
+  placeName: string;
 };
 
 export class PageCreatePost extends React.Component<Props, State> {
@@ -49,6 +59,7 @@ export class PageCreatePost extends React.Component<Props, State> {
     shootDate: '',
     lng: null,
     lat: null,
+    placeName: '',
   };
 
   oldImage: React.RefObject<HTMLInputElement>;
@@ -77,28 +88,17 @@ export class PageCreatePost extends React.Component<Props, State> {
     }
   };
 
-  getCurrentPosition = () => {
+  getLatLngFromPlaceName = async () => {
     const { addSnackbarQueue } = this.props;
+    const { placeName } = this.state;
+    if (!placeName) return;
 
-    if ('geolocation' in navigator) {
-      const onSuccess = geom => {
-        this.mapsPickPosition.setPosition({
-          lng: geom.coords.longitude,
-          lat: geom.coords.latitude,
-        });
-        this.setState({
-          lng: geom.coords.longitude,
-          lat: geom.coords.latitude,
-        });
-      };
-      const onError = () => {
-        addSnackbarQueue(
-          '位置情報を取得できませんでした。GPSの許可設定を確認してください。',
-        );
-      };
-      navigator.geolocation.getCurrentPosition(onSuccess, onError);
-    } else {
-      addSnackbarQueue('gpsが利用できない環境です。');
+    try {
+      const { lat, lng } = await getPositionFromPlaceName(placeName);
+      this.setState({ lat, lng });
+      this.mapsPickPosition.setPosition({ lng, lat });
+    } catch (err) {
+      addSnackbarQueue('住所・建物名から緯度経度を検索できませんでした');
     }
   };
 
@@ -166,6 +166,7 @@ export class PageCreatePost extends React.Component<Props, State> {
       newImageFilePath,
       description,
       shootDate,
+      placeName,
     } = this.state;
 
     return (
@@ -220,6 +221,19 @@ export class PageCreatePost extends React.Component<Props, State> {
         </FormControl>
         <FormControl component="fieldset" required>
           <FormLabel component="legend">撮影場所</FormLabel>
+          <div className={classes.searchContainer}>
+            <Input
+              placeholder="住所・建物名など"
+              multiline
+              value={placeName}
+              onChange={e => this.handleChange(e, 'placeName')}
+              // @ts-ignore
+              dataenzyme="placeName"
+            />
+            <Button variant="contained" onClick={this.getLatLngFromPlaceName}>
+              検索
+            </Button>
+          </div>
           <div
             ref={this.mapRef}
             style={{
@@ -229,13 +243,6 @@ export class PageCreatePost extends React.Component<Props, State> {
               marginBottom: '1rem',
             }}
           />
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={this.getCurrentPosition}
-          >
-            現在地から位置を取得
-          </Button>
         </FormControl>
         <FormControl component="fieldset" required>
           <Button
