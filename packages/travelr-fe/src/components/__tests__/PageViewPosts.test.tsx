@@ -86,7 +86,6 @@ describe('PageViewPosts component', () => {
 
     // button is disables when filter is opened
     wrapper.setState({ isFilterOpen: true });
-    wrapper.update();
     expect(wrapper.find(Button).props().disabled).toBe(true);
   });
 
