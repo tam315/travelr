@@ -7,7 +7,7 @@ import { Post } from '../config/types';
 import firebaseUtils from '../utils/firebaseUtils';
 import StatusBadge from './StatusBadge';
 
-const MAX_WIDTH = 528;
+const MAX_WIDTH = 900;
 
 const styles = theme => ({
   root: {

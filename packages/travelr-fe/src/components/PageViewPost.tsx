@@ -12,18 +12,23 @@ import PageViewPostComments from './PageViewPostComments';
 import StatusBadge from './StatusBadge';
 
 const styles = theme => ({
-  root: {
-    maxWidth: 500,
-    margin: 'auto',
-  },
   imageContainer: {
-    maxWidth: 468,
+    maxWidth: 900,
     margin: 'auto',
     position: 'relative',
+    '@media (min-width:900px)': {
+      marginTop: '2rem',
+      boxShadow:
+        '0px 3px 5px -1px rgba(0, 0, 0, 0.2),' +
+        '0px 6px 10px 0px rgba(0, 0, 0, 0.14),' +
+        '0px 1px 18px 0px rgba(0, 0, 0, 0.12)',
+    },
   },
   container: {
     display: 'grid',
     gridGap: `${theme.spacing.unit * 3}px`,
+    maxWidth: 468,
+    margin: 'auto',
     marginTop: `${theme.spacing.unit * 4}px`,
     paddingRight: theme.spacing.unit * 2,
     paddingLeft: theme.spacing.unit * 2,
@@ -169,7 +174,7 @@ export class PageViewPost extends React.Component<Props> {
     } = currentPost;
 
     return (
-      <div className={classes.root}>
+      <React.Fragment>
         <div className={classes.imageContainer}>
           <ReactCompareImage
             leftImage={firebaseUtils.getImageUrl(oldImageUrl, '1024w')}
@@ -204,7 +209,9 @@ export class PageViewPost extends React.Component<Props> {
 
           <div>
             <Typography variant="body2">{displayName}</Typography>
-            <Typography>{description}</Typography>
+            {description
+              .split('\n')
+              .map(line => <Typography key={Math.random()}>{line}</Typography>)}
           </div>
           <Typography>
             撮影日：{new Date(shootDate).toISOString().substr(0, 10)}
@@ -222,7 +229,7 @@ export class PageViewPost extends React.Component<Props> {
             deleteComment={deleteComment}
           />
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
