@@ -117,11 +117,11 @@ export class PageViewPostsMapDetail extends React.Component<Props, State> {
           <ReactCompareImage
             leftImage={firebaseUtils.getImageUrl(
               posts[currentIndex].oldImageUrl,
-              '192w',
+              '1024w',
             )}
             rightImage={firebaseUtils.getImageUrl(
               posts[currentIndex].newImageUrl,
-              '192w',
+              '1024w',
             )}
             hover
             skeleton={
