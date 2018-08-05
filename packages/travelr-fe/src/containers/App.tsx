@@ -114,6 +114,12 @@ export class App extends React.Component<Props> {
   );
 
   render() {
+    // Judgement if the browser is IE
+    // @ts-ignore
+    if (typeof document !== 'undefined' && document.documentMode) {
+      return <div>このサービスはInternet Explorerに対応しておりません。</div>;
+    }
+
     return (
       <React.Fragment>
         <CssBaseline />
