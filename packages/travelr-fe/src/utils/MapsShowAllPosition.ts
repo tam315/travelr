@@ -135,8 +135,7 @@ class MapsShowAllPosition {
     // a specific js library file is required for markerCluster. see index.html
     this.markerCluster = new MarkerClusterer(this.map, this.markers, {
       zoomOnClick: false,
-      imagePath:
-        'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+      imagePath: '/markers/m',
     });
 
     this.markerCluster.addListener('clusterclick', cluster => {
