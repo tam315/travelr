@@ -18,7 +18,7 @@ services:
       backend: # 'backend'という名前の仮想NWに所属させる
 
   pgadmin4:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:3.2
     container_name: 'some-pgadmin'
     volumes:
       - type: 'volume'
