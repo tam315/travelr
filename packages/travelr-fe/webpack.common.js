@@ -1,3 +1,6 @@
+// eslint-disable-next-line
+const webpack = require('webpack');
+
 module.exports = {
   entry: './src/index.tsx',
   output: {
@@ -34,6 +37,10 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    // to supress build errors related to `lokka-transport-http`
+    new webpack.IgnorePlugin(/\/iconv-loader$/),
+  ],
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },

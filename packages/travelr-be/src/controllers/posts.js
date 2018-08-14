@@ -31,7 +31,16 @@ exports.getPosts = async (req, res) => {
   }
 
   if (display_name) {
-    const criteria = pgPromise.as.format('display_name = $1', display_name);
+    // get userIds from displayName
+    const response = await db.manyOrNone(
+      'SELECT id FROM users WHERE display_name like $1',
+      `%${display_name}%`,
+    );
+    const userIDs = response.map(user => user.id);
+
+    if (userIDs.length === 0) userIDs.push('');
+
+    const criteria = pgPromise.as.format('user_id IN ($1)', userIDs);
     criterions.push(criteria);
   }
 
@@ -248,12 +257,6 @@ exports.getPost = async (req, res) => {
     // get post
     const post = await db.one('SELECT * FROM get_posts WHERE id = $1', postId);
 
-    // get comments
-    const comments = await db.manyOrNone(
-      'SELECT * FROM get_comments WHERE post_id = $1 ORDER BY datetime DESC',
-      postId,
-    );
-
     // get like status if user_id is provided as a query param
     let likeStatus;
     if (user_id) {
@@ -263,15 +266,6 @@ exports.getPost = async (req, res) => {
       );
       likeStatus = !!likes;
     }
-
-    const commentsFormatted = comments.map(comment => ({
-      commentId: comment.id,
-      postId: comment.post_id,
-      userId: comment.user_id,
-      datetime: comment.datetime,
-      comment: comment.comment,
-      displayName: comment.display_name,
-    }));
 
     const response = {
       postId: post.id,
@@ -287,7 +281,6 @@ exports.getPost = async (req, res) => {
       displayName: post.display_name,
       likedCount: +post.liked_count,
       commentsCount: +post.comments_count,
-      comments: commentsFormatted,
     };
 
     if (typeof likeStatus === 'boolean') {
@@ -398,7 +391,7 @@ exports.getComments = async (req, res) => {
 
   try {
     const comments = await db.manyOrNone(
-      'SELECT * FROM get_comments WHERE post_id = $1',
+      'SELECT * FROM comments WHERE post_id = $1',
       postId,
     );
 
@@ -408,7 +401,6 @@ exports.getComments = async (req, res) => {
       userId: comment.user_id,
       datetime: comment.datetime,
       comment: comment.comment,
-      displayName: comment.display_name,
     }));
 
     res.status(200).json(response);

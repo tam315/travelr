@@ -1,4 +1,5 @@
 let config = {
+  apiUrl: 'http://localhost:3090/',
   database: {
     host: 'localhost',
     user: 'travelr',
@@ -18,6 +19,7 @@ let config = {
 if (process.env.NODE_ENV === 'production') {
   config = {
     ...config,
+    apiUrl: 'https://travelr-api.yuuniworks.com/',
     database: {
       host: 'travelr-postgres-svc',
       user: 'travelr',

@@ -15,15 +15,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
+    "express-graphql": "^0.6.12",
     "firebase-admin": "^5.12.1",
+    "graphql": "^0.13.2",
     "morgan": "^1.9.0",
     "pg-promise": "^8.4.4"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.4",
     "lorem-ipsum": "^1.0.4",
     "nodemon": "^1.17.5",
     "prompt": "^1.0.0",

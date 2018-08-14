@@ -1,3 +1,4 @@
+import { Lokka } from 'lokka';
 import { from, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import {
@@ -5,11 +6,11 @@ import {
   fetchPostEpic,
   getOrCreateUserInfoEpic,
   initAuthEpic,
+  mapZoomAndCenterUpdaterEpic,
   redirectorEpic,
   snackbarEpic,
   startProgressServiceEpic,
   stopProgressServiceEpic,
-  mapZoomAndCenterUpdaterEpic,
 } from '..';
 import actionTypes from '../../actions/types';
 import {
@@ -28,6 +29,7 @@ declare const fetch: any;
 jest.mock('../../utils/firebaseUtils');
 jest.mock('../../utils/history');
 jest.mock('../../utils/mapsUtils');
+jest.mock('lokka');
 
 type ActionsAndResults = {
   marbles: string;
@@ -260,8 +262,10 @@ describe('fetchAllPostsEpic', () => {
     const DUMMY_LAT_LNG = { lat: 1, lng: 2 };
     // @ts-ignore
     getPositionFromPlaceName.mockResolvedValue(DUMMY_LAT_LNG);
-
-    fetch.mockResponse(JSON.stringify(DUMMY_POSTS[0]));
+    const mockQuery = jest.fn().mockResolvedValue({ posts: DUMMY_POSTS });
+    Lokka.mockImplementation(() => {
+      return { query: mockQuery };
+    });
 
     const incomingActions = [
       {
@@ -282,26 +286,12 @@ describe('fetchAllPostsEpic', () => {
     // @ts-ignore
     fetchAllPostsEpic(from(incomingActions), state).subscribe(
       outcomingAction => {
-        expect(fetch.mock.calls[assertionExecutedCount][0]).toContain(
-          `posts?` +
-            `display_name=${DUMMY_FILTER_CRITERION.displayName}` +
-            `&description=${DUMMY_FILTER_CRITERION.description}` +
-            `&min_date=${DUMMY_FILTER_CRITERION.shootDate.min}-01-01` +
-            `&max_date=${DUMMY_FILTER_CRITERION.shootDate.max}-12-31` +
-            `&lng=${DUMMY_LAT_LNG.lng}` +
-            `&lat=${DUMMY_LAT_LNG.lat}` +
-            `&radius=${DUMMY_FILTER_CRITERION.radius}` +
-            `&min_view_count=${DUMMY_FILTER_CRITERION.viewCount.min}` +
-            `&max_view_count=${DUMMY_FILTER_CRITERION.viewCount.max}` +
-            `&min_liked_count=${DUMMY_FILTER_CRITERION.likedCount.min}` +
-            `&max_liked_count=${DUMMY_FILTER_CRITERION.likedCount.max}` +
-            `&min_comments_count=${DUMMY_FILTER_CRITERION.commentsCount.min}` +
-            `&max_comments_count=${DUMMY_FILTER_CRITERION.commentsCount.max}`,
-        );
+        const variables = mockQuery.mock.calls[assertionExecutedCount][1];
 
+        expect(Object.keys(variables).length).toBeGreaterThan(0);
         expect(outcomingAction).toEqual({
           type: actionTypes.FETCH_ALL_POSTS_SUCCESS,
-          payload: DUMMY_POSTS[0],
+          payload: DUMMY_POSTS,
         });
 
         assertionExecutedCount += 1;
@@ -347,8 +337,10 @@ describe('fetchAllPostsEpic', () => {
 describe('fetchPostEpic', () => {
   test('if success (if user is NOT authenticated)', done => {
     const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
-
-    fetch.mockResponse(JSON.stringify(DUMMY_POSTS[0]));
+    const mockQuery = jest.fn().mockResolvedValue({ post: DUMMY_POSTS[0] });
+    Lokka.mockImplementation(() => {
+      return { query: mockQuery };
+    });
 
     const incomingActions = [
       {
@@ -380,16 +372,22 @@ describe('fetchPostEpic', () => {
     // @ts-ignore
     fetchPostEpic(from(incomingActions), state$).subscribe(
       outcomingAction => {
-        expect(fetch.mock.calls[assertionExecutedCount][0]).toContain(
-          `/posts/${DUMMY_POST_ID}`,
-        );
-        expect(fetch.mock.calls[assertionExecutedCount][0]).not.toContain(
-          `?user_id=${DUMMY_USER_STORE.userId}`,
-        );
+        const postId = incomingActions[assertionExecutedCount].payload;
+        const postIdQueried =
+          mockQuery.mock.calls[assertionExecutedCount][1].postId;
+
+        expect(postIdQueried).toBe(postId);
+
+        const userIdQueried =
+          mockQuery.mock.calls[assertionExecutedCount][1].userId;
+
+        expect(userIdQueried).toBeFalsy();
+
         expect(outcomingAction).toEqual({
           type: actionTypes.FETCH_POST_SUCCESS,
           payload: DUMMY_POSTS[0],
         });
+
         assertionExecutedCount += 1;
       },
       null,
@@ -402,8 +400,10 @@ describe('fetchPostEpic', () => {
 
   test('if success (if user IS authenticated)', done => {
     const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
-
-    fetch.mockResponse(JSON.stringify(DUMMY_POSTS[0]));
+    const mockQuery = jest.fn().mockResolvedValue({ post: DUMMY_POSTS[0] });
+    Lokka.mockImplementation(() => {
+      return { query: mockQuery };
+    });
 
     const incomingActions = [
       {
@@ -435,9 +435,11 @@ describe('fetchPostEpic', () => {
     // @ts-ignore
     fetchPostEpic(from(incomingActions), state$).subscribe(
       outcomingAction => {
-        expect(fetch.mock.calls[assertionExecutedCount][0]).toContain(
-          `/posts/${DUMMY_POST_ID}?user_id=${DUMMY_USER_STORE.userId}`,
-        );
+        const userIdQueried =
+          mockQuery.mock.calls[assertionExecutedCount][1].userId;
+
+        expect(userIdQueried).toBe(DUMMY_USER_STORE.userId);
+
         expect(outcomingAction).toEqual({
           type: actionTypes.FETCH_POST_SUCCESS,
           payload: DUMMY_POSTS[0],

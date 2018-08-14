@@ -49,13 +49,6 @@ type Props = {
 };
 
 class PageViewPostsGrid extends React.Component<Props> {
-  // @ts-ignore
-  componentDidUpdate = prevProps => {
-    // render grids if fetching posts done
-    const { posts } = this.props;
-    if (posts.length !== prevProps.posts.length) this.renderGridItems();
-  };
-
   handleOnBottom = () => {
     const { increaseLimitCountOfGrid } = this.props;
     increaseLimitCountOfGrid();
@@ -107,7 +100,7 @@ class PageViewPostsGrid extends React.Component<Props> {
   render() {
     const { classes, posts, limitCountOfGrid } = this.props;
 
-    if (!posts || !limitCountOfGrid) return;
+    if (!posts || !limitCountOfGrid) return null;
 
     return (
       <div className={classes.root}>

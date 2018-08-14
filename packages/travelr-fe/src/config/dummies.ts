@@ -40,7 +40,9 @@ export const DUMMY_COMMENTS: Comment[] = [
     datetime: '1985-03-01',
     comment: 'dummy_comment1',
     postId: 1,
-    displayName: 'dummy_comment_displayName1',
+    user: {
+      displayName: 'dummy_comment_displayName1',
+    },
   },
   {
     commentId: 791,
@@ -48,7 +50,9 @@ export const DUMMY_COMMENTS: Comment[] = [
     datetime: '1985-03-01',
     comment: 'dummy_comment1',
     postId: 1,
-    displayName: 'dummy_comment_displayName1',
+    user: {
+      displayName: 'dummy_comment_displayName1',
+    },
   },
   {
     commentId: 781,
@@ -56,7 +60,9 @@ export const DUMMY_COMMENTS: Comment[] = [
     datetime: '1985-03-01',
     comment: 'dummy_comment1',
     postId: 1,
-    displayName: 'dummy_comment_displayName1',
+    user: {
+      displayName: 'dummy_comment_displayName1',
+    },
   },
 ];
 
@@ -75,10 +81,12 @@ export const DUMMY_POSTS: Post[] = [
     lat: 301,
     viewCount: 401,
     createdAt: '2017-10-12T15:00:00.000Z',
-    displayName: 'dummy_displayName1',
     likedCount: 501,
     commentsCount: 601,
     comments: DUMMY_COMMENTS,
+    user: {
+      displayName: 'dummy_displayName1',
+    },
   },
   {
     postId: 2,
@@ -91,9 +99,11 @@ export const DUMMY_POSTS: Post[] = [
     lat: 302,
     viewCount: 402,
     createdAt: '2017-10-12T15:00:00.000Z',
-    displayName: 'dummy_displayName2',
     likedCount: 502,
     commentsCount: 602,
+    user: {
+      displayName: 'dummy_displayName2',
+    },
     comments: [
       {
         commentId: 702,
@@ -101,7 +111,9 @@ export const DUMMY_POSTS: Post[] = [
         datetime: '2985-03-02',
         comment: 'dummy_comment2',
         postId: 2,
-        displayName: 'dummy_comment_displayName2',
+        user: {
+          displayName: 'dummy_comment_displayName2',
+        },
       },
     ],
   },
@@ -116,9 +128,11 @@ export const DUMMY_POSTS: Post[] = [
     lat: 303,
     viewCount: 403,
     createdAt: '2017-10-12T15:00:00.000Z',
-    displayName: 'dummy_displayName3',
     likedCount: 503,
     commentsCount: 603,
+    user: {
+      displayName: 'dummy_displayName3',
+    },
     comments: [
       {
         commentId: 703,
@@ -126,7 +140,9 @@ export const DUMMY_POSTS: Post[] = [
         datetime: '3985-03-03',
         comment: 'dummy_comment3',
         postId: 3,
-        displayName: 'dummy_comment_displayName3',
+        user: {
+          displayName: 'dummy_comment_displayName3',
+        },
       },
     ],
   },
@@ -141,9 +157,11 @@ export const DUMMY_POSTS: Post[] = [
     lat: 304,
     viewCount: 404,
     createdAt: '2017-10-12T15:00:00.000Z',
-    displayName: 'dummy_displayName4',
     likedCount: 504,
     commentsCount: 604,
+    user: {
+      displayName: 'dummy_displayName4',
+    },
     comments: [
       {
         commentId: 704,
@@ -151,7 +169,9 @@ export const DUMMY_POSTS: Post[] = [
         datetime: '4985-03-04',
         comment: 'dummy_comment4',
         postId: 4,
-        displayName: 'dummy_comment_displayName4',
+        user: {
+          displayName: 'dummy_comment_displayName4',
+        },
       },
     ],
   },
@@ -166,9 +186,11 @@ export const DUMMY_POSTS: Post[] = [
     lat: 305,
     viewCount: 405,
     createdAt: '2017-10-12T15:00:00.000Z',
-    displayName: 'dummy_displayName5',
     likedCount: 505,
     commentsCount: 605,
+    user: {
+      displayName: 'dummy_displayName5',
+    },
     comments: [
       {
         commentId: 705,
@@ -176,7 +198,9 @@ export const DUMMY_POSTS: Post[] = [
         datetime: '5985-03-05',
         comment: 'dummy_comment5',
         postId: 5,
-        displayName: 'dummy_comment_displayName5',
+        user: {
+          displayName: 'dummy_comment_displayName5',
+        },
       },
     ],
   },

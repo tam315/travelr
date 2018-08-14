@@ -84,7 +84,7 @@ describe('PageViewPost component', () => {
         .find(Typography)
         .at(0)
         .html(),
-    ).toContain(DUMMY_POST.displayName);
+    ).toContain(DUMMY_POST.user.displayName);
     // description
     expect(
       wrapper

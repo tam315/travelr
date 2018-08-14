@@ -1,3 +1,5 @@
+import { Lokka } from 'lokka';
+import Transport from 'lokka-transport-http';
 import {
   ActionsObservable,
   combineEpics,
@@ -11,7 +13,10 @@ import types from '../actions/types';
 // @ts-ignore
 import config from '../config';
 import { Store } from '../config/types';
+import GetPostQuery from '../queries/getPost';
+import GetPostsQuery from '../queries/getPosts';
 import firebaseUtils from '../utils/firebaseUtils';
+import { flattenCriterion } from '../utils/general';
 import history from '../utils/history';
 import { getPositionFromPlaceName } from '../utils/mapsUtils';
 
@@ -95,76 +100,15 @@ export const fetchAllPostsEpic = (
       types.DELETE_POSTS_SUCCESS,
     ),
     switchMap(async () => {
-      const {
-        displayName,
-        description,
-        shootDate,
-        placeName,
-        radius,
-        viewCount,
-        likedCount,
-        commentsCount,
-      } = state$.value.filter.criterion;
+      const criterion = await flattenCriterion(state$.value.filter.criterion);
 
-      let minDate;
-      let maxDate;
-      let lng;
-      let lat;
-      let minViewCount;
-      let maxViewCount;
-      let minLikedCount;
-      let maxLikedCount;
-      let minCommentsCount;
-      let maxCommentsCount;
+      const client = new Lokka({
+        transport: new Transport(`${config.apiUrl}graphql`, {
+          credentials: false,
+        }),
+      });
 
-      if (shootDate) {
-        minDate = shootDate.min;
-        maxDate = shootDate.max;
-      }
-      if (placeName) {
-        const position = await getPositionFromPlaceName(placeName);
-        lng = position.lng;
-        lat = position.lat;
-      }
-      if (viewCount) {
-        minViewCount = viewCount.min;
-        maxViewCount = viewCount.max;
-      }
-      if (likedCount) {
-        minLikedCount = likedCount.min;
-        maxLikedCount = likedCount.max;
-      }
-      if (commentsCount) {
-        minCommentsCount = commentsCount.min;
-        maxCommentsCount = commentsCount.max;
-      }
-
-      const params = [];
-
-      if (displayName) params.push(`display_name=${displayName}`);
-      if (description) params.push(`description=${description}`);
-      if (minDate) params.push(`min_date=${minDate}-01-01`);
-      if (maxDate) params.push(`max_date=${maxDate}-12-31`);
-      if (lng) params.push(`lng=${lng}`);
-      if (lat) params.push(`lat=${lat}`);
-      if (radius) params.push(`radius=${radius}`);
-      if (minViewCount) params.push(`min_view_count=${minViewCount}`);
-      if (maxViewCount) params.push(`max_view_count=${maxViewCount}`);
-      if (minLikedCount) params.push(`min_liked_count=${minLikedCount}`);
-      if (maxLikedCount) params.push(`max_liked_count=${maxLikedCount}`);
-      if (minCommentsCount) {
-        params.push(`min_comments_count=${minCommentsCount}`);
-      }
-      if (maxCommentsCount) {
-        params.push(`max_comments_count=${maxCommentsCount}`);
-      }
-
-      let queryParams = '';
-      if (params.length) queryParams = `?${params.join('&')}`;
-
-      const posts = await wretch(`${config.apiUrl}posts${queryParams}`)
-        .get()
-        .json();
+      const { posts } = await client.query(GetPostsQuery, criterion);
 
       return {
         type: types.FETCH_ALL_POSTS_SUCCESS,
@@ -193,16 +137,19 @@ export const fetchPostEpic = (
     flatMap(async action => {
       const postId = action.payload;
       const { user } = state$.value;
-      let url;
-      if (user && user.userId) {
-        url = `${config.apiUrl}posts/${postId}?user_id=${user.userId}`;
-      } else {
-        url = `${config.apiUrl}posts/${postId}`;
-      }
 
-      const post = await wretch(url)
-        .get()
-        .json();
+      const client = new Lokka({
+        transport: new Transport(`${config.apiUrl}graphql`, {
+          credentials: false,
+        }),
+      });
+
+      const variables = {
+        postId,
+        userId: user.userId,
+      };
+
+      const { post } = await client.query(GetPostQuery, variables);
 
       return {
         type: types.FETCH_POST_SUCCESS,

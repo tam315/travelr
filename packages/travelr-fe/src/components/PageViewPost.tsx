@@ -165,7 +165,7 @@ export class PageViewPost extends React.Component<Props> {
       description,
       shootDate,
       viewCount,
-      displayName,
+      user: { displayName },
       likedCount,
       commentsCount,
       likeStatus,
@@ -207,12 +207,13 @@ export class PageViewPost extends React.Component<Props> {
 
           <div>
             <Typography variant="body2">{displayName}</Typography>
-            {description
-              .split('\n')
-              .map(line => <Typography key={Math.random()}>{line}</Typography>)}
+            {description.split('\n').map(line => (
+              <Typography key={Math.random()}>{line}</Typography>
+            ))}
           </div>
           <Typography>
-            撮影日：{new Date(shootDate).toISOString().substr(0, 10)}
+            撮影日：
+            {new Date(shootDate).toISOString().substr(0, 10)}
           </Typography>
 
           <div

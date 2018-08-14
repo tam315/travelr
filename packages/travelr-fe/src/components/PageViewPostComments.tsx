@@ -95,7 +95,7 @@ export class PageViewPostComments extends React.Component<Props, State> {
           role="button"
           tabIndex={0}
         >
-          <Typography variant="body2">{comment.displayName}</Typography>
+          <Typography variant="body2">{comment.user.displayName}</Typography>
           <Typography>{comment.comment}</Typography>
           <Typography variant="caption">
             {new Date(comment.datetime).toISOString().substr(0, 10)}

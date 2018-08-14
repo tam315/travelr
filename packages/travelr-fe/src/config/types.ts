@@ -60,7 +60,9 @@ export type Comment = {
   postId: number;
   datetime: string;
   comment: string;
-  displayName: string;
+  user: {
+    displayName: string;
+  };
 };
 
 export type Post = {
@@ -74,11 +76,13 @@ export type Post = {
   lat: number;
   viewCount: number;
   createdAt: string;
-  displayName: string;
   likedCount: number;
   commentsCount: number;
   comments: Comment[];
   likeStatus?: boolean;
+  user: {
+    displayName: string;
+  };
 };
 
 export type NewPost = {
@@ -148,6 +152,22 @@ export type FilterCriterion = {
   radius: string;
   displayName: string;
   description: string;
+};
+
+export type FilterCriterionFlatten = {
+  displayName?: string;
+  description?: string;
+  minDate?: number;
+  maxDate?: number;
+  lng?: number;
+  lat?: number;
+  radius?: string;
+  minViewCount?: number;
+  maxViewCount?: number;
+  minLikedCount?: number;
+  maxLikedCount?: number;
+  minCommentsCount?: number;
+  maxCommentsCount?: number;
 };
 
 // required info to authenticate with the main API
