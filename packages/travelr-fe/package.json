@@ -1,6 +1,6 @@
 {
   "name": "travelr-fe",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "build": "rimraf ./dist && cpx \"./public/**/*\" ./dist && webpack --config webpack.prod.js",
     "serve": "webpack-serve ./webpack.dev.js",
