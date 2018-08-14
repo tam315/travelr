@@ -62,6 +62,17 @@ const RootQuery = new GraphQLObjectType({
           .then(res => res.data);
       },
     },
+    user: {
+      type: types.UserType,
+      args: {
+        userId: { type: GraphQLString },
+      },
+      resolve(parentValue, { userId }) {
+        return axios
+          .get(`${config.apiUrl}users/${userId}`)
+          .then(res => res.data);
+      },
+    },
   },
 });
 

@@ -1,19 +1,18 @@
+import { Lokka } from 'lokka';
+import actions from '..';
 import {
   DUMMY_COMMENTS,
-  DUMMY_FILTER_CRITERION,
   DUMMY_NEW_POST,
   DUMMY_POSTS,
   DUMMY_POSTS_IDS,
   DUMMY_POST_TO_EDIT,
   DUMMY_USER_STORE,
-  DUMMY_USER_STORE_UNAUTHORIZED,
 } from '../../config/dummies';
 // @ts-ignore
 import firebaseUtils from '../../utils/firebaseUtils';
-import actions from '..';
 import types from '../types';
-import { getPositionFromPlaceName } from '../../utils/mapsUtils';
 
+jest.mock('lokka');
 jest.mock('../../utils/firebaseUtils');
 jest.mock('../../utils/history');
 jest.mock('../../utils/mapsUtils');
@@ -526,17 +525,24 @@ describe('deletePosts', () => {
 });
 
 describe('fetchMyPosts', () => {
-  test('generate a correct url', async () => {
-    fetch.mockResponse();
-
+  test('generate a correct query variables and action', async () => {
     const mockDispatch = jest.fn();
     const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
+    const mockQuery = jest
+      .fn()
+      .mockResolvedValue({ user: { posts: DUMMY_POSTS } });
+    Lokka.mockImplementation(() => {
+      return { query: mockQuery };
+    });
     await thunk(mockDispatch);
 
-    const fetchUrl = fetch.mock.calls[0][0];
+    const variables = mockQuery.mock.calls[0][1];
 
-    // make a correct fetch
-    expect(fetchUrl).toContain(`/posts?user_id=${DUMMY_USER_STORE.userId}`);
+    expect(variables.userId).toBe(DUMMY_USER_STORE.userId);
+    expect(mockDispatch.mock.calls[0][0]).toEqual({
+      type: types.FETCH_MY_POSTS_SUCCESS,
+      payload: DUMMY_POSTS,
+    });
   });
 
   test('do nothing if userId is not provided', async () => {
@@ -549,22 +555,7 @@ describe('fetchMyPosts', () => {
     expect(fetch).not.toBeCalled();
   });
 
-  test('make a correct action if test succeed', async () => {
-    fetch.mockResponse(JSON.stringify(DUMMY_POSTS));
-
-    const mockDispatch = jest.fn();
-    const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
-    await thunk(mockDispatch);
-    // make a correct action
-    expect(mockDispatch.mock.calls[0][0]).toEqual({
-      type: types.FETCH_MY_POSTS_SUCCESS,
-      payload: DUMMY_POSTS,
-    });
-  });
-
   test('make a correct action if test failed', async () => {
-    fetch.mockReject();
-
     const mockDispatch = jest.fn();
     const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
     await thunk(mockDispatch);

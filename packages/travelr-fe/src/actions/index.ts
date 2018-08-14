@@ -19,6 +19,9 @@ import {
 import firebaseUtils from '../utils/firebaseUtils';
 import { difference } from '../utils/general';
 import actionTypes from './types';
+import { Lokka } from 'lokka';
+import Transport from 'lokka-transport-http';
+import getUserAndPostsQuery from '../queries/getUserAndPosts';
 
 const { authRef } = firebaseUtils;
 
@@ -345,13 +348,19 @@ actions.fetchMyPosts = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   const { userId } = user;
   if (!userId) return;
   try {
-    const myPosts = await wretch(`${config.apiUrl}posts?user_id=${userId}`)
-      .get()
-      .json();
+    const client = new Lokka({
+      transport: new Transport(`${config.apiUrl}graphql`, {
+        credentials: false,
+      }),
+    });
+
+    const variables = { userId };
+
+    const { user } = await client.query(getUserAndPostsQuery, variables);
 
     dispatch({
       type: actionTypes.FETCH_MY_POSTS_SUCCESS,
-      payload: myPosts,
+      payload: user.posts,
     });
   } catch (err) {
     dispatch({

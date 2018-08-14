@@ -76,10 +76,19 @@ const UserType = new GraphQLObjectType({
     earnedLikes: { type: GraphQLInt },
     earnedComments: { type: GraphQLInt },
     earnedViews: { type: GraphQLInt },
+    posts: {
+      type: GraphQLList(PostType),
+      resolve(parentValue) {
+        return axios
+          .get(`${config.apiUrl}posts?user_id=${parentValue.userId}`)
+          .then(res => res.data);
+      },
+    },
   }),
 });
 
 module.exports = {
   PostType,
   CommentType,
+  UserType,
 };
