@@ -17,6 +17,7 @@ import {
   PostToEdit,
   UserStore,
 } from '../config/types';
+import changeDisplayNameMutation from '../queries/changeDisplayName';
 import getUserAndPostsQuery from '../queries/getUserAndPosts';
 import firebaseUtils from '../utils/firebaseUtils';
 import { difference } from '../utils/general';
@@ -36,14 +37,20 @@ actions.updateUserInfo = (user: UserStore, newUserInfo: NewUserInfo) => async (
   const { userId, token } = user;
   const { displayName } = newUserInfo;
   try {
-    await wretch(`${config.apiUrl}users/${userId}`)
-      .headers({ authorization: token })
-      .put({ displayName })
-      .res();
+    const client = new ApolloClient({
+      uri: `${config.apiUrl}graphql`,
+      headers: { authorization: token },
+    });
+    const mutation = changeDisplayNameMutation;
+    const variables = { userId, displayName };
+    const result = await client.mutate({
+      mutation,
+      variables,
+    });
 
     dispatch({
       type: actionTypes.UPDATE_USER_INFO_SUCCESS,
-      payload: { displayName },
+      payload: { displayName: result.data.changeDisplayName.displayName },
     });
   } catch (err) {
     dispatch({

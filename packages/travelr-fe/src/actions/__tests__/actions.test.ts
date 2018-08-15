@@ -29,20 +29,28 @@ describe('updateUserInfo', () => {
     displayName: 'dd',
   };
 
-  test('make a correct fetch and action if success', async () => {
-    fetch.mockResponse();
-
-    const thunk = actions.updateUserInfo(DUMMY_USER_STORE, DUMMY_NEW_USER_INFO);
+  test('make a correct mutation and action if success', async () => {
     const mockDispatch = jest.fn();
+    const thunk = actions.updateUserInfo(DUMMY_USER_STORE, DUMMY_NEW_USER_INFO);
+    const mockMutate = jest.fn().mockResolvedValue({
+      data: {
+        changeDisplayName: { displayName: DUMMY_NEW_USER_INFO.displayName },
+      },
+    });
+    // @ts-ignore
+    ApolloClient.mockImplementation(() => {
+      return { mutate: mockMutate };
+    });
+
     await thunk(mockDispatch);
 
-    const fetchUrl = fetch.mock.calls[0][0];
-    const fetchOptions = fetch.mock.calls[0][1];
+    const { variables } = mockMutate.mock.calls[0][0];
+    // @ts-ignore
+    const { authorization } = ApolloClient.mock.calls[0][0].headers;
 
-    // make a correct fetch
-    expect(fetchUrl).toContain(`/users/${DUMMY_USER_STORE.userId}`);
-    expect(fetchOptions.headers.authorization).toBe(DUMMY_USER_STORE.token);
-    expect(fetchOptions.method).toBe('PUT');
+    expect(variables.userId).toBe(DUMMY_USER_STORE.userId);
+    expect(variables.displayName).toBe(DUMMY_NEW_USER_INFO.displayName);
+    expect(authorization).toBe(DUMMY_USER_STORE.token);
 
     // make a correct action
     expect(mockDispatch.mock.calls[0][0]).toEqual({
