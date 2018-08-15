@@ -1,4 +1,4 @@
-import { Lokka } from 'lokka';
+import ApolloClient from 'apollo-boost';
 import actions from '..';
 import {
   DUMMY_COMMENTS,
@@ -12,7 +12,7 @@ import {
 import firebaseUtils from '../../utils/firebaseUtils';
 import types from '../types';
 
-jest.mock('lokka');
+jest.mock('apollo-boost');
 jest.mock('../../utils/firebaseUtils');
 jest.mock('../../utils/history');
 jest.mock('../../utils/mapsUtils');
@@ -530,13 +530,14 @@ describe('fetchMyPosts', () => {
     const thunk = actions.fetchMyPosts(DUMMY_USER_STORE);
     const mockQuery = jest
       .fn()
-      .mockResolvedValue({ user: { posts: DUMMY_POSTS } });
-    Lokka.mockImplementation(() => {
+      .mockResolvedValue({ data: { user: { posts: DUMMY_POSTS } } });
+    // @ts-ignore
+    ApolloClient.mockImplementation(() => {
       return { query: mockQuery };
     });
     await thunk(mockDispatch);
 
-    const variables = mockQuery.mock.calls[0][1];
+    const { variables } = mockQuery.mock.calls[0][0];
 
     expect(variables.userId).toBe(DUMMY_USER_STORE.userId);
     expect(mockDispatch.mock.calls[0][0]).toEqual({

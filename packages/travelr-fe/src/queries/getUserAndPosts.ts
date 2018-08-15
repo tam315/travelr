@@ -15,6 +15,4 @@ const query = gql`
   }
 `;
 
-// vanilla query string should be exported
-// as gql is only used for formatting
-export default query.loc.source.body;
+export default query;

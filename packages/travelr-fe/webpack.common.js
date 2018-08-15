@@ -37,10 +37,6 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    // to supress build errors related to `lokka-transport-http`
-    new webpack.IgnorePlugin(/\/iconv-loader$/),
-  ],
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },

@@ -1,3 +1,4 @@
+import ApolloClient from 'apollo-boost';
 import * as firebase from 'firebase/app';
 import { Dispatch } from 'redux';
 import uuid from 'uuid/v4';
@@ -7,21 +8,19 @@ import config from '../config';
 import {
   AuthSeed,
   Comment,
+  FilterCriterion,
   FilterCriterionReduced,
+  MapZoomAndCenter,
   NewPost,
   NewUserInfo,
   Post,
   PostToEdit,
   UserStore,
-  MapZoomAndCenter,
-  FilterCriterion,
 } from '../config/types';
+import getUserAndPostsQuery from '../queries/getUserAndPosts';
 import firebaseUtils from '../utils/firebaseUtils';
 import { difference } from '../utils/general';
 import actionTypes from './types';
-import { Lokka } from 'lokka';
-import Transport from 'lokka-transport-http';
-import getUserAndPostsQuery from '../queries/getUserAndPosts';
 
 const { authRef } = firebaseUtils;
 
@@ -348,19 +347,17 @@ actions.fetchMyPosts = (user: UserStore) => async (dispatch: Dispatch<any>) => {
   const { userId } = user;
   if (!userId) return;
   try {
-    const client = new Lokka({
-      transport: new Transport(`${config.apiUrl}graphql`, {
-        credentials: false,
-      }),
+    const client = new ApolloClient({
+      uri: `${config.apiUrl}graphql`,
     });
-
+    const query = getUserAndPostsQuery;
     const variables = { userId };
-
-    const { user } = await client.query(getUserAndPostsQuery, variables);
+    const result = await client.query<{ user: any }>({ query, variables });
+    const { posts } = result.data.user;
 
     dispatch({
       type: actionTypes.FETCH_MY_POSTS_SUCCESS,
-      payload: user.posts,
+      payload: posts,
     });
   } catch (err) {
     dispatch({

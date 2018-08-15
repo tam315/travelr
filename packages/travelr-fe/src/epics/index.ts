@@ -1,5 +1,4 @@
-import { Lokka } from 'lokka';
-import Transport from 'lokka-transport-http';
+import ApolloClient from 'apollo-boost';
 import {
   ActionsObservable,
   combineEpics,
@@ -102,13 +101,13 @@ export const fetchAllPostsEpic = (
     switchMap(async () => {
       const criterion = await flattenCriterion(state$.value.filter.criterion);
 
-      const client = new Lokka({
-        transport: new Transport(`${config.apiUrl}graphql`, {
-          credentials: false,
-        }),
+      const client = new ApolloClient({
+        uri: `${config.apiUrl}graphql`,
       });
-
-      const { posts } = await client.query(GetPostsQuery, criterion);
+      const query = GetPostsQuery;
+      const variables = criterion;
+      const result = await client.query<{ posts: any }>({ query, variables });
+      const { posts } = result.data;
 
       return {
         type: types.FETCH_ALL_POSTS_SUCCESS,
@@ -138,18 +137,16 @@ export const fetchPostEpic = (
       const postId = action.payload;
       const { user } = state$.value;
 
-      const client = new Lokka({
-        transport: new Transport(`${config.apiUrl}graphql`, {
-          credentials: false,
-        }),
+      const client = new ApolloClient({
+        uri: `${config.apiUrl}graphql`,
       });
-
+      const query = GetPostQuery;
       const variables = {
         postId,
         userId: user.userId,
       };
-
-      const { post } = await client.query(GetPostQuery, variables);
+      const result = await client.query<{ post: any }>({ query, variables });
+      const { post } = result.data;
 
       return {
         type: types.FETCH_POST_SUCCESS,

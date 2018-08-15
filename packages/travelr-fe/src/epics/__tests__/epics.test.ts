@@ -1,4 +1,4 @@
-import { Lokka } from 'lokka';
+import ApolloClient from 'apollo-boost';
 import { from, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import {
@@ -26,10 +26,10 @@ import { getPositionFromPlaceName } from '../../utils/mapsUtils';
 
 declare const fetch: any;
 
+jest.mock('apollo-boost');
 jest.mock('../../utils/firebaseUtils');
 jest.mock('../../utils/history');
 jest.mock('../../utils/mapsUtils');
-jest.mock('lokka');
 
 type ActionsAndResults = {
   marbles: string;
@@ -262,8 +262,11 @@ describe('fetchAllPostsEpic', () => {
     const DUMMY_LAT_LNG = { lat: 1, lng: 2 };
     // @ts-ignore
     getPositionFromPlaceName.mockResolvedValue(DUMMY_LAT_LNG);
-    const mockQuery = jest.fn().mockResolvedValue({ posts: DUMMY_POSTS });
-    Lokka.mockImplementation(() => {
+    const mockQuery = jest
+      .fn()
+      .mockResolvedValue({ data: { posts: DUMMY_POSTS } });
+    // @ts-ignore
+    ApolloClient.mockImplementation(() => {
       return { query: mockQuery };
     });
 
@@ -286,7 +289,7 @@ describe('fetchAllPostsEpic', () => {
     // @ts-ignore
     fetchAllPostsEpic(from(incomingActions), state).subscribe(
       outcomingAction => {
-        const variables = mockQuery.mock.calls[assertionExecutedCount][1];
+        const { variables } = mockQuery.mock.calls[assertionExecutedCount][0];
 
         expect(Object.keys(variables).length).toBeGreaterThan(0);
         expect(outcomingAction).toEqual({
@@ -337,8 +340,11 @@ describe('fetchAllPostsEpic', () => {
 describe('fetchPostEpic', () => {
   test('if success (if user is NOT authenticated)', done => {
     const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
-    const mockQuery = jest.fn().mockResolvedValue({ post: DUMMY_POSTS[0] });
-    Lokka.mockImplementation(() => {
+    const mockQuery = jest
+      .fn()
+      .mockResolvedValue({ data: { post: DUMMY_POSTS[0] } });
+    // @ts-ignore
+    ApolloClient.mockImplementation(() => {
       return { query: mockQuery };
     });
 
@@ -374,12 +380,12 @@ describe('fetchPostEpic', () => {
       outcomingAction => {
         const postId = incomingActions[assertionExecutedCount].payload;
         const postIdQueried =
-          mockQuery.mock.calls[assertionExecutedCount][1].postId;
+          mockQuery.mock.calls[assertionExecutedCount][0].variables.postId;
 
         expect(postIdQueried).toBe(postId);
 
         const userIdQueried =
-          mockQuery.mock.calls[assertionExecutedCount][1].userId;
+          mockQuery.mock.calls[assertionExecutedCount][0].variables.userId;
 
         expect(userIdQueried).toBeFalsy();
 
@@ -400,8 +406,11 @@ describe('fetchPostEpic', () => {
 
   test('if success (if user IS authenticated)', done => {
     const DUMMY_POST_ID = DUMMY_POSTS[0].postId;
-    const mockQuery = jest.fn().mockResolvedValue({ post: DUMMY_POSTS[0] });
-    Lokka.mockImplementation(() => {
+    const mockQuery = jest
+      .fn()
+      .mockResolvedValue({ data: { post: DUMMY_POSTS[0] } });
+    // @ts-ignore
+    ApolloClient.mockImplementation(() => {
       return { query: mockQuery };
     });
 
@@ -436,7 +445,7 @@ describe('fetchPostEpic', () => {
     fetchPostEpic(from(incomingActions), state$).subscribe(
       outcomingAction => {
         const userIdQueried =
-          mockQuery.mock.calls[assertionExecutedCount][1].userId;
+          mockQuery.mock.calls[assertionExecutedCount][0].variables.userId;
 
         expect(userIdQueried).toBe(DUMMY_USER_STORE.userId);
 
