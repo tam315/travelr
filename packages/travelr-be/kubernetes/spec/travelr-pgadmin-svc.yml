@@ -5,8 +5,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 80
-    targetPort: 80
+    - port: 80
+      targetPort: 80
   selector:
     app: travelr-pgadmin
 ---
@@ -22,36 +22,36 @@ spec:
         app: travelr-pgadmin
     spec:
       volumes:
-      - name: volume-travelr-pgadmin
-        persistentVolumeClaim:
-          claimName: pvc-travelr-pgadmin
+        - name: volume-travelr-pgadmin
+          persistentVolumeClaim:
+            claimName: pvc-travelr-pgadmin
       containers:
-      - name: travelr-pgadmin
-        image: dpage/pgadmin4:3.1
-        resources:
-          requests:
-            cpu: 0
-            memory: 0
-        ports:
-        - containerPort: 80
-        env:
-        - name: PGADMIN_DEFAULT_EMAIL
-          value: "some@dummy.com"
-        - name: PGADMIN_DEFAULT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysecret
-              key: travelr_pgadmin_pass
-        volumeMounts:
-          - mountPath: "/var/lib/pgadmin"
-            name: volume-travelr-pgadmin
-        # Ingressのバックエンドとして使うためには必須
-        readinessProbe:
-          httpGet:
-            path: /login?next=%2F
-            port: 80
-          initialDelaySeconds: 15
-          timeoutSeconds: 1
+        - name: travelr-pgadmin
+          image: dpage/pgadmin4:3.5
+          resources:
+            requests:
+              cpu: 0
+              memory: 0
+          ports:
+            - containerPort: 80
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: 'some@dummy.com'
+            - name: PGADMIN_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: travelr_pgadmin_pass
+          volumeMounts:
+            - mountPath: '/var/lib/pgadmin'
+              name: volume-travelr-pgadmin
+          # Ingressのバックエンドとして使うためには必須
+          readinessProbe:
+            httpGet:
+              path: /login?next=%2F
+              port: 80
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
 ---
 # pgadmin用PVC
 apiVersion: v1
@@ -59,7 +59,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: pvc-travelr-pgadmin
 spec:
-  storageClassName: ""
+  storageClassName: ''
   volumeName: pv-travelr-pgadmin
   accessModes:
     - ReadWriteOnce
@@ -73,7 +73,7 @@ kind: PersistentVolume
 metadata:
   name: pv-travelr-pgadmin
 spec:
-  storageClassName: ""
+  storageClassName: ''
   capacity:
     storage: 10G
   accessModes:

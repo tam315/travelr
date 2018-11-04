@@ -25,6 +25,8 @@
     CREATE EXTENSION postgis;
     ```
 
+    注意：PostGIS のバージョンが上がったときは、pgAdmin=>travelr=>extensions=>postgis=>definition=>version を調整すること。
+
 1.  `queries`フォルダの所定のクエリを実行する。
 
 ## バックアップ
