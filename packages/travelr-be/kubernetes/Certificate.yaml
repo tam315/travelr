@@ -10,13 +10,13 @@ spec:
     kind: ClusterIssuer
   commonName: travelr-pgadmin.yuuniworks.com # ドメイン
   dnsNames:
-  - travelr-pgadmin.yuuniworks.com # ドメイン
+    - travelr-pgadmin.yuuniworks.com # ドメイン
   acme:
     config:
-    - http01:
-        ingress: my-ingress # 使用しているIngressの名前
-      domains:
-      - travelr-pgadmin.yuuniworks.com # ドメイン
+      - http01:
+          ingress: my-ingress # 使用しているIngressの名前
+        domains:
+          - travelr-pgadmin.yuuniworks.com # ドメイン
 ---
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
@@ -30,10 +30,10 @@ spec:
     kind: ClusterIssuer
   commonName: travelr-api.yuuniworks.com # ドメイン
   dnsNames:
-  - travelr-api.yuuniworks.com # ドメイン
+    - travelr-api.yuuniworks.com # ドメイン
   acme:
     config:
-    - http01:
-        ingress: my-ingress # 使用しているIngressの名前
-      domains:
-      - travelr-api.yuuniworks.com # ドメイン
+      - http01:
+          ingress: my-ingress # 使用しているIngressの名前
+        domains:
+          - travelr-api.yuuniworks.com # ドメイン

@@ -31,6 +31,16 @@
 
 ## バックアップ
 
+### 方法 1
+
+1. pgadmin でバックアップを作成しておく
+1. リストアするときは、予め下記のセットアップ作業を手動で済ませておくこと。
+   - DB の作成
+   - ユーザの作成
+   - PostGIS 機能拡張の有効化
+
+### 方法 2
+
 https://qiita.com/kame_hitoshi/items/0caca3615764fd566a1c
 
 ```powershell

@@ -79,7 +79,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   # run following command once before use th disk
-  # gcloud compute disks create --size=10GB --zone=asia-northeast1-a --type=pd-standard disk-for-travelr-pgadmin
+  # gcloud compute disks create --size=20GB --zone=us-west1-a --type=pd-standard disk-for-travelr-pgadmin
   gcePersistentDisk:
     pdName: disk-for-travelr-pgadmin
     fsType: ext4
