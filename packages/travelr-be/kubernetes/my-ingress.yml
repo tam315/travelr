@@ -5,6 +5,11 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx # この一文を入れると、Ingressはロードバランサを作成しない。
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    # 自動更新のため、cert-managerの設定後に下記の2行を入れてapplyする
+    # https://docs.cert-manager.io/en/latest/tutorials/acme/quick-start/index.html#step-7-deploy-a-tls-ingress-resource
+    certmanager.k8s.io/issuer: 'letsencrypt-prod'
+    certmanager.k8s.io/acme-challenge-type: http01
+
 spec:
   tls:
     - secretName: travelr-pgadmin-tls
