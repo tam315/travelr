@@ -7773,10 +7773,10 @@ react-bottom-scroll-listener@^1.3.0:
     lodash.debounce "^4.0.8"
     prop-types "^15.6.0"
 
-react-compare-image@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/react-compare-image/-/react-compare-image-1.0.2.tgz#9d2c5fe148fc43a932b324092ad193f1359f3f81"
-  integrity sha512-tfK/bs498/yVI1NicTZ9Di5vlcXVPzFjg3TLPdE4VEN2tHKNIjFK8SeimvO1vVBZG1INFJgL4iTfpMfxDegYtw==
+react-compare-image@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-compare-image/-/react-compare-image-1.0.3.tgz#1a870102cc48d5b98d88a4a0777129fd7ad94c24"
+  integrity sha512-ZngtVOYLPLtnSHu8rb+N6fCFyVNNTSKfsjmy9WLgzP+yE1SDQciZ8I7M/xdHEEc7fc3xUIfZRphVMHH0UH2PnA==
   dependencies:
     css-element-queries "^1.0.2"
 
