@@ -1,0 +1,22 @@
+resources:
+  - name: travelr-postgres2
+    type: sqladmin.v1beta4.instance
+    properties:
+      backendType: SECOND_GEN
+      databaseVersion: POSTGRES_11
+      instanceType: CLOUD_SQL_INSTANCE
+      region: 'asia-northeast1'
+      settings:
+        tier: 'db-f1-micro'
+        dataDiskSizeGb: 10
+        storageAutoResize: true
+        backupConfiguration:
+          enabled: true
+          startTime: '09:00'
+  - name: travelr-postgres-user
+    type: sqladmin.v1beta4.user
+    properties:
+      name: postgres
+      instance: travelr-postgres
+      password: initialpass
+      host: 'cloudsqlproxy~%'
