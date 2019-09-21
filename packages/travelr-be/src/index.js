@@ -34,7 +34,7 @@ app.use(
 router(app);
 
 const portDevelopment = 3090;
-const portProduction = 80;
+const portProduction = process.env.PORT; // PORT comes from cloud run
 const server = http.createServer(app);
 
 // Run the server unless it is a test environment

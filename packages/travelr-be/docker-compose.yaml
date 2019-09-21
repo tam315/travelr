@@ -1,40 +1,48 @@
 version: '3.6'
 services:
-  postgis: # 同一NWに所属していれば、サービス間でサービス名を使って名前解決が可能
-    image: mdillon/postgis:10-alpine
-    container_name: 'some-postgis'
-    volumes:
-      - type: 'volume' # DBデータ保存用（ホストから操作できないタイプ）
-        source: postgres
-        target: /var/lib/postgresql/data
-      - type: 'bind' # バックアップデータ取り出し用（ホストから操作できるタイプ）
-        source: c:/backup
-        target: /backup
-    ports:
-      - '5432:5432'
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_DEV_PASS}
-    networks:
-      backend: # 'backend'という名前の仮想NWに所属させる
-
-  pgadmin4:
-    image: dpage/pgadmin4:3.2
-    container_name: 'some-pgadmin'
-    volumes:
-      - type: 'volume'
-        source: pgadmin
-        target: /var/lib/pgadmin
+  travelr_api:
+    build: .
+    container_name: travelr_api
     ports:
       - '80:80'
-    environment:
-      PGADMIN_DEFAULT_EMAIL: some@dummy.com
-      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_DEV_PASS}
-    networks:
-      ? backend
+      - '3090:3090'
+    env_file:
+      - ~/github/my-secrets/travelr/docker-env-dev.txt
+#   postgis: # 同一NWに所属していれば、サービス間でサービス名を使って名前解決が可能
+#     image: mdillon/postgis:10-alpine
+#     container_name: 'some-postgis'
+#     volumes:
+#       - type: 'volume' # DBデータ保存用（ホストから操作できないタイプ）
+#         source: postgres
+#         target: /var/lib/postgresql/data
+#       - type: 'bind' # バックアップデータ取り出し用（ホストから操作できるタイプ）
+#         source: c:/backup
+#         target: /backup
+#     ports:
+#       - '5432:5432'
+#     environment:
+#       POSTGRES_PASSWORD: ${POSTGRES_DEV_PASS}
+#     networks:
+#       backend: # 'backend'という名前の仮想NWに所属させる
 
-volumes: # コンテナで使用するvolumeの名称を、ここに列挙する必要がある
-  ? postgres
-  ? pgadmin
+#   pgadmin4:
+#     image: dpage/pgadmin4:3.2
+#     container_name: 'some-pgadmin'
+#     volumes:
+#       - type: 'volume'
+#         source: pgadmin
+#         target: /var/lib/pgadmin
+#     ports:
+#       - '80:80'
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: some@dummy.com
+#       PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_DEV_PASS}
+#     networks:
+#       backend:
 
-networks: # コンテナで使用するNWの名称を、ここに列挙する必要がある
-  ? backend
+# volumes: # コンテナで使用するvolumeの名称を、ここに列挙する必要がある
+#   postgres:
+#   pgadmin:
+
+# networks: # コンテナで使用するNWの名称を、ここに列挙する必要がある
+#   backend:

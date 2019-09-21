@@ -1,3 +1,6 @@
+# when a database user cannot be deleted:
+# gcloud deployment-manager deployments delete travelr-postgres --delete-policy=ABANDON
+
 resources:
   - name: travelr-postgres2
     type: sqladmin.v1beta4.instance
