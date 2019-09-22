@@ -78,7 +78,7 @@ const blurOffensiveImages = async object => {
   }
 };
 
-exports.onFileChange = functions
+exports.onFinalize = functions
   .region('asia-northeast1')
   .storage.bucket('travelr-images')
   .object()

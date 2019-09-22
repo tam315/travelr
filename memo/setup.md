@@ -9,13 +9,15 @@ docker-compose up travelr_api
 
 ## how to deploy on the Cloud Run
 
+### on the shell
+
 ```sh
 cd packages/travelr-be
 gcloud builds submit --project travelr-a75c4 --tag gcr.io/travelr-a75c4/travelr-api
 gcloud beta run deploy --project travelr-a75c4 --image gcr.io/travelr-a75c4/travelr-api
 ```
 
-### on GCP console:
+### on GCP console
 
 - set env variables
   - NODE_ENV=production
